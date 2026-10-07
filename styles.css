@@ -99,51 +99,14 @@ span.ex-thumb { background: var(--raised); }
 .tchip { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 999px; background: var(--raised); font-size: 14px; font-weight: 600; }
 .tchip.skel { width: 64px; }
 .watch-btn { flex: 1 1 100%; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border-radius: 14px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: 600; font-size: 15px; cursor: pointer; }
-/* 3D stage for the live animation, and the loading state before it. The figure is still the 180 px GIF: the depth comes from lighting, a contact shadow, parallax and a gentle tilt.
-   Idle sway and hand tilt are registered angles added up in ONE transform, so handing over between them never jumps. */
-@property --idle-rx { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-@property --idle-ry { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-@property --tilt-rx { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-@property --tilt-ry { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-.stage {
-  --rx: calc(var(--idle-rx) + var(--tilt-rx));
-  --ry: calc(var(--idle-ry) + var(--tilt-ry));
-  border-radius: 14px;
-  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
-  transition: --tilt-rx .35s cubic-bezier(.2, .7, .2, 1), --tilt-ry .35s cubic-bezier(.2, .7, .2, 1), box-shadow .4s ease;
-  touch-action: pan-y pinch-zoom;
-}
-.stage.is-live { box-shadow: 0 26px 44px -22px rgba(0, 0, 0, .8), 0 18px 44px -26px rgba(198, 244, 50, .5); }
-.stage.sway { animation: idleSway 10s ease-in-out infinite; }
-.stage.held { animation-play-state: paused; }
-@keyframes idleSway { 0%, 100% { --idle-rx: 3deg; --idle-ry: -6deg; } 50% { --idle-rx: 1deg; --idle-ry: 6deg; } }
-.anim { isolation: isolate; -webkit-mask-image: -webkit-radial-gradient(white, black); }
-/* Smooth gradients only: the GIF is multiplied onto this, so any pattern here would show through the figure. */
-.anim[data-state="loading"], .anim[data-state="live"] {
-  background:
-    radial-gradient(40% 8% at 50% 89%, rgba(14, 15, 18, .24), rgba(14, 15, 18, 0) 75%),
-    linear-gradient(to bottom, rgba(16, 20, 28, 0) 56%, rgba(16, 20, 28, .09) 80%, rgba(16, 20, 28, .16) 100%),
-    radial-gradient(125% 95% at 50% 6%, #FFFFFF 0%, #EEF1F5 48%, #D3D9E1 100%);
-}
-/* Shown at 80 percent of the box: less upscaling keeps the 180 px GIF sharper. Multiply melts its white square into the lit stage. */
-.anim[data-state="live"] > img {
-  inset: auto; left: 10%; top: 6%; width: 80%; height: 80%;
-  mix-blend-mode: multiply; filter: contrast(1.04) saturate(1.08);
-  transform: translate(calc(sin(var(--ry)) * 40px), calc(sin(var(--rx)) * -40px));
-}
-.anim[data-state="live"]::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(70% 55% at calc(50% - sin(var(--ry)) * 240%) calc(12% + sin(var(--rx)) * 180%), rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 62%);
-  mix-blend-mode: soft-light;
-}
+/* Flat light background for the live animation and the loading state before it. A smooth gradient only: the GIF is multiplied onto it, so any pattern would show through the figure. */
+.anim[data-state="loading"], .anim[data-state="live"] { isolation: isolate; background: radial-gradient(125% 95% at 50% 6%, #FFFFFF 0%, #EEF1F5 48%, #D3D9E1 100%); }
+/* Shown at 80 percent of the box: less upscaling keeps the 180 px GIF sharper. Multiply melts its white square into the background. */
+.anim[data-state="live"] > img { inset: auto; left: 10%; top: 10%; width: 80%; height: 80%; mix-blend-mode: multiply; filter: contrast(1.04) saturate(1.08); }
 .anim[data-state="live"] .anim-chip { z-index: 1; background: rgba(14, 15, 18, .82); box-shadow: 0 4px 12px rgba(14, 15, 18, .25); }
 .anim[data-state="live"] .dot { animation: livePulse 2.2s ease-out infinite; }
 @keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(198, 244, 50, .6); } 70%, 100% { box-shadow: 0 0 0 7px rgba(198, 244, 50, 0); } }
-@media (prefers-reduced-motion: reduce) {
-  .stage { transform: none; animation: none; }
-  .anim[data-state="live"] > img { transform: none; }
-  .anim[data-state="live"] .dot { animation: none; }
-}
+@media (prefers-reduced-motion: reduce) { .anim[data-state="live"] .dot { animation: none; } }
 
 /* Step by step */
 .steps-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 60px; padding: 10px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; color: var(--text); text-align: left; cursor: pointer; }

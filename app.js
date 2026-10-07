@@ -147,10 +147,8 @@ function renderExercise(view, day, ex, variantKey) {
   const segBlock = el('div', 'version-block'); segBlock.append(seg);
 
   const animCard = el('section', 'card anim-card'); animCard.setAttribute('aria-label', 'Animation');
-  // The stage tilts in 3D and casts the shadow. The box inside it clips and holds the lighting (two elements, so Safari clips the corners).
-  const stage = el('div', 'stage'); const box = el('div', 'anim'); const foot = el('div', 'anim-foot');
-  stage.append(box); animCard.append(stage, foot);
-  wireTilt(stage);
+  const box = el('div', 'anim'); const foot = el('div', 'anim-foot');
+  animCard.append(box, foot);
 
   const toggle = el('button', 'steps-toggle'); toggle.type = 'button';
   toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-controls', 'steps');
@@ -196,7 +194,7 @@ function renderExercise(view, day, ex, variantKey) {
     watch.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     watchTitle.focus({ preventScroll: true });
   };
-  loadAnimation(v, { stage, box, foot, toggle, sub, steps, toVideos });
+  loadAnimation(v, { box, foot, toggle, sub, steps, toVideos });
 }
 
 function setupRow(iconName, label, text) {
@@ -212,54 +210,6 @@ function setAnim(ui, name, boxKids, footKids) {
   ui.box.dataset.state = name;
   ui.box.replaceChildren(...boxKids);
   ui.foot.replaceChildren(...footKids);
-  setLive(ui.stage, name === 'live');
-}
-
-// 3D stage for the live animation. The idle sway and the hand tilt add up in one transform (.stage in styles.css), so the box never jumps between them.
-const MAX_TILT = 8; // degrees: the largest angle the box ever shows
-const calmMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-function setLive(stage, live) {
-  stage.classList.toggle('is-live', live);
-  // An unregistered custom property snaps instead of easing, so the sway needs CSS.registerProperty.
-  stage.classList.toggle('sway', live && !calmMotion() && Boolean(window.CSS && CSS.registerProperty));
-  if (!live) holdTilt(stage, null);
-}
-
-// target null lets go. Otherwise the sway pauses where it is and the tilt makes up the difference, so the sum stays on target.
-function holdTilt(stage, target) {
-  if (!target) {
-    stage.classList.remove('held');
-    stage.style.setProperty('--tilt-rx', '0deg'); stage.style.setProperty('--tilt-ry', '0deg');
-    return;
-  }
-  stage.classList.add('held');
-  const cs = getComputedStyle(stage);
-  const idleX = parseFloat(cs.getPropertyValue('--idle-rx')) || 0;
-  const idleY = parseFloat(cs.getPropertyValue('--idle-ry')) || 0;
-  stage.style.setProperty('--tilt-rx', `${target.rx - idleX}deg`);
-  stage.style.setProperty('--tilt-ry', `${target.ry - idleY}deg`);
-}
-
-// A mouse tilts the box by hovering. A finger tilts it by dragging sideways; a vertical drag stays a page scroll (touch-action) and cancels the tilt.
-function wireTilt(stage) {
-  let start = null;
-  const clamp = (n) => Math.max(-1, Math.min(1, n));
-  stage.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') start = { x: e.clientX, y: e.clientY }; });
-  stage.addEventListener('pointermove', (e) => {
-    if (!stage.classList.contains('is-live') || calmMotion()) return;
-    let nx; let ny;
-    if (e.pointerType === 'touch') {
-      if (!start) return;
-      nx = clamp((e.clientX - start.x) / 120); ny = clamp((e.clientY - start.y) / 120);
-    } else {
-      const r = stage.getBoundingClientRect();
-      nx = clamp(((e.clientX - r.left) / r.width) * 2 - 1); ny = clamp(((e.clientY - r.top) / r.height) * 2 - 1);
-    }
-    holdTilt(stage, { rx: -ny * MAX_TILT, ry: nx * MAX_TILT });
-  });
-  const release = () => { start = null; holdTilt(stage, null); };
-  for (const type of ['pointerup', 'pointercancel', 'pointerleave']) stage.addEventListener(type, release);
 }
 // list null disables the toggle, sub null hides it.
 function setSteps(ui, list, sub) {
