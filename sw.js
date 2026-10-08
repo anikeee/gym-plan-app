@@ -1,4 +1,4 @@
-const VERSION = 'gym-v6'; // bump on every data or code change
+const VERSION = 'gym-v7'; // bump on every data or code change
 const FONTS = ['./fonts/barlow-400.woff2', './fonts/barlow-600.woff2', './fonts/barlow-condensed-600.woff2', './fonts/barlow-condensed-700.woff2'];
 const SHELL = ['./', './index.html', './styles.css', './app.js', './log.js', './data/exercises.json', './manifest.webmanifest', './icon.svg', ...FONTS];
 
