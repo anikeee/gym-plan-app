@@ -331,7 +331,8 @@ function buildSetLog(ex, variantKey) {
     status.textContent = '';
     const last = lastFor(i);
     const s = g.suggestions[i];
-    if (!last) context.textContent = `No earlier ${versionName.toLowerCase()} sets yet. Log today's weight and it will show here next time.`;
+    // The version key reads as a plain noun here (machine, dumbbell, barbell sets); the label "Dumbbells" would not.
+    if (!last) context.textContent = `No earlier ${variantKey} sets yet. Log today's weight and it will show here next time.`;
     else {
       const lw = L.formatWeight(last.w);
       let text = `Last time, ${L.formatDay(last.date)}: ${lw} kg × ${last.r} of ${t}.`;
