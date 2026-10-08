@@ -250,8 +250,16 @@ test('start and finish a session, and a session left running is closed at its la
   const log = L.setSlot(L.emptyLog(), 'lat-pulldown.machine', '2026-10-09', 0, { w: 50, r: 12, t: at(18, 50, 9) }, 4);
   const closed = L.closeStale(forgot, log, '2026-10-10');
   assert.equal(closed.closed, 1);
-  assert.deepEqual(closed.days.sessions[0], { date: '2026-10-09', day: 'pull', start: at(18, 0, 9), end: at(18, 50, 9), auto: true });
+  assert.deepEqual(closed.days.sessions[0], { date: '2026-10-09', day: 'pull', start: at(18, 0, 9), end: at(18, 50, 9), auto: 'set' });
   assert.equal(L.closeStale(forgot, log, '2026-10-09').closed, 0); // still the same session day: left running
+  const noSets = L.closeStale(forgot, L.emptyLog(), '2026-10-10').days.sessions[0];
+  assert.deepEqual([noSets.end, noSets.auto], [at(18, 0, 9), 'start']); // nothing logged after Start: closed where it began
+  assert.equal(L.validateDays(closed.days).days.sessions[0].auto, 'set');
+  // Across 4 am with the page still open: the app passes its own session day, so Start and Finish agree with the card.
+  const early = L.startSession(L.emptyDays(), 'push', new Date(2026, 9, 9, 4, 5), '2026-10-08');
+  assert.equal(early.session.date, '2026-10-08');
+  assert.equal(L.finishSession(early.days, new Date(2026, 9, 9, 4, 10), '2026-10-08').session.date, '2026-10-08');
+  assert.equal(L.finishSession(early.days, new Date(2026, 9, 9, 4, 10)).session, null); // the clock's own day has no running session
   // A session started at 1 am belongs to the evening before, so it stays active until 4 am.
   const late = L.startSession(L.emptyDays(), 'legs', new Date(2026, 9, 9, 1, 0));
   assert.equal(late.session.date, '2026-10-08');

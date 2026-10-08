@@ -251,7 +251,7 @@ export function validateDays(obj) {
       if (!validTime(s.start)) throw new Error('start');
       if (s.end !== null && s.end !== undefined && (!validTime(s.end) || s.end < s.start)) throw new Error('end');
       const clean = { date: s.date, day: s.day, start: s.start, end: validTime(s.end) ? s.end : null };
-      if (s.auto === true) clean.auto = true;
+      if (s.auto === 'set' || s.auto === 'start') clean.auto = s.auto; // closed by the app, not by Finish: at the last set, or at its start
       byKey.set(s.start, clean); // the same start twice: last wins
     }
     const sessions = [...byKey.values()].sort(byStart);
@@ -280,15 +280,15 @@ export function activeSession(days, today) {
   }
   return null;
 }
-export function startSession(days, dayId, now = new Date()) {
-  const today = sessionDay(now);
+// today is passed in by the app, so the card, the sets and the session all use the same session day across 4 am.
+export function startSession(days, dayId, now = new Date(), today = sessionDay(now)) {
   const running = activeSession(days, today);
   if (running) return { days, session: running, started: false };
   const session = { date: today, day: dayId, start: now.getTime(), end: null };
   return { days: { ...days, sessions: [...days.sessions, session].sort(byStart) }, session, started: true };
 }
-export function finishSession(days, now = new Date()) {
-  const running = activeSession(days, sessionDay(now));
+export function finishSession(days, now = new Date(), today = sessionDay(now)) {
+  const running = activeSession(days, today);
   if (!running) return { days, session: null };
   const session = { ...running, end: Math.max(running.start, now.getTime()) };
   return { days: { ...days, sessions: days.sessions.map((s) => (s === running ? session : s)) }, session };
@@ -299,7 +299,8 @@ export function closeStale(days, log, today) {
   const sessions = days.sessions.map((s) => {
     if (s.end !== null || s.date === today) return s;
     closed++;
-    return { ...s, end: Math.max(s.start, lastSetTime(log, s.date) ?? s.start), auto: true };
+    const last = lastSetTime(log, s.date);
+    return last !== null && last > s.start ? { ...s, end: last, auto: 'set' } : { ...s, end: s.start, auto: 'start' };
   });
   return { days: closed ? { ...days, sessions } : days, closed };
 }

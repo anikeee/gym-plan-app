@@ -86,6 +86,10 @@ span.ex-thumb { background: var(--raised); }
 .train-btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 4px; border: 0; border-radius: 16px; background: var(--accent); color: var(--ink); font: 700 20px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
 .train-btn.is-finish { background: var(--raised); color: var(--text); border: 1px solid var(--line-hi); }
 .train-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 15px; }
+.done-wrap { display: flex; flex-direction: column; gap: 8px; }
+.done-wrap p, .list-status { margin: 0; }
+.done-status, .list-status { font-size: 14px; color: var(--warn); font-weight: 600; }
+.done-status:empty, .list-status:empty { display: none; }
 .done-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 1px solid var(--line-hi); border-radius: 14px; background: var(--raised); color: var(--text); font-weight: 600; font-size: 16px; cursor: pointer; }
 .done-btn.is-done { background: var(--accent); border-color: var(--accent); color: var(--ink); }
 
@@ -114,7 +118,7 @@ span.ex-thumb { background: var(--raised); }
 .sets-block { display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 0; }
 .sets { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .set { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 0 10px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
-.set-reps { font: 700 36px/1 var(--display); }
+.set-reps { font: 700 clamp(28px, 9.5vw, 36px)/1 var(--display); } /* 122.5 kg still fits a 320 px phone */
 .set-unit { font-size: 12px; color: var(--muted); }
 .rest { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--soft); }
 .rest .i { color: var(--accent); }
