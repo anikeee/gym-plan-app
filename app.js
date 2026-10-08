@@ -3,7 +3,7 @@ import * as L from './log.js';
 const API = 'https://oss.exercisedb.dev/api/v1/exercises/';
 const GIF_TIMEOUT_MS = 6000;
 const SESSION_LENGTH = '45 min'; // docs/research/anik-workout-plan-1.txt:3
-const state = { data: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, day: null }; // live: exerciseId -> API response for this page load only
+const state = { data: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: false, day: null }; // live: exerciseId -> API response for this page load only
 const LATEST_APK = 'https://github.com/anikeee/gym-plan-app/releases/latest/download/workout-plan.apk';
 const SAVE_FAILED = "Couldn't save on this phone. Storage may be full or blocked.";
 // Reading the localStorage global itself throws when site data is blocked, so read it once here. The log
@@ -391,6 +391,7 @@ function buildSetLog(ex, variantKey) {
 function freshLog() {
   const r = L.loadLog(store);
   state.logOk = r.ok;
+  state.logRecovered = r.ok && r.recovered === true; // only true once the unreadable value really was copied aside
   if (!r.ok) return null;
   state.log = r.log;
   return state.log;
@@ -415,12 +416,14 @@ function buildLogCard() {
   const card = el('section', 'card log-card'); card.setAttribute('aria-labelledby', 'log-title');
   const h = el('h2', 'log-title', 'Your weight log'); h.id = 'log-title';
   const count = el('p', 'log-count');
+  const recovered = el('p', 'log-note', "Some saved weights couldn't be read, so they aren't shown. A copy was kept on this phone.");
   const backup = el('p', 'log-backup');
   const status = el('p', 'log-status'); status.setAttribute('role', 'status');
   const paint = () => {
     const n = L.countSessions(freshLog() ?? state.log);
     count.textContent = !state.logOk ? "This phone isn't letting the app save. Check that site storage is allowed."
       : n ? `${n} ${n === 1 ? 'session' : 'sessions'} saved on this phone.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
+    recovered.hidden = !state.logRecovered; // gone once a new set replaces the unreadable value
     const at = L.loadMeta(store).lastExportAt;
     const age = at ? Math.floor((Date.now() - Date.parse(at)) / 86400000) : null;
     backup.textContent = at ? `Last backup: ${L.formatDay(L.localDate(new Date(at)))}` : 'Last backup: never';
@@ -436,7 +439,7 @@ function buildLogCard() {
     if (f) { await importBackup(f, status); paint(); }
   });
   const row = el('div', 'log-actions'); row.append(exp, imp);
-  card.append(h, count, backup);
+  card.append(h, count, recovered, backup);
   if (inAppWebView()) {
     const note = el('p', 'log-note', 'In the Workout Plan Android app? Update it to back up or restore your log. ');
     const get = link(LATEST_APK, null, 'Get the new app'); note.append(get);
@@ -448,7 +451,7 @@ function buildLogCard() {
   return card;
 }
 
-function exportBackup(status) {
+async function exportBackup(status) {
   const log = freshLog();
   if (!log) { say(status, "Couldn't read the log on this phone, so nothing was exported.", true); return; }
   const now = new Date();
@@ -461,10 +464,38 @@ function exportBackup(status) {
     return;
   }
   if (inAppWebView()) { say(status, "This app can't save files. Update it, or open the site in Chrome to back up.", true); return; }
+  if (typeof window.showSaveFilePicker === 'function') {
+    const saved = await saveWithPicker(name, text, status);
+    if (saved !== null) { backupFinished(saved, saved ? 'Backup saved. Keep the file somewhere safe, like Google Drive.' : undefined); return; }
+  }
   const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
   const a = link(url, null); a.download = name; document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 10000);
-  backupFinished(true, 'Backup downloaded. Keep the file somewhere safe, like Google Drive.');
+  // The page never hears whether a download finished, so it records the backup now and says what a cancel means.
+  backupFinished(true, 'Backup downloaded. Keep the file somewhere safe, like Google Drive. If you cancelled the download, nothing was saved, so export again.');
+}
+
+// Desktop Chrome and Edge let the page write the file itself, so only a real save is recorded.
+// True once the file is written, false when it was cancelled or could not be written,
+// null when the picker can't open here (the caller then downloads the file instead).
+async function saveWithPicker(name, text, status) {
+  let handle;
+  try {
+    // Called before any await, so the tap still counts as the user gesture the picker needs.
+    const picked = window.showSaveFilePicker({ suggestedName: name, types: [{ description: 'Workout log backup', accept: { 'application/json': ['.json'] } }] });
+    say(status, 'Choose where to save the backup.');
+    handle = await picked;
+  } catch (err) {
+    return err?.name === 'AbortError' ? false : null;
+  }
+  try {
+    const out = await handle.createWritable();
+    await out.write(text);
+    await out.close(); // the file only holds the backup once close resolves
+    return true;
+  } catch {
+    return false; // a place was already chosen, so a second surprise download would only confuse
+  }
 }
 
 // at: when the file was written, in milliseconds. The Android app passes it, because the page may hear the result later.
