@@ -324,3 +324,85 @@ test('the exercise order applies per day, moves items, and the backup carries it
   assert.equal(old.ok, true);
   assert.deepEqual(old.days, L.emptyDays());
 });
+
+// ---- Review fixes: speed with years of data, and one running training at a time after a restore ----
+
+// The plain version of trainingDays: rescans the whole log once per date. The fast one must give the same answer.
+function slowTrainingDays(days, log) {
+  const dates = new Set([...days.sessions.map((s) => s.date), ...Object.keys(days.done)]);
+  for (const list of Object.values(log.entries)) for (const e of list) dates.add(e.date);
+  const times = (date, pick) => { let t = null; for (const list of Object.values(log.entries)) for (const e of list) if (e.date === date) for (const s of e.sets) if (s && Number.isInteger(s.t) && s.t > 0 && (t === null || pick(s.t, t))) t = s.t; return t; };
+  return [...dates].sort().map((date, i) => ({ number: i + 1, date, sessions: days.sessions.filter((s) => s.date === date), done: L.doneOn(days, date),
+    firstSet: times(date, (a, b) => a < b), lastSet: times(date, (a, b) => a > b) }));
+}
+
+test('training days and the sets per date come out the same from one pass over the stores', () => {
+  let seed = 11; const rnd = (n) => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed % n; };
+  for (let run = 0; run < 40; run++) {
+    let log = L.emptyLog(); let days = L.emptyDays();
+    for (let k = 0; k < 60; k++) {
+      const date = `2026-0${1 + rnd(9)}-${String(1 + rnd(28)).padStart(2, '0')}`;
+      const key = ['incline-chest-press-machine.machine', 'leg-press.machine', 'lat-pulldown.dumbbell'][rnd(3)];
+      if (rnd(3)) log = L.setSlot(log, key, date, rnd(4), { w: 20 + rnd(80), r: rnd(13), ...(rnd(2) ? { t: 1e12 + rnd(1e9) } : {}) }, 4);
+      if (!rnd(4)) days = L.toggleDone(days, date, `push-${1 + rnd(7)}`);
+      if (!rnd(5)) days = { ...days, sessions: [...days.sessions, { date, day: 'push', start: 1e12 + rnd(1e9), end: null }].sort((a, b) => a.start - b.start) };
+    }
+    const fast = L.trainingDays(days, log);
+    const slow = slowTrainingDays(days, log);
+    assert.deepEqual(fast.map((d) => ({ ...d })), slow);
+    const byDate = L.setsByDate(log);
+    for (const d of slow) assert.deepEqual(byDate.get(d.date) ?? {}, L.setsOn(log, d.date));
+  }
+});
+
+test('a restored backup never leaves two trainings running', () => {
+  const phone = L.startSession(L.emptyDays(), 'push', new Date(2026, 9, 8, 18, 30)).days;
+  const other = { v: 1, sessions: [{ date: '2026-10-08', day: 'legs', start: at(18, 10), end: null }], done: {} };
+  const merged = L.mergeDays(phone, other).days;
+  assert.equal(merged.sessions.filter((s) => s.end === null).length, 1);
+  assert.equal(L.activeSession(merged, '2026-10-08').day, 'push'); // the phone's own running training wins
+  assert.deepEqual(merged.sessions.find((s) => s.day === 'legs'), { date: '2026-10-08', day: 'legs', start: at(18, 10), end: at(18, 10), auto: 'start' });
+  // With nothing running on the phone, the restored training keeps running, so it can be finished here.
+  const alone = L.mergeDays(L.emptyDays(), other).days;
+  assert.equal(L.activeSession(alone, '2026-10-08').day, 'legs');
+  // Two running in the backup itself: only the newest keeps running.
+  const two = { v: 1, sessions: [{ date: '2026-10-08', day: 'legs', start: at(18, 10), end: null }, { date: '2026-10-08', day: 'pull', start: at(18, 20), end: null }], done: {} };
+  assert.deepEqual(L.mergeDays(L.emptyDays(), two).days.sessions.map((s) => [s.day, s.end === null]), [['legs', false], ['pull', true]]);
+});
+
+test('a training that is still running owns its day past 4 am, and a forgotten one rolls over after 3 quiet hours', () => {
+  let days = L.startSession(L.emptyDays(), 'push', new Date(2026, 9, 9, 3, 45)).days; // 03:45: the evening of 8 Oct
+  let log = L.setSlot(L.emptyLog(), KEY, '2026-10-08', 0, { w: 40, r: 12, t: at(3, 55, 9) }, 4);
+  assert.equal(L.currentDay(days, log, new Date(2026, 9, 9, 4, 20)), '2026-10-08'); // still training at 04:20
+  const done = L.finishSession(days, new Date(2026, 9, 9, 4, 20), L.currentDay(days, log, new Date(2026, 9, 9, 4, 20)));
+  assert.equal(done.session.end, at(4, 20, 9)); // Finish counts, it is not thrown away
+  assert.equal(L.currentDay(done.days, log, new Date(2026, 9, 9, 4, 25)), '2026-10-09'); // finished: the new day starts
+  assert.equal(L.currentDay(days, log, new Date(2026, 9, 9, 7, 0)), '2026-10-09'); // forgotten: over 3 hours since the last set
+  assert.equal(L.currentDay(L.emptyDays(), log, new Date(2026, 9, 9, 4, 20)), '2026-10-09'); // nothing running: the plain 4 am rule
+});
+
+test('editing a logged set keeps the time it was first saved', () => {
+  let log = L.setSlot(L.emptyLog(), KEY, '2026-10-08', 2, { w: 40, r: 10, t: at(18, 20) }, 4);
+  log = L.setSlot(log, KEY, '2026-10-08', 2, { w: 42.5, r: 10, t: at(22, 30) }, 4);
+  assert.deepEqual(log.entries[KEY][0].sets[2], { w: 42.5, r: 10, t: at(18, 20) });
+  log = L.setSlot(L.setSlot(log, KEY, '2026-10-08', 2, null, 4), KEY, '2026-10-08', 2, { w: 45, r: 10, t: at(22, 31) }, 4);
+  assert.equal(log.entries[KEY][0].sets[2].t, at(22, 31)); // cleared and logged again: a new time
+});
+
+test('a backup with a list where a date or a day name belongs is refused', () => {
+  const bad = (sessions, entries = {}) => L.validateBackup({ app: L.APP_MARK, v: 1, entries, sessions, done: {}, order: {} }).ok;
+  assert.equal(bad([{ date: ['2026-10-05'], day: 'push', start: 5, end: 9 }]), false);
+  assert.equal(bad([{ date: '2026-10-05', day: ['push'], start: 5, end: 9 }]), false);
+  assert.equal(bad([], { [KEY]: [{ date: ['2026-10-05'], sets: [{ w: 30, r: 12 }] }] }), false);
+  assert.equal(bad([{ date: '2026-10-05', day: 'push', start: 5, end: 9 }]), true);
+});
+
+test('a restore counts the Done marks it adds, and a training started by mistake can be discarded', () => {
+  const r = L.mergeDays(L.toggleDone(L.emptyDays(), '2026-10-05', 'push-1'), { v: 1, sessions: [], done: { '2026-10-05': ['push-1', 'push-2'], '2026-10-06': ['pull-1'] } });
+  assert.equal(r.marks, 2);
+  let days = L.startSession(L.emptyDays(), 'push', new Date(2026, 9, 8, 18, 0)).days;
+  days = L.discardSession(days, '2026-10-08');
+  assert.deepEqual(days.sessions, []);
+  const finished = L.finishSession(L.startSession(L.emptyDays(), 'push', new Date(2026, 9, 8, 18, 0)).days, new Date(2026, 9, 8, 19, 0)).days;
+  assert.equal(L.discardSession(finished, '2026-10-08').sessions.length, 1); // only a running training can be discarded
+});

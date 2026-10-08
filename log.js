@@ -67,6 +67,7 @@ export function emptyLog() {
 }
 
 function validDate(s) {
+  if (typeof s !== 'string') return false; // a list like ["2026-10-05"] would pass the pattern as text and break the page later
   const m = DATE_RE.exec(s);
   if (!m) return false;
   const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
@@ -166,7 +167,9 @@ export function setSlot(log, key, day, index, slot, nSets) {
   let entry = list.find((e) => e.date === day);
   if (!entry) { entry = { date: day, sets: [] }; list.push(entry); }
   while (entry.sets.length < Math.max(nSets, index + 1)) entry.sets.push(null);
-  entry.sets[index] = slot ? (validTime(slot.t) ? { w: roundWeight(slot.w), r: slot.r, t: slot.t } : { w: roundWeight(slot.w), r: slot.r }) : null;
+  // An edit keeps the time the set was first saved, so fixing a weight at home does not stretch the training.
+  const t = validTime(entry.sets[index]?.t) ? entry.sets[index].t : slot?.t;
+  entry.sets[index] = slot ? (validTime(t) ? { w: roundWeight(slot.w), r: slot.r, t } : { w: roundWeight(slot.w), r: slot.r }) : null;
   const kept = list.filter((e) => e.sets.some(Boolean)).sort(byDate);
   const entries = { ...log.entries };
   if (kept.length) entries[key] = kept; else delete entries[key];
@@ -247,7 +250,7 @@ export function validateDays(obj) {
     if (!Array.isArray(obj.sessions)) throw new Error('sessions');
     const byKey = new Map();
     for (const s of obj.sessions) {
-      if (!s || typeof s !== 'object' || !validDate(s.date) || !DAY_ID_RE.test(String(s.day))) throw new Error('session');
+      if (!s || typeof s !== 'object' || !validDate(s.date) || typeof s.day !== 'string' || !DAY_ID_RE.test(s.day)) throw new Error('session');
       if (!validTime(s.start)) throw new Error('start');
       if (s.end !== null && s.end !== undefined && (!validTime(s.end) || s.end < s.start)) throw new Error('end');
       const clean = { date: s.date, day: s.day, start: s.start, end: validTime(s.end) ? s.end : null };
@@ -271,6 +274,25 @@ export function validateDays(obj) {
 }
 export function loadDays(storage) { return loadStore(storage, DAYS_KEY, validateDays, emptyDays); }
 export function saveDays(storage, days) { return saveStore(storage, DAYS_KEY, days); }
+
+// The day the app works on. A training that is still running owns its day, even past 4 am, until it is finished or
+// has been quiet for 3 hours (no set and no start in that time). Otherwise the plain rule: the local date of now minus 4 hours.
+export const QUIET_MS = 3 * 3600e3;
+export function currentDay(days, log, now = new Date()) {
+  const plain = sessionDay(now);
+  for (let i = days.sessions.length - 1; i >= 0; i--) {
+    const s = days.sessions[i];
+    if (s.end !== null || s.date > plain) continue;
+    const last = Math.max(s.start, lastSetTime(log, s.date) ?? 0);
+    return now.getTime() - last <= QUIET_MS ? s.date : plain;
+  }
+  return plain;
+}
+// A training started by mistake: only a running one can be removed. Its sets and Done marks stay.
+export function discardSession(days, today) {
+  const running = activeSession(days, today);
+  return running ? { ...days, sessions: days.sessions.filter((s) => s !== running) } : days;
+}
 
 // The session running right now: started on this session day and not finished.
 export function activeSession(days, today) {
@@ -300,10 +322,11 @@ export function closeStale(days, log, today) {
     if (s.end !== null || s.date === today) return s;
     closed++;
     const last = lastSetTime(log, s.date);
-    return last !== null && last > s.start ? { ...s, end: last, auto: 'set' } : { ...s, end: s.start, auto: 'start' };
+    return last !== null && last > s.start ? { ...s, end: last, auto: 'set' } : closedAtStart(s);
   });
   return { days: closed ? { ...days, sessions } : days, closed };
 }
+const closedAtStart = (s) => ({ ...s, end: s.start, auto: 'start' });
 export function lastSetTime(log, date) {
   let t = null;
   for (const list of Object.values(log.entries)) for (const e of list) if (e.date === date) for (const s of e.sets) if (s && validTime(s.t) && (t === null || s.t > t)) t = s.t;
@@ -324,17 +347,35 @@ export function toggleDone(days, date, id) {
   return { ...days, done };
 }
 // Every date with a session, a logged set or a Done mark, oldest first. Day 1 is the first of them.
+// One pass over each store: the day page runs this on every visit, and five years of training is about 1,500 dates.
 export function trainingDays(days, log) {
-  const dates = new Set([...days.sessions.map((s) => s.date), ...Object.keys(days.done)]);
-  for (const list of Object.values(log.entries)) for (const e of list) dates.add(e.date);
-  return [...dates].sort().map((date, i) => ({
-    number: i + 1,
-    date,
-    sessions: days.sessions.filter((s) => s.date === date),
-    done: doneOn(days, date),
-    firstSet: firstSetTime(log, date),
-    lastSet: lastSetTime(log, date),
-  }));
+  const byDay = new Map();
+  const at = (date) => {
+    let d = byDay.get(date);
+    if (!d) { d = { date, sessions: [], done: [], firstSet: null, lastSet: null }; byDay.set(date, d); }
+    return d;
+  };
+  for (const s of days.sessions) at(s.date).sessions.push(s);
+  for (const [date, ids] of Object.entries(days.done)) at(date).done = ids;
+  for (const list of Object.values(log.entries)) for (const e of list) {
+    const d = at(e.date);
+    for (const s of e.sets) {
+      if (!s || !validTime(s.t)) continue;
+      if (d.firstSet === null || s.t < d.firstSet) d.firstSet = s.t;
+      if (d.lastSet === null || s.t > d.lastSet) d.lastSet = s.t;
+    }
+  }
+  return [...byDay.values()].sort(byDate).map((d, i) => ({ number: i + 1, ...d }));
+}
+// The sets of every date at once, keyed by exercise entry key, for the diary. setsOn answers one date.
+export function setsByDate(log) {
+  const out = new Map();
+  for (const [key, list] of Object.entries(log.entries)) for (const e of list) {
+    let day = out.get(e.date);
+    if (!day) { day = {}; out.set(e.date, day); }
+    day[key] = e.sets;
+  }
+  return out;
 }
 // The sets logged on one date, keyed by exercise entry key, in log order.
 export function setsOn(log, date) {
@@ -344,12 +385,26 @@ export function setsOn(log, date) {
 }
 export function countSets(sets) { return sets.filter(Boolean).length; }
 
+// Only one training runs at a time. A restored training that was still running is kept running only when nothing
+// runs on this phone, and then only the newest one; the others are closed where they began.
 export function mergeDays(current, imported) {
   const have = new Set(current.sessions.map((s) => s.start));
-  const sessions = [...current.sessions, ...imported.sessions.filter((s) => !have.has(s.start))].sort(byStart);
+  let running = current.sessions.some((s) => s.end === null);
+  const incoming = imported.sessions.filter((s) => !have.has(s.start)).sort((a, b) => b.start - a.start).map((s) => {
+    if (s.end !== null) return s;
+    if (running) return closedAtStart(s);
+    running = true;
+    return s;
+  });
+  const sessions = [...current.sessions, ...incoming].sort(byStart);
   const done = { ...current.done };
-  for (const [date, ids] of Object.entries(imported.done)) done[date] = [...new Set([...(done[date] || []), ...ids])];
-  return { days: { v: 1, sessions, done }, added: sessions.length - current.sessions.length };
+  let marks = 0;
+  for (const [date, ids] of Object.entries(imported.done)) {
+    const mine = new Set(done[date] || []);
+    marks += ids.filter((id) => !mine.has(id)).length;
+    done[date] = [...new Set([...(done[date] || []), ...ids])];
+  }
+  return { days: { v: 1, sessions, done }, added: sessions.length - current.sessions.length, marks };
 }
 
 // ---- Exercise order: the user's own order per training day. Missing exercises keep their plan position at the end. ----
