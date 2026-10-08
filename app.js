@@ -15,7 +15,7 @@ async function main() {
   state.data = await res.json();
   state.log = L.emptyLog(); state.days = L.emptyDays(); state.order = L.emptyOrder();
   freshLog(); freshDays(); freshOrder();
-  state.day = L.sessionDay();
+  state.day = L.currentDay(state.days, state.log);
   closeStaleSessions();
   // A reload or an Android restore can leave the set sheet's history entry behind. Step back off it, so the
   // next back press leaves the exercise. Same URL below it, so only popstate fires, and it finds no open sheet.
@@ -26,15 +26,14 @@ async function main() {
   // Another tab changed something (key null means storage was cleared): show it here too.
   window.addEventListener('storage', (e) => {
     const all = e.key === null;
-    if (all || e.key === L.STORE_KEY) {
-      freshLog();
-      state.repaintSets?.();
-      if (state.logCard?.status.isConnected) state.logCard.paint();
-    }
-    if (all || e.key === L.DAYS_KEY || e.key === L.ORDER_KEY) {
-      freshDays(); freshOrder();
-      if (route().exercise) state.repaintDone?.(); else render(); // the day list and the diary hold no animation, so a redraw is cheap
-    }
+    const logChanged = all || e.key === L.STORE_KEY;
+    const daysChanged = all || e.key === L.DAYS_KEY || e.key === L.ORDER_KEY;
+    if (!logChanged && !daysChanged) return;
+    if (logChanged) freshLog();
+    if (daysChanged) { freshDays(); freshOrder(); }
+    if (!route().exercise) { render(); return; } // the day list and the diary hold no animation, so a redraw is cheap
+    if (logChanged) state.repaintSets?.();
+    if (daysChanged) { state.repaintDone?.(); state.repaintPosition?.(); } // the exercise page keeps its live animation
   });
   // Back on screen: the running clock catches up at once, and after 4 am the boxes must show a new session.
   document.addEventListener('visibilitychange', () => {
@@ -65,6 +64,7 @@ function route() {
 }
 
 function render() {
+  syncDay(); // a page opened after 4 am shows the new day, even when the screen never went off
   const r = route();
   if (state.timer) { clearInterval(state.timer); state.timer = null; }
   state.tick = null;
@@ -73,10 +73,11 @@ function render() {
   const day = state.data.days.find((d) => d.id === r.day);
   const ex = r.exercise ? day.exercises.find((e) => e.id === r.exercise) : null;
   const view = document.getElementById('view');
+  // A version switch keeps the scroll position. A new day or exercise starts at the top, and leaves Reorder mode.
+  const shown = r.history ? 'history' : `${day.id}/${ex ? ex.id : ''}`;
+  if (shown !== state.shown) state.reorder = false;
   view.replaceChildren();
   if (r.history) renderHistory(view, day); else if (ex) renderExercise(view, day, ex, r.variant); else renderDay(view, day);
-  // A version switch keeps the scroll position. A new day or exercise starts at the top.
-  const shown = r.history ? 'history' : `${day.id}/${ex ? ex.id : ''}`;
   if (shown !== state.shown) window.scrollTo(0, 0);
   state.shown = shown;
 }
@@ -91,6 +92,7 @@ const ICONS = {
   chevronRight: '<path d="M9 6l6 6-6 6"/>',
   chevronLeft: '<path d="M15 6l-6 6 6 6"/>',
   chevronDown: '<path d="M6 9l6 6 6-6"/>',
+  chevronUp: '<path d="M6 15l6-6 6 6"/>',
   pin: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
   target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>',
@@ -129,6 +131,8 @@ function exerciseHref(day, ex) { return `#/${day.id}/${ex.id}/${defaultVariant(e
 // The day's exercises in the user's own order (Reorder on the day page), plan order until they change it.
 function orderedExercises(day) { return L.applyOrder(day.exercises, state.order.order[day.id]); }
 function dayName(id) { return state.data.days.find((d) => d.id === id)?.name || cap(id); }
+// How many of a plan day's exercises carry a Done mark on a date. The day chip and the training card both use it.
+function doneCount(planDay, date) { return L.doneOn(state.days, date).filter((id) => planDay.exercises.some((e) => e.id === id)).length; }
 function fmtTime(ms) { return new Date(ms).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
 function fmtDuration(ms) {
   const m = Math.max(0, Math.round(ms / 60000));
@@ -156,7 +160,7 @@ function renderDay(view, day) {
   const titles = el('div', 'day-titles');
   titles.append(el('h1', 'title-xl', `${day.name} day`), el('p', 'focus', focusText(day.focus)));
   const chips = el('div', 'chips');
-  const doneToday = L.doneOn(state.days, state.day).filter((id) => day.exercises.some((e) => e.id === id)).length;
+  const doneToday = doneCount(day, state.day);
   chips.append(el('span', 'chip', `${day.exercises.length} exercises`), el('span', 'chip', `${state.data.plan.sets} sets: ${state.data.plan.reps.join(', ')}`));
   if (doneToday) chips.append(withIcon(el('span', 'chip is-done'), 'check', 14, `${doneToday} of ${day.exercises.length} done`));
 
@@ -222,20 +226,30 @@ function reorderRow(day, ex, i, ordered, list, paintList, moved, listStatus) {
     paintList();
     return true;
   };
+  const move = (to, focusSel) => {
+    if (!commit(to)) return;
+    const li = list.children[to];
+    (li?.querySelector(focusSel) && !li.querySelector(focusSel).disabled ? li.querySelector(focusSel) : li?.querySelector('.handle'))?.focus();
+    moved.textContent = `${ex.name} moved to position ${to + 1}.`;
+  };
   handle.addEventListener('keydown', (e) => {
     const to = e.key === 'ArrowUp' ? i - 1 : e.key === 'ArrowDown' ? i + 1 : null;
     if (to === null) return;
     e.preventDefault();
-    if (!commit(to)) return;
-    list.querySelectorAll('.handle')[to]?.focus();
-    moved.textContent = `${ex.name} moved to position ${to + 1}.`;
+    move(to, '.handle');
   });
+  // Buttons too: a phone screen reader has no arrow keys, and a tap is easier than a drag for one step.
+  const up = el('button', 'move-btn'); up.type = 'button'; up.setAttribute('aria-label', `Move ${ex.name} up`); up.append(icon('chevronUp', 20)); up.disabled = i === 0;
+  const down = el('button', 'move-btn'); down.type = 'button'; down.setAttribute('aria-label', `Move ${ex.name} down`); down.append(icon('chevronDown', 20)); down.disabled = i === ordered.length - 1;
+  up.addEventListener('click', () => move(i - 1, '.move-btn:first-of-type'));
+  down.addEventListener('click', () => move(i + 1, '.move-btn:last-of-type'));
   handle.addEventListener('pointerdown', (e) => {
     if ((e.pointerType === 'mouse' && e.button !== 0) || state.drag) return; // one finger at a time
     e.preventDefault();
     startDrag(e, handle, list, i, commit);
   });
-  row.append(exerciseThumb(ex), exerciseText(ex, i, false), handle);
+  const moves = el('span', 'moves'); moves.append(up, down);
+  row.append(handle, exerciseText(ex, i, false), moves);
   return row;
 }
 
@@ -266,7 +280,7 @@ function startDrag(e, handle, list, from, commit) {
     cancelAnimationFrame(raf);
     handle.removeEventListener('pointermove', onMove);
     handle.removeEventListener('pointerup', onEnd);
-    handle.removeEventListener('pointercancel', onEnd);
+    handle.removeEventListener('pointercancel', onCancel);
     items.forEach((n) => { n.style.transform = ''; });
     li.classList.remove('is-dragging'); list.classList.remove('is-dragging');
     state.drag = null;
@@ -287,10 +301,12 @@ function startDrag(e, handle, list, from, commit) {
     stop();
     if (to !== from && commit(to)) list.querySelectorAll('.handle')[to]?.focus({ preventScroll: true });
   };
+  // The system took the touch away (a call, the lock screen): put the row back and save nothing.
+  const onCancel = (ev) => { if (ev.pointerId === e.pointerId) stop(); };
   state.drag = { cancel: stop };
   handle.addEventListener('pointermove', onMove);
   handle.addEventListener('pointerup', onEnd);
-  handle.addEventListener('pointercancel', onEnd);
+  handle.addEventListener('pointercancel', onCancel);
   raf = requestAnimationFrame(tick);
 }
 
@@ -300,14 +316,24 @@ function renderExercise(view, day, ex, variantKey) {
   const keys = Object.keys(ex.variants);
   const key = keys.includes(variantKey) ? variantKey : defaultVariant(ex);
   const v = ex.variants[key];
-  const ordered = orderedExercises(day);
-  const position = ordered.indexOf(ex);
-  const next = ordered[position + 1];
+  const count = el('span', 'count');
+  const nextWrap = el('div', 'next-wrap');
+  const paintPosition = () => {
+    const ordered = orderedExercises(day);
+    const position = ordered.indexOf(ex);
+    const next = ordered[position + 1];
+    count.textContent = `${position + 1} of ${ordered.length}`;
+    nextWrap.hidden = !next;
+    nextWrap.replaceChildren();
+    if (next) { const a = link(exerciseHref(day, next), 'next'); a.append(el('span', null, `Next: ${next.name}`), icon('chevronRight', 22)); nextWrap.append(a); }
+  };
+  paintPosition();
+  state.repaintPosition = paintPosition;
 
   const top = el('div', 'topbar');
   const back = link(`#/${day.id}`, 'back'); back.setAttribute('aria-label', `Back to ${day.name} day`);
   back.append(icon('chevronLeft', 20), `${day.name} day`);
-  top.append(back, el('span', 'count', `${position + 1} of ${ordered.length}`));
+  top.append(back, count);
 
   const head = el('div', 'ex-head');
   head.append(el('p', 'eyebrow', cap(ex.type)), el('h1', 'title-lg', ex.name));
@@ -370,11 +396,7 @@ function renderExercise(view, day, ex, variantKey) {
 
   const body = el('div', 'variant');
   body.append(animCard, toggle, steps, setup, watch);
-  view.append(top, head, segBlock, setsBlock, body, setLog.sheet);
-  if (next) {
-    const wrap = el('div', 'next-wrap'); const a = link(exerciseHref(day, next), 'next');
-    a.append(el('span', null, `Next: ${next.name}`), icon('chevronRight', 22)); wrap.append(a); view.append(wrap);
-  }
+  view.append(top, head, segBlock, setsBlock, body, setLog.sheet, nextWrap);
   if (state.refocus) { seg.querySelector(`[data-variant="${state.refocus}"]`)?.focus(); state.refocus = null; }
 
   const toVideos = () => {
@@ -425,7 +447,7 @@ function buildSetLog(ex, variantKey) {
       // A logged set shows exactly what was lifted: the weight large, the reps under it. The plan target is in the sheet.
       const w = L.formatWeight(done.w);
       hint.classList.add('is-done'); hint.append(icon('check', 14), `${done.r} reps`);
-      b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', 'set-reps', w), el('span', 'set-unit', 'kg'), hint);
+      b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', `set-reps${w.length >= 6 ? ' is-long' : ''}`, w), el('span', 'set-unit', 'kg'), hint); // 102.25 is six characters
       b.setAttribute('aria-label', `Set ${i + 1}, done: ${w} kilograms, ${done.r} reps. Plan ${t} reps. Tap to change.`);
       return;
     }
@@ -466,8 +488,11 @@ function buildSetLog(ex, variantKey) {
   const desktop = matchMedia('(hover: hover) and (pointer: fine)').matches;
   (desktop ? wInput : save).autofocus = true;
   // The field opens prefilled (last time's weight, or a set from today). Typing must replace it, not append to it: "30" then "40" is not 3040.
+  // Only the click that focuses the field keeps the selection; once the field has focus, a click places the caret.
+  let keepSelection = false;
+  wInput.addEventListener('mousedown', () => { keepSelection = document.activeElement !== wInput; });
   wInput.addEventListener('focus', () => wInput.select());
-  wInput.addEventListener('mouseup', (e) => { if (wInput.selectionStart === 0 && wInput.selectionEnd === wInput.value.length) e.preventDefault(); });
+  wInput.addEventListener('mouseup', (e) => { if (keepSelection) e.preventDefault(); keepSelection = false; });
   const actions = el('div', 'sheet-actions'); actions.append(cancel, save);
   sheet.append(head, context, wLabel, wRow, rLabel, rRow, status, actions);
 
@@ -481,7 +506,7 @@ function buildSetLog(ex, variantKey) {
     return null;
   };
   // The clock passed 4 am with this page open: the boxes belong to a new session now.
-  const rollDay = () => { if (!syncDay()) return false; today = state.day; paintLast(); buttons.forEach((b, k) => paintSet(k)); return true; };
+  const rollDay = () => { if (!syncDay()) return false; today = state.day; paintLast(); buttons.forEach((b, k) => paintSet(k)); state.repaintDone?.(); return true; };
   function openSheet(i) {
     rollDay();
     current = i;
@@ -519,8 +544,7 @@ function buildSetLog(ex, variantKey) {
   function doSave() {
     const w = L.parseWeight(wInput.value);
     if (w == null) { status.textContent = 'Enter the weight in kg, for example 32.5.'; wInput.focus(); return; }
-    rollDay();
-    if (!persist({ w, r: reps, t: Date.now() })) return; // t: when the set was saved, for the training day's times
+    if (!persist({ w, r: reps, t: Date.now() })) return; // t: when the set was first saved, for the training day's times. Saves to the day the sheet opened for.
     paintSet(current);
     sheet.close();
   }
@@ -576,9 +600,10 @@ function freshOrder() {
   return state.order;
 }
 // state.day is the session day the page was drawn for. The clock can pass 4 am while the page stays visible (a 24 hour
-// gym), so every write checks again. True when the day moved on: the caller then redraws for the new day.
+// gym), so every page draw and every write checks again. A running training keeps its day (L.currentDay).
+// True when the day moved on: the caller then redraws for the new day.
 function syncDay() {
-  const now = L.sessionDay();
+  const now = L.currentDay(freshDays() ?? state.days, state.log);
   if (now === state.day) return false;
   state.day = now;
   closeStaleSessions();
@@ -614,11 +639,11 @@ function buildLogCard() {
   const backup = el('p', 'log-backup');
   const status = el('p', 'log-status'); status.setAttribute('role', 'status');
   const paint = () => {
-    const n = L.countSessions(freshLog() ?? state.log);
+    const n = L.trainingDays(state.days, freshLog() ?? state.log).length; // weights, training times or Done marks
     // An unreadable log is set aside whole, so none of it can show. This line goes once a new set replaces it.
     count.textContent = !state.logOk ? "This phone isn't letting the app save. Check that site storage is allowed."
       : state.logRecovered ? "Your saved weights couldn't be read, so none are shown. A copy was kept on this phone, and new sets save as normal."
-        : n ? `Weights from ${n} training ${n === 1 ? 'day' : 'days'} saved on this phone, with your training times, Done marks and exercise order.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
+        : n ? `${n} training ${n === 1 ? 'day' : 'days'} saved on this phone: weights, training times and Done marks.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
     const at = L.loadMeta(store).lastExportAt;
     const age = at ? Math.floor((Date.now() - Date.parse(at)) / 86400000) : null;
     backup.textContent = at ? `Last backup: ${L.formatDay(L.localDate(new Date(at)))}` : 'Last backup: never';
@@ -728,13 +753,18 @@ async function importBackup(f) {
   const days = L.mergeDays(curDays, checked.days);
   const order = L.mergeOrder(curOrder, checked.order);
   const newOrderDays = Object.keys(order.order).length - Object.keys(curOrder.order).length;
-  if (!L.saveLog(store, log) || !L.saveDays(store, days.days) || !L.saveOrder(store, order)) return fail(SAVE_FAILED);
+  const before = [L.STORE_KEY, L.DAYS_KEY, L.ORDER_KEY].map((k) => [k, store.getItem(k)]);
+  if (!L.saveLog(store, log) || !L.saveDays(store, days.days) || !L.saveOrder(store, order)) {
+    for (const [k, v] of before) { try { if (v === null) store.removeItem(k); else store.setItem(k, v); } catch { /* the old value was smaller, so this only fails if storage is gone */ } }
+    return fail(SAVE_FAILED);
+  }
   state.log = log; state.days = days.days; state.order = order;
   closeStaleSessions(); // a backup can carry a training that was never finished on the other phone
   const parts = [];
   if (added) parts.push(`${added} new ${added === 1 ? 'day' : 'days'} of weights`);
   if (filled) parts.push(`${filled} missing ${filled === 1 ? 'set' : 'sets'} filled in`);
   if (days.added) parts.push(`${days.added} training ${days.added === 1 ? 'time' : 'times'}`);
+  if (days.marks) parts.push(`${days.marks} Done ${days.marks === 1 ? 'mark' : 'marks'}`);
   if (newOrderDays > 0) parts.push('your exercise order');
   return { ok: true, message: parts.length ? `Backup restored: ${parts.join(', ')}.` : 'Backup restored. Everything in it was already on this phone.' };
 }
@@ -753,12 +783,14 @@ function buildTrainingCard(day) {
     const h = el('h2', 'train-title'); h.id = 'train-title';
     const more = link('#/history', 'train-link'); more.append(`${all.length ? `All ${all.length} training ${all.length === 1 ? 'day' : 'days'}` : 'Training days'}`, icon('chevronRight', 18));
     if (running) {
-      const total = state.data.days.find((d) => d.id === running.day)?.exercises.length ?? day.exercises.length;
-      const doneCount = L.doneOn(state.days, today).filter((id) => id.startsWith(`${running.day}-`)).length;
+      const planDay = state.data.days.find((d) => d.id === running.day) ?? day;
+      const total = planDay.exercises.length;
+      const doneN = doneCount(planDay, today);
       h.textContent = `Day ${todayEntry.number} · ${dayName(running.day)}`;
       const big = el('p', 'train-big');
       const time = el('p', 'train-time');
-      const tick = () => { big.textContent = fmtDuration(Date.now() - running.start); time.textContent = `Started ${fmtTime(running.start)} · ${doneCount} of ${total} exercises done`; };
+      big.setAttribute('aria-live', 'off'); time.setAttribute('aria-live', 'off'); // the page is a live region; a clock read out every 30 s is noise
+      const tick = () => { big.textContent = fmtDuration(Date.now() - running.start); time.textContent = `Started ${fmtTime(running.start)} · ${doneN} of ${total} exercises done`; };
       tick();
       state.tick = tick; // called again the moment the page comes back on screen
       state.timer = setInterval(tick, 30000);
@@ -771,9 +803,23 @@ function buildTrainingCard(day) {
         state.days = r.days;
         const sets = Object.values(L.setsOn(state.log, today)).reduce((n, s) => n + L.countSets(s), 0);
         paint();
-        say(status, `Day ${todayEntry.number} saved: ${fmtDuration(r.session.end - r.session.start)}, ${doneCount} of ${total} exercises done, ${sets} ${sets === 1 ? 'set' : 'sets'} logged.`);
+        card.querySelector('.train-btn')?.focus({ preventScroll: true }); // Finish is gone: keep the keyboard on the card
+        say(status, `Day ${todayEntry.number} saved: ${fmtDuration(r.session.end - r.session.start)}, ${doneN} of ${total} exercises done, ${sets} ${sets === 1 ? 'set' : 'sets'} logged.`);
       });
-      card.append(h, big, time, finish, status, more);
+      const discard = el('button', 'train-discard', 'Started by mistake? Discard'); discard.type = 'button';
+      let armed = null;
+      discard.addEventListener('click', () => {
+        if (!armed) { discard.textContent = 'Tap again to discard this training'; armed = setTimeout(() => { armed = null; discard.textContent = 'Started by mistake? Discard'; }, 5000); return; }
+        clearTimeout(armed); armed = null;
+        const cur = freshDays();
+        const days = cur && L.discardSession(cur, today);
+        if (!days || !L.saveDays(store, days)) { say(status, SAVE_FAILED, true); return; }
+        state.days = days;
+        paint();
+        card.querySelector('.train-btn')?.focus({ preventScroll: true });
+        say(status, 'Training discarded. Sets and Done marks stay saved.');
+      });
+      card.append(h, big, time, finish, discard, status, more);
       return;
     }
     h.textContent = 'Training';
@@ -837,14 +883,27 @@ function renderHistory(view, day) {
   const wrap = el('div', 'history');
   const all = L.trainingDays(state.days, state.log).reverse();
   if (!all.length) wrap.append(el('p', 'history-empty', 'No training days yet. Press Start training on a day, or log a set, and it shows up here.'));
-  all.forEach((d, i) => wrap.append(dayCard(d, i === 0)));
+  // Thirty days at a time: after years of training, drawing every day at once froze the page for seconds on a phone.
+  const setsByDate = L.setsByDate(state.log);
+  const more = el('button', 'history-more'); more.type = 'button';
+  let shown = 0;
+  const showMore = () => {
+    const page = all.slice(shown, shown + HISTORY_PAGE);
+    page.forEach((d, i) => wrap.insertBefore(dayCard(d, shown + i === 0, setsByDate.get(d.date) || {}), more));
+    shown += page.length;
+    more.hidden = shown >= all.length;
+    more.textContent = `Show older days (${all.length - shown} more)`;
+  };
+  more.addEventListener('click', showMore);
+  wrap.append(more);
+  showMore();
   view.append(top, head, wrap);
 }
+const HISTORY_PAGE = 30;
 
-function dayCard(d, open) {
+function dayCard(d, open, sets) {
   const card = el('details', 'card day-card'); card.open = open;
   const sum = el('summary', 'day-sum');
-  const sets = L.setsOn(state.log, d.date);
   const setCount = Object.values(sets).reduce((n, s) => n + L.countSets(s), 0);
   // Which plan days were trained: from the sessions, else from the exercises that have sets or a Done mark.
   const names = new Set(d.sessions.map((s) => dayName(s.day)));

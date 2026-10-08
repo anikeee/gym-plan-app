@@ -69,7 +69,10 @@ span.ex-thumb { background: var(--raised); }
 .reorder-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 1px solid var(--line-hi); border-radius: 999px; background: var(--card); color: var(--soft); font-size: 14px; font-weight: 600; cursor: pointer; }
 .reorder-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--ink); }
 /* Reorder mode: rows are no longer links, the handle on the right takes the drag. */
-.ex-card.is-reorder { grid-template-columns: 64px minmax(0, 1fr) 44px; cursor: default; }
+.ex-card.is-reorder { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; padding-left: 10px; cursor: default; }
+.moves { display: flex; gap: 6px; }
+.move-btn { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--soft); cursor: pointer; }
+.move-btn:disabled { opacity: .35; cursor: default; }
 .handle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-hi); border-radius: 12px; background: var(--raised); color: var(--soft); cursor: grab; touch-action: none; }
 .ex-list.is-dragging { user-select: none; -webkit-user-select: none; }
 .ex-list.is-dragging li { transition: transform .15s ease; }
@@ -85,6 +88,7 @@ span.ex-thumb { background: var(--raised); }
 .train-time, .train-text { color: var(--soft); line-height: 1.45; }
 .train-btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 4px; border: 0; border-radius: 16px; background: var(--accent); color: var(--ink); font: 700 20px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
 .train-btn.is-finish { background: var(--raised); color: var(--text); border: 1px solid var(--line-hi); }
+.train-discard { align-self: center; min-height: 44px; padding: 0 12px; border: 0; background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer; }
 .train-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 15px; }
 .done-wrap { display: flex; flex-direction: column; gap: 8px; }
 .done-wrap p, .list-status { margin: 0; }
@@ -96,6 +100,7 @@ span.ex-thumb { background: var(--raised); }
 /* The diary */
 .history { display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 28px; }
 .history-empty { margin: 0; color: var(--soft); line-height: 1.5; }
+.history-more { min-height: 48px; border: 1px solid var(--line-hi); border-radius: 14px; background: var(--raised); color: var(--text); font-weight: 600; font-size: 15px; cursor: pointer; }
 .day-card { padding: 0; }
 .day-sum { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px; list-style: none; cursor: pointer; }
 .day-sum::-webkit-details-marker { display: none; }
@@ -119,6 +124,7 @@ span.ex-thumb { background: var(--raised); }
 .sets { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .set { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 0 10px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
 .set-reps { font: 700 clamp(28px, 9.5vw, 36px)/1 var(--display); } /* 122.5 kg still fits a 320 px phone */
+.set-reps.is-long { font-size: clamp(22px, 7.6vw, 32px); } /* six characters, like 102.25 */
 .set-unit { font-size: 12px; color: var(--muted); }
 .rest { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--soft); }
 .rest .i { color: var(--accent); }
@@ -207,7 +213,7 @@ dialog.sheet::backdrop { background: rgba(0, 0, 0, .6); }
 .log-status, .train-status { font-size: 14px; color: var(--accent); }
 .log-status.is-error, .train-status.is-error { color: var(--warn); }
 @media (hover: hover) {
-  button.set:hover, .log-btn:hover, .stepper-btn:hover, .sheet-cancel:hover, .sheet-clear:hover, .handle:hover, .done-btn:not(.is-done):hover, .train-btn.is-finish:hover { border-color: var(--line-hi); background-color: #2C3038; }
+  button.set:hover, .log-btn:hover, .history-more:hover, .move-btn:not(:disabled):hover, .stepper-btn:hover, .sheet-cancel:hover, .sheet-clear:hover, .handle:hover, .done-btn:not(.is-done):hover, .train-btn.is-finish:hover { border-color: var(--line-hi); background-color: #2C3038; }
   .reorder-btn:not([aria-pressed="true"]):hover { background-color: #2C3038; }
   .train-btn:not(.is-finish):hover { filter: brightness(1.08); }
   .set.done:hover { border-color: var(--accent); }
