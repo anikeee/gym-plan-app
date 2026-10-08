@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 7 to 11. Only the page's saved data (weights, training days, Done marks, order) is backed up.
+     The service worker cache and cookies are left out: the site rebuilds them, and the whole backup must stay under 25 MB.
+     Older WebView versions keep the storage one folder up, so both paths are listed. -->
+<full-backup-content>
+    <include domain="root" path="app_webview/Default/Local Storage/" />
+    <include domain="root" path="app_webview/Local Storage/" />
+</full-backup-content>
