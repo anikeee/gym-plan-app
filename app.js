@@ -3,7 +3,7 @@ import * as L from './log.js';
 const API = 'https://oss.exercisedb.dev/api/v1/exercises/';
 const GIF_TIMEOUT_MS = 6000;
 const SESSION_LENGTH = '45 min'; // docs/research/anik-workout-plan-1.txt:3
-const state = { data: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: false, day: null }; // live: exerciseId -> API response for this page load only
+const state = { data: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: false, day: null, days: null, order: null, timer: null, reorder: false }; // live: exerciseId -> API response for this page load only
 const LATEST_APK = 'https://github.com/anikeee/gym-plan-app/releases/latest/download/workout-plan.apk';
 const SAVE_FAILED = "Couldn't save on this phone. Storage may be full or blocked.";
 // Reading the localStorage global itself throws when site data is blocked, so read it once here. The log
@@ -13,26 +13,34 @@ const store = (() => { try { return window.localStorage; } catch { return null; 
 async function main() {
   const res = await fetch('data/exercises.json', { cache: 'no-cache' });
   state.data = await res.json();
-  state.log = L.emptyLog();
-  freshLog();
+  state.log = L.emptyLog(); state.days = L.emptyDays(); state.order = L.emptyOrder();
+  freshLog(); freshDays(); freshOrder();
   state.day = L.sessionDay();
+  closeStaleSessions();
   // A reload or an Android restore can leave the set sheet's history entry behind. Step back off it, so the
   // next back press leaves the exercise. Same URL below it, so only popstate fires, and it finds no open sheet.
   if (history.state?.sheet) history.back();
   window.addEventListener('hashchange', render);
   // The phone's back button closes the set sheet instead of leaving the exercise (see openSheet).
   window.addEventListener('popstate', () => document.querySelector('dialog.sheet[open]')?.close());
-  // Another tab saved or cleared a set (key null means storage was cleared): show it here too.
+  // Another tab changed something (key null means storage was cleared): show it here too.
   window.addEventListener('storage', (e) => {
-    if (e.key !== L.STORE_KEY && e.key !== null) return;
-    freshLog();
-    state.repaintSets?.();
-    if (state.logCard?.status.isConnected) state.logCard.paint();
+    const all = e.key === null;
+    if (all || e.key === L.STORE_KEY) {
+      freshLog();
+      state.repaintSets?.();
+      if (state.logCard?.status.isConnected) state.logCard.paint();
+    }
+    if (all || e.key === L.DAYS_KEY || e.key === L.ORDER_KEY) {
+      freshDays(); freshOrder();
+      if (route().exercise) state.repaintDone?.(); else render(); // the day list and the diary hold no animation, so a redraw is cheap
+    }
   });
-  // Left open overnight: after 4 am the boxes must show a new session.
+  // Left open overnight: after 4 am the boxes must show a new session, and a training left running is closed.
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && L.sessionDay() !== state.day) {
       state.day = L.sessionDay();
+      closeStaleSessions();
       // Removing an open dialog does not fire 'close', so close it first: its handler pops the sheet's history entry.
       document.querySelector('dialog.sheet[open]')?.close();
       render();
@@ -50,21 +58,23 @@ function route() {
   const dayIds = state.data.days.map((d) => d.id);
   let saved = null;
   try { saved = store.getItem('day'); } catch { /* blocked storage: start on push */ }
-  let day = dayIds.includes(parts[0]) ? parts[0] : (saved || 'push');
+  const history = parts[0] === 'history'; // #/history: the training days diary. Its back link goes to the last day shown.
+  let day = !history && dayIds.includes(parts[0]) ? parts[0] : (saved || 'push');
   if (!dayIds.includes(day)) day = 'push';
-  return { day, exercise: parts[1] || null, variant: parts[2] || null };
+  return { history, day, exercise: history ? null : parts[1] || null, variant: history ? null : parts[2] || null };
 }
 
 function render() {
   const r = route();
+  if (state.timer) { clearInterval(state.timer); state.timer = null; }
   try { store.setItem('day', r.day); } catch { /* blocked storage: the day is only remembered in the URL */ }
   const day = state.data.days.find((d) => d.id === r.day);
   const ex = r.exercise ? day.exercises.find((e) => e.id === r.exercise) : null;
   const view = document.getElementById('view');
   view.replaceChildren();
-  if (ex) renderExercise(view, day, ex, r.variant); else renderDay(view, day);
+  if (r.history) renderHistory(view, day); else if (ex) renderExercise(view, day, ex, r.variant); else renderDay(view, day);
   // A version switch keeps the scroll position. A new day or exercise starts at the top.
-  const shown = `${day.id}/${ex ? ex.id : ''}`;
+  const shown = r.history ? 'history' : `${day.id}/${ex ? ex.id : ''}`;
   if (shown !== state.shown) window.scrollTo(0, 0);
   state.shown = shown;
 }
@@ -90,6 +100,9 @@ const ICONS = {
   check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
   minus: '<path d="M5 12h14"/>',
   plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
+  checkCircle: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
+  drag: '<path d="M5 8h14"/><path d="M5 12h14"/><path d="M5 16h14"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
 };
 const SPINNER = '<svg class="spinner" width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="18" stroke="#E3E6EA" stroke-width="5"/><path d="M22 4a18 18 0 0 1 18 18" stroke="#0E0F12" stroke-width="5" stroke-linecap="round"/></svg>';
 
@@ -111,6 +124,14 @@ function duration(s) { return s === null ? 'Short' : `${Math.floor(s / 60)}:${St
 // Opens on the version the trainer wrote, or the machine when the plan names neither (asWritten "other").
 function defaultVariant(ex) { return ex.variants[ex.asWritten] ? ex.asWritten : 'machine'; }
 function exerciseHref(day, ex) { return `#/${day.id}/${ex.id}/${defaultVariant(ex)}`; }
+// The day's exercises in the user's own order (Reorder on the day page), plan order until they change it.
+function orderedExercises(day) { return L.applyOrder(day.exercises, state.order.order[day.id]); }
+function dayName(id) { return state.data.days.find((d) => d.id === id)?.name || cap(id); }
+function fmtTime(ms) { return new Date(ms).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+function fmtDuration(ms) {
+  const m = Math.max(0, Math.round(ms / 60000));
+  return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min`;
+}
 // Card picture: frame 0 of the as written version, or of the machine version when that has no picture.
 function thumbFor(ex) {
   const v = ex.variants[ex.asWritten]?.animation.fallback ? ex.variants[ex.asWritten] : ex.variants.machine;
@@ -133,21 +154,132 @@ function renderDay(view, day) {
   const titles = el('div', 'day-titles');
   titles.append(el('h1', 'title-xl', `${day.name} day`), el('p', 'focus', focusText(day.focus)));
   const chips = el('div', 'chips');
+  const doneToday = L.doneOn(state.days, state.day).filter((id) => day.exercises.some((e) => e.id === id)).length;
   chips.append(el('span', 'chip', `${day.exercises.length} exercises`), el('span', 'chip', `${state.data.plan.sets} sets: ${state.data.plan.reps.join(', ')}`));
+  if (doneToday) chips.append(withIcon(el('span', 'chip is-done'), 'check', 14, `${doneToday} of ${day.exercises.length} done`));
+
+  const listHead = el('div', 'list-head');
+  const reorder = el('button', 'reorder-btn'); reorder.type = 'button';
   const list = el('ol', 'ex-list'); list.setAttribute('role', 'list'); // Safari drops list semantics when list-style is none
-  for (const ex of day.exercises) {
-    const a = link(exerciseHref(day, ex), 'ex-card');
-    const src = thumbFor(ex);
-    let thumb = el('span', 'ex-thumb');
-    if (src) { thumb = el('img', 'ex-thumb'); thumb.src = src; thumb.alt = ''; thumb.width = 64; thumb.height = 64; }
-    const text = el('span', 'ex-text');
-    text.append(el('span', `tag is-${ex.type}`, `${String(ex.order).padStart(2, '0')} · ${cap(ex.type)}`), el('span', 'ex-name', ex.name),
-      withIcon(el('span', 'ex-rest'), 'clock', 14, `Rest ${restFor(ex)}`));
-    a.append(thumb, text, icon('chevronRight', 20, 'chev'));
-    const li = el('li'); li.append(a); list.append(li);
-  }
-  body.append(titles, chips, list, buildLogCard());
+  const moved = el('p', 'sr-only'); moved.setAttribute('role', 'status'); // keyboard moves are announced here
+  const paintList = () => {
+    const ordered = orderedExercises(day);
+    list.classList.toggle('is-reorder', state.reorder);
+    list.replaceChildren(...ordered.map((ex, i) => {
+      const li = el('li');
+      li.append(state.reorder ? reorderRow(day, ex, i, ordered, list, paintList, moved) : exerciseRow(day, ex, i));
+      return li;
+    }));
+    reorder.setAttribute('aria-pressed', String(state.reorder));
+    reorder.replaceChildren(icon(state.reorder ? 'check' : 'drag', 16), state.reorder ? 'Done reordering' : 'Reorder');
+  };
+  reorder.addEventListener('click', () => { state.reorder = !state.reorder; paintList(); if (state.reorder) list.querySelector('.handle')?.focus(); });
+  listHead.append(el('h2', 'list-title', 'Exercises'), reorder);
+  paintList();
+  body.append(titles, chips, buildTrainingCard(day), listHead, list, moved, buildLogCard());
   view.append(head, body);
+}
+
+function exerciseRow(day, ex, i) {
+  const done = L.isDone(state.days, state.day, ex.id);
+  const a = link(exerciseHref(day, ex), `ex-card${done ? ' is-done' : ''}`);
+  a.append(exerciseThumb(ex), exerciseText(ex, i, done), icon(done ? 'checkCircle' : 'chevronRight', done ? 24 : 20, done ? 'ex-done' : 'chev'));
+  return a;
+}
+function exerciseThumb(ex) {
+  const src = thumbFor(ex);
+  if (!src) return el('span', 'ex-thumb');
+  const thumb = el('img', 'ex-thumb'); thumb.src = src; thumb.alt = ''; thumb.width = 64; thumb.height = 64;
+  return thumb;
+}
+function exerciseText(ex, i, done) {
+  const text = el('span', 'ex-text');
+  text.append(el('span', `tag is-${ex.type}`, `${String(i + 1).padStart(2, '0')} · ${cap(ex.type)}`), el('span', 'ex-name', ex.name),
+    withIcon(el('span', 'ex-rest'), 'clock', 14, `Rest ${restFor(ex)}`));
+  if (done) text.append(el('span', 'sr-only', 'Done today'));
+  return text;
+}
+
+// Reorder mode: each row gets a handle. Drag it with a finger or the mouse, or press the arrow keys on it.
+function reorderRow(day, ex, i, ordered, list, paintList, moved) {
+  const row = el('div', 'ex-card is-reorder');
+  const handle = el('button', 'handle'); handle.type = 'button';
+  handle.setAttribute('aria-label', `Move ${ex.name}, position ${i + 1} of ${ordered.length}. Drag, or use the up and down arrow keys.`);
+  handle.append(icon('drag', 22));
+  const ids = ordered.map((e) => e.id);
+  const commit = (to) => {
+    const next = L.moveItem(ids, i, to);
+    if (next === ids) return false;
+    const cur = freshOrder();
+    if (!cur) return false;
+    const order = { ...cur, order: { ...cur.order, [day.id]: next } };
+    if (!L.saveOrder(store, order)) return false;
+    state.order = order;
+    paintList();
+    return true;
+  };
+  handle.addEventListener('keydown', (e) => {
+    const to = e.key === 'ArrowUp' ? i - 1 : e.key === 'ArrowDown' ? i + 1 : null;
+    if (to === null) return;
+    e.preventDefault();
+    if (!commit(to)) return;
+    list.querySelectorAll('.handle')[to]?.focus();
+    moved.textContent = `${ex.name} moved to position ${to + 1}.`;
+  });
+  handle.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    e.preventDefault();
+    startDrag(e, handle, list, i, commit);
+  });
+  row.append(exerciseThumb(ex), exerciseText(ex, i, false), handle);
+  return row;
+}
+
+// One drag: the row follows the pointer, the others slide out of its way, and the list auto scrolls near the edges.
+function startDrag(e, handle, list, from, commit) {
+  const items = [...list.children];
+  const li = items[from];
+  const rects = items.map((n) => n.getBoundingClientRect()); // measured once, in the viewport as it was at the start
+  const gap = items.length > 1 ? Math.max(0, rects[1].top - rects[0].bottom) : 0;
+  const y0 = e.clientY; const scroll0 = window.scrollY;
+  let lastY = y0; let to = from; let edge = 0; let raf = 0;
+  try { handle.setPointerCapture(e.pointerId); } catch { /* an old browser: the move events still reach the handle while the pointer is over it */ }
+  li.classList.add('is-dragging'); list.classList.add('is-dragging');
+  const place = () => {
+    const dy = lastY - y0 + (window.scrollY - scroll0);
+    li.style.transform = `translateY(${dy}px)`;
+    const centre = rects[from].top + rects[from].height / 2 + dy;
+    to = from;
+    for (let i = 0; i < from; i++) if (centre < rects[i].top + rects[i].height / 2) { to = i; break; }
+    if (to === from) for (let i = items.length - 1; i > from; i--) if (centre > rects[i].top + rects[i].height / 2) { to = i; break; }
+    items.forEach((n, i) => {
+      if (i === from) return;
+      const shift = (to < from && i >= to && i < from) ? rects[from].height + gap : (to > from && i > from && i <= to) ? -(rects[from].height + gap) : 0;
+      n.style.transform = shift ? `translateY(${shift}px)` : '';
+    });
+  };
+  const tick = () => { // keep scrolling while the pointer rests near the top or bottom of the screen
+    if (edge) { window.scrollBy(0, edge * 8); place(); }
+    raf = requestAnimationFrame(tick);
+  };
+  const onMove = (ev) => {
+    lastY = ev.clientY;
+    edge = ev.clientY < 70 ? -1 : ev.clientY > window.innerHeight - 70 ? 1 : 0;
+    place();
+  };
+  const onEnd = () => {
+    cancelAnimationFrame(raf);
+    handle.removeEventListener('pointermove', onMove);
+    handle.removeEventListener('pointerup', onEnd);
+    handle.removeEventListener('pointercancel', onEnd);
+    items.forEach((n) => { n.style.transform = ''; });
+    li.classList.remove('is-dragging'); list.classList.remove('is-dragging');
+    if (to !== from && commit(to)) list.querySelectorAll('.handle')[to]?.focus({ preventScroll: true });
+  };
+  handle.addEventListener('pointermove', onMove);
+  handle.addEventListener('pointerup', onEnd);
+  handle.addEventListener('pointercancel', onEnd);
+  raf = requestAnimationFrame(tick);
 }
 
 const VARIANT_LABEL = { machine: 'Machine', dumbbell: 'Dumbbells', barbell: 'Barbell' };
@@ -156,19 +288,21 @@ function renderExercise(view, day, ex, variantKey) {
   const keys = Object.keys(ex.variants);
   const key = keys.includes(variantKey) ? variantKey : defaultVariant(ex);
   const v = ex.variants[key];
-  const next = day.exercises[day.exercises.indexOf(ex) + 1];
+  const ordered = orderedExercises(day);
+  const position = ordered.indexOf(ex);
+  const next = ordered[position + 1];
 
   const top = el('div', 'topbar');
   const back = link(`#/${day.id}`, 'back'); back.setAttribute('aria-label', `Back to ${day.name} day`);
   back.append(icon('chevronLeft', 20), `${day.name} day`);
-  top.append(back, el('span', 'count', `${ex.order} of ${day.exercises.length}`));
+  top.append(back, el('span', 'count', `${position + 1} of ${ordered.length}`));
 
   const head = el('div', 'ex-head');
   head.append(el('p', 'eyebrow', cap(ex.type)), el('h1', 'title-lg', ex.name));
 
   const setsBlock = el('div', 'sets-block');
   const setLog = buildSetLog(ex, key);
-  setsBlock.append(setLog.lastLine, setLog.list, withIcon(el('p', 'rest'), 'clock', 18, `Rest ${restFor(ex)} between sets`));
+  setsBlock.append(setLog.lastLine, setLog.list, withIcon(el('p', 'rest'), 'clock', 18, `Rest ${restFor(ex)} between sets`), buildDoneButton(ex));
 
   // Buttons, not links: switching version replaces the hash so the back button still goes to the day.
   const seg = el('div', `seg seg-versions${keys.length > 2 ? ' three' : ''}`); seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Version');
@@ -201,19 +335,25 @@ function renderExercise(view, day, ex, variantKey) {
     g.append(icon('external', 18)); setup.append(g);
   }
 
+  // Every version's clips, the version on screen first, so the machine and dumbbell videos are both one scroll away.
   const watch = el('section', 'watch'); watch.setAttribute('aria-labelledby', 'watch');
   const watchHead = el('div', 'watch-head'); const watchTitle = el('h2', null, 'Watch'); watchTitle.id = 'watch'; watchTitle.tabIndex = -1;
   watchHead.append(watchTitle, el('span', null, 'Opens in YouTube'));
   watch.append(watchHead);
-  for (const vid of v.videos) {
-    const a = link(`https://www.youtube.com/watch?v=${vid.id}`, 'video'); a.target = '_blank'; a.rel = 'noopener';
-    const thumb = el('span', 'video-thumb');
-    const img = el('img'); img.src = `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`; img.alt = ''; img.loading = 'lazy'; img.width = 128; img.height = 72;
-    img.onerror = () => img.remove(); // no signal: keep the plain tile with the play button
-    const play = el('span', 'play'); play.append(icon('play', 16, 'fill'));
-    thumb.append(img, play, el('span', 'dur', duration(vid.seconds)));
-    const text = el('span', 'video-text'); text.append(el('span', 'video-label', vid.label), el('span', 'video-by', vid.by));
-    a.append(thumb, text); watch.append(a);
+  for (const k of [key, ...keys.filter((x) => x !== key)]) {
+    const clips = ex.variants[k].videos;
+    if (!clips.length) continue;
+    watch.append(el('h3', 'watch-group', `${VARIANT_LABEL[k] || cap(k)}${k === key ? '' : ' version'}`));
+    for (const vid of clips) {
+      const a = link(`https://www.youtube.com/watch?v=${vid.id}`, 'video'); a.target = '_blank'; a.rel = 'noopener';
+      const thumb = el('span', 'video-thumb');
+      const img = el('img'); img.src = `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`; img.alt = ''; img.loading = 'lazy'; img.width = 128; img.height = 72;
+      img.onerror = () => img.remove(); // no signal: keep the plain tile with the play button
+      const play = el('span', 'play'); play.append(icon('play', 16, 'fill'));
+      thumb.append(img, play, el('span', 'dur', duration(vid.seconds)));
+      const text = el('span', 'video-text'); text.append(el('span', 'video-label', vid.label), el('span', 'video-by', vid.by));
+      a.append(thumb, text); watch.append(a);
+    }
   }
 
   const body = el('div', 'variant');
@@ -267,19 +407,22 @@ function buildSetLog(ex, variantKey) {
     const done = L.todayEntry(state.log, logKey, today)?.sets[i];
     const s = g.suggestions[i];
     const hint = el('span', 'set-hint');
-    let say;
+    const b = buttons[i];
+    b.classList.toggle('done', Boolean(done));
     if (done) {
+      // A logged set shows exactly what was lifted: the weight large, the reps under it. The plan target is in the sheet.
       const w = L.formatWeight(done.w);
-      hint.classList.add('is-done'); hint.append(icon('check', 14), w);
-      if (done.r !== t) hint.append(el('span', null, `×${done.r}`)); // its own item, so it can wrap under the weight on a narrow phone
-      say = `done, ${w} kilograms${done.r === t ? '' : `, ${done.r} reps`}`;
-    } else if (s) {
+      hint.classList.add('is-done'); hint.append(icon('check', 14), `${done.r} reps`);
+      b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', 'set-reps', w), el('span', 'set-unit', 'kg'), hint);
+      b.setAttribute('aria-label', `Set ${i + 1}, done: ${w} kilograms, ${done.r} reps. Plan ${t} reps. Tap to change.`);
+      return;
+    }
+    let say;
+    if (s) {
       const w = L.formatWeight(s.w);
       if (s.up) { hint.classList.add('is-up'); hint.append(icon('up', 14), w); say = `try ${w} kilograms, up from last time`; }
       else { hint.append(w); say = `last time ${w} kilograms`; }
     } else { hint.append('Add kg'); say = 'not logged yet'; }
-    const b = buttons[i];
-    b.classList.toggle('done', Boolean(done));
     b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', 'set-reps', String(t)), el('span', 'set-unit', 'reps'), hint);
     b.setAttribute('aria-label', `Set ${i + 1}, ${t} reps, ${say}. Tap to log.`);
   }
@@ -306,7 +449,13 @@ function buildSetLog(ex, variantKey) {
   const rRow = el('div', 'stepper'); rRow.append(rMinus, rValue, rPlus);
   const status = el('p', 'sheet-status'); status.setAttribute('role', 'alert');
   const cancel = el('button', 'sheet-cancel', 'Cancel'); cancel.type = 'button';
-  const save = el('button', 'sheet-save', 'Save'); save.type = 'button'; save.autofocus = true;
+  const save = el('button', 'sheet-save', 'Save'); save.type = 'button';
+  // With a mouse and keyboard the sheet opens in the weight field. On a phone it opens on Save, so the keypad never covers the sheet.
+  const desktop = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  (desktop ? wInput : save).autofocus = true;
+  // The field opens prefilled (last time's weight, or a set from today). Typing must replace it, not append to it: "30" then "40" is not 3040.
+  wInput.addEventListener('focus', () => wInput.select());
+  wInput.addEventListener('mouseup', (e) => { if (wInput.selectionStart === 0 && wInput.selectionEnd === wInput.value.length) e.preventDefault(); });
   const actions = el('div', 'sheet-actions'); actions.append(cancel, save);
   sheet.append(head, context, wLabel, wRow, rLabel, rRow, status, actions);
 
@@ -355,13 +504,13 @@ function buildSetLog(ex, variantKey) {
   function doSave() {
     const w = L.parseWeight(wInput.value);
     if (w == null) { status.textContent = 'Enter the weight in kg, for example 32.5.'; wInput.focus(); return; }
-    if (!persist({ w, r: reps })) return;
+    if (!persist({ w, r: reps, t: Date.now() })) return; // t: when the set was saved, for the training day's times
     paintSet(current);
     sheet.close();
   }
   const bump = (dir) => {
     const w = L.parseWeight(wInput.value);
-    if (w == null) { wInput.focus(); return; } // nothing to step from yet: type the first weight
+    if (w == null) { if (dir > 0) wInput.value = L.formatWeight(step); else wInput.focus(); return; } // + from empty starts at one step
     const next = L.roundWeight(w + dir * step);
     if (next > 0 && next <= 500) wInput.value = L.formatWeight(next);
   };
@@ -397,6 +546,27 @@ function freshLog() {
   return state.log;
 }
 
+// The training days and the exercise order, read fresh before every write like the log. Null when storage is blocked.
+function freshDays() {
+  const r = L.loadDays(store);
+  if (!r.ok) return null;
+  state.days = r.days;
+  return state.days;
+}
+function freshOrder() {
+  const r = L.loadOrder(store);
+  if (!r.ok) return null;
+  state.order = r.order;
+  return state.order;
+}
+// A training left running on an earlier day ends at its last saved set, so the diary never shows a 3 day session.
+function closeStaleSessions() {
+  const cur = freshDays();
+  if (!cur) return;
+  const { days, closed } = L.closeStale(cur, state.log, state.day);
+  if (closed && L.saveDays(store, days)) state.days = days;
+}
+
 // One place writes the log card's status line, so an error never keeps the success colour, or the reverse.
 function say(status, text, bad = false) {
   status.textContent = text;
@@ -423,7 +593,7 @@ function buildLogCard() {
     // An unreadable log is set aside whole, so none of it can show. This line goes once a new set replaces it.
     count.textContent = !state.logOk ? "This phone isn't letting the app save. Check that site storage is allowed."
       : state.logRecovered ? "Your saved weights couldn't be read, so none are shown. A copy was kept on this phone, and new sets save as normal."
-        : n ? `${n} ${n === 1 ? 'session' : 'sessions'} saved on this phone.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
+        : n ? `Weights from ${n} training ${n === 1 ? 'day' : 'days'} saved on this phone, with your training times, Done marks and exercise order.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
     const at = L.loadMeta(store).lastExportAt;
     const age = at ? Math.floor((Date.now() - Date.parse(at)) / 86400000) : null;
     backup.textContent = at ? `Last backup: ${L.formatDay(L.localDate(new Date(at)))}` : 'Last backup: never';
@@ -436,7 +606,10 @@ function buildLogCard() {
   imp.addEventListener('click', () => file.click());
   file.addEventListener('change', async () => {
     const f = file.files[0]; file.value = '';
-    if (f) { await importBackup(f, status); paint(); }
+    if (!f) return;
+    const result = await importBackup(f);
+    if (result.ok) render(); // Done marks, the order and the training card may all have changed
+    say(state.logCard.status, result.message, !result.ok);
   });
   const row = el('div', 'log-actions'); row.append(exp, imp);
   card.append(h, count, backup);
@@ -455,7 +628,7 @@ async function exportBackup(status) {
   const log = freshLog();
   if (!log) { say(status, "Couldn't read the log on this phone, so nothing was exported.", true); return; }
   const now = new Date();
-  const text = JSON.stringify(L.exportPayload(log, now)); // compact: about the size of the stored log, far below the import cap
+  const text = JSON.stringify(L.exportPayload(log, now, freshDays() ?? state.days, freshOrder() ?? state.order)); // compact: about the size of the stored log, far below the import cap
   const name = L.exportFileName(now);
   const bridge = window.WorkoutPlanApp;
   if (bridge && typeof bridge.saveFile === 'function') {
@@ -516,20 +689,163 @@ function takeBackupResult() {
   backupFinished(r.ok === true, undefined, Number.isFinite(r.at) ? r.at : Date.now());
 }
 
-async function importBackup(f, status) {
-  if (f.size > L.MAX_IMPORT_BYTES) { say(status, 'That file is too big to be a workout log backup.', true); return; }
+// Restores a backup into the log, the training days and the order. The phone's own data always wins.
+async function importBackup(f) {
+  const fail = (message) => ({ ok: false, message });
+  if (f.size > L.MAX_IMPORT_BYTES) return fail('That file is too big to be a workout log backup.');
   let obj;
-  try { obj = JSON.parse(await f.text()); } catch { say(status, "That file isn't a workout log backup.", true); return; }
+  try { obj = JSON.parse(await f.text()); } catch { return fail("That file isn't a workout log backup."); }
   const checked = L.validateBackup(obj);
-  if (!checked.ok) { say(status, "That file isn't a workout log backup from this app, so nothing changed.", true); return; }
-  const cur = freshLog();
-  if (!cur) { say(status, SAVE_FAILED, true); return; }
+  if (!checked.ok) return fail("That file isn't a workout log backup from this app, so nothing changed.");
+  const cur = freshLog(); const curDays = freshDays(); const curOrder = freshOrder();
+  if (!cur || !curDays || !curOrder) return fail(SAVE_FAILED);
   const { log, added, filled } = L.mergeLogs(cur, checked.log);
-  if (!L.saveLog(store, log)) { say(status, SAVE_FAILED, true); return; }
-  state.log = log;
-  say(status, added ? `Backup restored: ${added} new ${added === 1 ? 'session' : 'sessions'} added.`
-    : filled ? `Backup restored: ${filled} missing ${filled === 1 ? 'set' : 'sets'} filled in.`
-      : 'Backup restored. Everything in it was already on this phone.');
+  const days = L.mergeDays(curDays, checked.days);
+  const order = L.mergeOrder(curOrder, checked.order);
+  const newOrderDays = Object.keys(order.order).length - Object.keys(curOrder.order).length;
+  if (!L.saveLog(store, log) || !L.saveDays(store, days.days) || !L.saveOrder(store, order)) return fail(SAVE_FAILED);
+  state.log = log; state.days = days.days; state.order = order;
+  const parts = [];
+  if (added) parts.push(`${added} new ${added === 1 ? 'day' : 'days'} of weights`);
+  if (filled) parts.push(`${filled} missing ${filled === 1 ? 'set' : 'sets'} filled in`);
+  if (days.added) parts.push(`${days.added} training ${days.added === 1 ? 'time' : 'times'}`);
+  if (newOrderDays > 0) parts.push('your exercise order');
+  return { ok: true, message: parts.length ? `Backup restored: ${parts.join(', ')}.` : 'Backup restored. Everything in it was already on this phone.' };
+}
+
+// The training card on the day page: Start records the time, Finish records the end, and the diary keeps every day.
+function buildTrainingCard(day) {
+  const card = el('section', 'card train-card'); card.setAttribute('aria-labelledby', 'train-title');
+  const status = el('p', 'train-status'); status.setAttribute('role', 'status');
+  const paint = () => {
+    if (state.timer) { clearInterval(state.timer); state.timer = null; }
+    card.replaceChildren();
+    const today = state.day;
+    const all = L.trainingDays(state.days, state.log);
+    const todayEntry = all.find((d) => d.date === today);
+    const running = L.activeSession(state.days, today);
+    const h = el('h2', 'train-title'); h.id = 'train-title';
+    const more = link('#/history', 'train-link'); more.append(`${all.length ? `All ${all.length} training ${all.length === 1 ? 'day' : 'days'}` : 'Training days'}`, icon('chevronRight', 18));
+    if (running) {
+      const total = state.data.days.find((d) => d.id === running.day)?.exercises.length ?? day.exercises.length;
+      const doneCount = L.doneOn(state.days, today).filter((id) => id.startsWith(`${running.day}-`)).length;
+      h.textContent = `Day ${todayEntry.number} · ${dayName(running.day)}`;
+      const big = el('p', 'train-big');
+      const time = el('p', 'train-time');
+      const tick = () => { big.textContent = fmtDuration(Date.now() - running.start); time.textContent = `Started ${fmtTime(running.start)} · ${doneCount} of ${total} exercises done`; };
+      tick();
+      state.timer = setInterval(tick, 30000);
+      const finish = el('button', 'train-btn is-finish'); finish.type = 'button'; finish.append(icon('flag', 20), 'Finish training');
+      finish.addEventListener('click', () => {
+        const cur = freshDays();
+        const r = cur && L.finishSession(cur, new Date());
+        if (!r?.session || !L.saveDays(store, r.days)) { say(status, SAVE_FAILED, true); return; }
+        state.days = r.days;
+        const sets = Object.values(L.setsOn(state.log, today)).reduce((n, s) => n + L.countSets(s), 0);
+        paint();
+        say(status, `Day ${todayEntry.number} saved: ${fmtDuration(r.session.end - r.session.start)}, ${doneCount} of ${total} exercises done, ${sets} ${sets === 1 ? 'set' : 'sets'} logged.`);
+      });
+      card.append(h, big, time, finish, status, more);
+      return;
+    }
+    h.textContent = 'Training';
+    const text = el('p', 'train-text');
+    const last = all[all.length - 1];
+    const lastSession = last?.sessions.filter((s) => s.end !== null).pop();
+    if (!last) text.textContent = 'Start a training and the app records when you began, every set you log, which exercises you finish, and when you stop.';
+    else if (last.date === today) text.textContent = `Day ${last.number} today${lastSession ? `: ${fmtTime(lastSession.start)} to ${fmtTime(lastSession.end)}, ${fmtDuration(lastSession.end - lastSession.start)}` : ''}. Start again to add more time.`;
+    else text.textContent = `Last: Day ${last.number}, ${L.formatDay(last.date)}${lastSession ? `, ${fmtDuration(lastSession.end - lastSession.start)}` : ''}. Next up: Day ${all.length + 1}.`;
+    const start = el('button', 'train-btn'); start.type = 'button'; start.append(icon('play', 18, 'fill'), `Start ${day.name.toLowerCase()} training`);
+    start.addEventListener('click', () => {
+      const cur = freshDays();
+      const r = cur && L.startSession(cur, day.id, new Date());
+      if (!r || (r.started && !L.saveDays(store, r.days))) { say(status, SAVE_FAILED, true); return; }
+      state.days = r.days;
+      status.textContent = '';
+      paint();
+      card.querySelector('.is-finish')?.focus({ preventScroll: true });
+    });
+    card.append(h, text, start, status, more);
+  };
+  paint();
+  return card;
+}
+
+function buildDoneButton(ex) {
+  const btn = el('button', 'done-btn'); btn.type = 'button';
+  const paint = () => {
+    const done = L.isDone(state.days, state.day, ex.id);
+    btn.setAttribute('aria-pressed', String(done));
+    btn.classList.toggle('is-done', done);
+    btn.replaceChildren(icon(done ? 'checkCircle' : 'check', 20), done ? 'Done' : 'Mark as done');
+  };
+  btn.addEventListener('click', () => {
+    const cur = freshDays();
+    const days = cur && L.toggleDone(cur, state.day, ex.id);
+    if (!days || !L.saveDays(store, days)) return;
+    state.days = days;
+    paint();
+  });
+  paint();
+  state.repaintDone = paint;
+  return btn;
+}
+
+// #/history: every training day, newest first, with its times, Done marks and every set logged that day.
+function renderHistory(view, day) {
+  const top = el('div', 'topbar');
+  const back = link(`#/${day.id}`, 'back'); back.setAttribute('aria-label', `Back to ${day.name} day`);
+  back.append(icon('chevronLeft', 20), `${day.name} day`);
+  top.append(back);
+  const head = el('div', 'ex-head');
+  head.append(el('p', 'eyebrow', 'Your diary'), el('h1', 'title-lg', 'Training days'));
+  const wrap = el('div', 'history');
+  const all = L.trainingDays(state.days, state.log).reverse();
+  if (!all.length) wrap.append(el('p', 'history-empty', 'No training days yet. Press Start training on a day, or log a set, and it shows up here.'));
+  all.forEach((d, i) => wrap.append(dayCard(d, i === 0)));
+  view.append(top, head, wrap);
+}
+
+function dayCard(d, open) {
+  const card = el('details', 'card day-card'); card.open = open;
+  const sum = el('summary', 'day-sum');
+  const sets = L.setsOn(state.log, d.date);
+  const setCount = Object.values(sets).reduce((n, s) => n + L.countSets(s), 0);
+  // Which plan days were trained: from the sessions, else from the exercises that have sets or a Done mark.
+  const names = new Set(d.sessions.map((s) => dayName(s.day)));
+  const rows = [];
+  for (const planDay of state.data.days) for (const ex of orderedExercises(planDay)) {
+    const done = d.done.includes(ex.id);
+    const versions = Object.keys(ex.variants).map((k) => [k, sets[L.entryKey(ex.name, k)]]).filter(([, s]) => s);
+    if (!done && !versions.length) continue;
+    if (!d.sessions.length) names.add(planDay.name);
+    rows.push({ ex, done, versions });
+  }
+  const running = d.sessions.find((s) => s.end === null);
+  const first = d.sessions[0]; const lastEnd = Math.max(...d.sessions.map((s) => s.end ?? 0));
+  let when;
+  if (running) when = `Started ${fmtTime(running.start)}, still running`;
+  else if (first) when = `${fmtTime(first.start)} to ${fmtTime(lastEnd)} · ${fmtDuration(d.sessions.reduce((n, s) => n + (s.end - s.start), 0))}${d.sessions.some((s) => s.auto) ? ' (ended at the last set)' : ''}`;
+  else if (d.firstSet) when = `Sets logged ${fmtTime(d.firstSet)} to ${fmtTime(d.lastSet)} · no start pressed`;
+  else when = 'No times recorded';
+  const title = el('span', 'day-n', `Day ${d.number}${names.size ? ` · ${[...names].join(' + ')}` : ''}`);
+  const sub = el('span', 'day-sub', `${L.formatDay(d.date)} · ${when}`);
+  const facts = el('span', 'day-sub', `${rows.filter((r) => r.done).length} done · ${setCount} ${setCount === 1 ? 'set' : 'sets'}`);
+  const text = el('span', 'day-text'); text.append(title, sub, facts);
+  sum.append(text, icon('chevronDown', 20));
+  const body = el('div', 'day-body');
+  if (!rows.length) body.append(el('p', 'day-sub', 'Nothing logged on this day.'));
+  for (const r of rows) {
+    const row = el('div', `day-ex${r.done ? ' is-done' : ''}`);
+    const name = el('span', 'day-ex-name'); name.append(r.ex.name);
+    if (r.done) name.append(' ', icon('checkCircle', 16));
+    row.append(name);
+    for (const [k, s] of r.versions) row.append(el('span', 'day-ex-sets', `${VARIANT_LABEL[k] || cap(k)}: ${s.map((x) => (x ? `${L.formatWeight(x.w)}×${x.r}` : 'skipped')).join(' · ')}`));
+    if (!r.versions.length) row.append(el('span', 'day-ex-sets', 'Done, no weights logged'));
+    body.append(row);
+  }
+  card.append(sum, body);
+  return card;
 }
 
 function setupRow(iconName, label, text) {

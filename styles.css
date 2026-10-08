@@ -60,6 +60,51 @@ span.ex-thumb { background: var(--raised); }
 .ex-name { font-weight: 600; font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
 .ex-rest { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
 .chev { color: var(--dim); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.chip.is-done { gap: 6px; color: var(--accent); border-color: rgba(198, 244, 50, .45); }
+.ex-card.is-done { border-color: rgba(198, 244, 50, .55); }
+.ex-done { color: var(--accent); }
+.list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 4px; }
+.list-title { margin: 0; font: 700 24px/1.1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.reorder-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 1px solid var(--line-hi); border-radius: 999px; background: var(--card); color: var(--soft); font-size: 14px; font-weight: 600; cursor: pointer; }
+.reorder-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+/* Reorder mode: rows are no longer links, the handle on the right takes the drag. */
+.ex-card.is-reorder { grid-template-columns: 64px minmax(0, 1fr) 44px; cursor: default; }
+.handle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-hi); border-radius: 12px; background: var(--raised); color: var(--soft); cursor: grab; touch-action: none; }
+.ex-list.is-dragging { user-select: none; -webkit-user-select: none; }
+.ex-list.is-dragging li { transition: transform .15s ease; }
+.ex-list li.is-dragging { position: relative; z-index: 3; transition: none; }
+.ex-list li.is-dragging .ex-card { border-color: var(--accent); box-shadow: 0 12px 32px rgba(0, 0, 0, .55); }
+.ex-list li.is-dragging .handle { cursor: grabbing; }
+
+/* Training card: Start, the running timer, Finish, and the link to the diary. */
+.train-card { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
+.train-card p { margin: 0; }
+.train-title { margin: 0; font: 700 24px/1.1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.train-big { font: 700 44px/1 var(--display); font-variant-numeric: tabular-nums; color: var(--accent); }
+.train-time, .train-text { color: var(--soft); line-height: 1.45; }
+.train-btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 4px; border: 0; border-radius: 16px; background: var(--accent); color: var(--ink); font: 700 20px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.train-btn.is-finish { background: var(--raised); color: var(--text); border: 1px solid var(--line-hi); }
+.train-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 15px; }
+.done-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 1px solid var(--line-hi); border-radius: 14px; background: var(--raised); color: var(--text); font-weight: 600; font-size: 16px; cursor: pointer; }
+.done-btn.is-done { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+
+/* The diary */
+.history { display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 28px; }
+.history-empty { margin: 0; color: var(--soft); line-height: 1.5; }
+.day-card { padding: 0; }
+.day-sum { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px; list-style: none; cursor: pointer; }
+.day-sum::-webkit-details-marker { display: none; }
+.day-sum .i { flex: none; color: var(--muted); transition: transform .2s; }
+.day-card[open] .day-sum .i { transform: rotate(180deg); }
+.day-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.day-n { font: 700 22px/1.1 var(--display); letter-spacing: .03em; text-transform: uppercase; }
+.day-sub { font-size: 14px; color: var(--muted); line-height: 1.35; }
+.day-body { display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 16px; border-top: 1px solid var(--line); }
+.day-ex { display: flex; flex-direction: column; gap: 3px; }
+.day-ex-name { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.day-ex.is-done .day-ex-name .i { color: var(--accent); }
+.day-ex-sets { font-size: 14px; color: var(--soft); font-variant-numeric: tabular-nums; }
 
 /* Exercise detail */
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: calc(14px + env(safe-area-inset-top)) 16px 0; }
@@ -141,7 +186,7 @@ dialog.sheet::backdrop { background: rgba(0, 0, 0, .6); }
 .stepper-unit { color: var(--muted); font-weight: 600; }
 .stepper-value { display: flex; align-items: center; justify-content: center; height: 56px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); font: 700 34px/1 var(--display); font-variant-numeric: tabular-nums; }
 .sheet-status { margin: 12px 0 0; color: var(--warn); font-weight: 600; }
-.sheet-status:empty, .log-status:empty { display: none; }
+.sheet-status:empty, .log-status:empty, .train-status:empty { display: none; }
 .sheet-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 12px; margin-top: 20px; }
 .sheet-cancel { min-height: 56px; border: 1px solid var(--line); border-radius: 16px; background: transparent; color: var(--text); font-weight: 600; cursor: pointer; }
 .sheet-save { min-height: 56px; border: 0; border-radius: 16px; background: var(--accent); color: var(--ink); font: 700 20px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
@@ -155,10 +200,12 @@ dialog.sheet::backdrop { background: rgba(0, 0, 0, .6); }
 .log-note { font-size: 14px; color: var(--soft); }
 .log-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 6px; }
 .log-btn { min-height: 48px; padding: 0 10px; border: 1px solid var(--line-hi); border-radius: 14px; background: var(--raised); color: var(--text); font-weight: 600; font-size: 15px; cursor: pointer; }
-.log-status { font-size: 14px; color: var(--accent); }
-.log-status.is-error { color: var(--warn); }
+.log-status, .train-status { font-size: 14px; color: var(--accent); }
+.log-status.is-error, .train-status.is-error { color: var(--warn); }
 @media (hover: hover) {
-  button.set:hover, .log-btn:hover, .stepper-btn:hover, .sheet-cancel:hover, .sheet-clear:hover { border-color: var(--line-hi); background-color: #2C3038; }
+  button.set:hover, .log-btn:hover, .stepper-btn:hover, .sheet-cancel:hover, .sheet-clear:hover, .handle:hover, .done-btn:not(.is-done):hover, .train-btn.is-finish:hover { border-color: var(--line-hi); background-color: #2C3038; }
+  .reorder-btn:not([aria-pressed="true"]):hover { background-color: #2C3038; }
+  .train-btn:not(.is-finish):hover { filter: brightness(1.08); }
   .set.done:hover { border-color: var(--accent); }
   .sheet-save:hover { filter: brightness(1.08); }
 }
@@ -193,6 +240,7 @@ dialog.sheet::backdrop { background: rgba(0, 0, 0, .6); }
 .watch-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .watch-head h2 { margin: 0; font: 700 24px/1.1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
 .watch-head span { font-size: 13px; color: var(--muted); }
+.watch-group { margin: 6px 0 -2px; font: 600 13px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .video { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 12px; align-items: center; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; color: var(--text); text-decoration: none; }
 .video-thumb { position: relative; display: flex; align-items: center; justify-content: center; width: 128px; height: 72px; border-radius: 12px; background: var(--raised); overflow: hidden; }
 .video-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
