@@ -108,6 +108,61 @@ span.ex-thumb { background: var(--raised); }
 @keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(198, 244, 50, .6); } 70%, 100% { box-shadow: 0 0 0 7px rgba(198, 244, 50, 0); } }
 @media (prefers-reduced-motion: reduce) { .anim[data-state="live"] .dot { animation: none; } }
 
+/* Weight log: last session, set boxes as buttons, the log sheet and the backup card. */
+.last { display: flex; flex-direction: column; gap: 6px; }
+.last p { margin: 0; }
+.last-head { display: flex; justify-content: space-between; gap: 12px; font: 600 13px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.last-unit { letter-spacing: .06em; }
+.last-sets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--soft); }
+.last-nudge { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(198, 244, 50, .12); color: var(--accent); font-weight: 600; font-size: 15px; }
+.last-nudge .i { stroke-width: 2.5; }
+.sets li { display: flex; min-width: 0; }
+button.set { flex: 1; min-width: 0; padding-bottom: 12px; font: inherit; color: var(--text); cursor: pointer; }
+.set.done { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.set-hint { display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; min-height: 20px; font-size: 15px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; color: var(--muted); flex-wrap: wrap; justify-content: center; max-width: 100%; }
+.set-hint .i { stroke-width: 2.5; }
+.set-hint.is-up { color: var(--accent); }
+.set-hint.is-done { color: var(--text); }
+.set-hint.is-done .i { color: var(--accent); }
+
+dialog.sheet { box-sizing: border-box; width: 100%; max-width: 520px; max-height: calc(100% - 24px); margin: auto auto 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); border: 1px solid var(--line); border-bottom: 0; border-radius: 24px 24px 0 0; background: var(--card); color: var(--text); overflow-y: auto; }
+dialog.sheet::backdrop { background: rgba(0, 0, 0, .6); }
+.sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.sheet-title { margin: 0; font: 700 30px/1 var(--display); text-transform: uppercase; }
+.sheet-version { margin: 6px 0 0; font: 600 13px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.sheet-clear { flex: none; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--soft); font-weight: 600; font-size: 14px; cursor: pointer; }
+.sheet-context { margin: 14px 0 0; color: var(--soft); line-height: 1.45; }
+.sheet-label { display: block; margin: 18px 0 8px; font: 600 13px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.stepper { display: grid; grid-template-columns: 56px minmax(0, 1fr) 56px; gap: 12px; align-items: center; }
+.stepper-btn { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--raised); color: var(--text); cursor: pointer; }
+.stepper-field { display: flex; align-items: center; justify-content: center; gap: 6px; height: 56px; padding: 0 14px; border: 1px solid var(--line-hi); border-radius: 16px; background: var(--bg); }
+.stepper-field:focus-within { border-color: var(--accent); }
+.stepper-input { flex: 1; width: 100%; min-width: 0; height: 100%; padding: 0; border: 0; background: transparent; color: var(--text); font: 700 34px/1 var(--display); font-variant-numeric: tabular-nums; text-align: right; outline: none; }
+.stepper-unit { color: var(--muted); font-weight: 600; }
+.stepper-value { display: flex; align-items: center; justify-content: center; height: 56px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); font: 700 34px/1 var(--display); font-variant-numeric: tabular-nums; }
+.sheet-status { margin: 12px 0 0; color: var(--warn); font-weight: 600; }
+.sheet-status:empty, .log-status:empty { display: none; }
+.sheet-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 12px; margin-top: 20px; }
+.sheet-cancel { min-height: 56px; border: 1px solid var(--line); border-radius: 16px; background: transparent; color: var(--text); font-weight: 600; cursor: pointer; }
+.sheet-save { min-height: 56px; border: 0; border-radius: 16px; background: var(--accent); color: var(--ink); font: 700 20px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+
+.log-card { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; padding: 16px; }
+.log-title { margin: 0; font: 700 24px/1.1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.log-card p { margin: 0; }
+.log-count { color: var(--soft); }
+.log-backup { font-size: 14px; color: var(--muted); }
+.log-backup.is-due { color: var(--warn); }
+.log-note { font-size: 14px; color: var(--soft); }
+.log-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 6px; }
+.log-btn { min-height: 48px; padding: 0 10px; border: 1px solid var(--line-hi); border-radius: 14px; background: var(--raised); color: var(--text); font-weight: 600; font-size: 15px; cursor: pointer; }
+.log-status { font-size: 14px; color: var(--accent); }
+.log-status.is-error { color: var(--warn); }
+@media (hover: hover) {
+  button.set:hover, .log-btn:hover, .stepper-btn:hover, .sheet-cancel:hover, .sheet-clear:hover { border-color: var(--line-hi); background-color: #2C3038; }
+  .set.done:hover { border-color: var(--accent); }
+  .sheet-save:hover { filter: brightness(1.08); }
+}
+
 /* Step by step */
 .steps-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 60px; padding: 10px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; color: var(--text); text-align: left; cursor: pointer; }
 .steps-text { display: flex; flex-direction: column; gap: 2px; }
