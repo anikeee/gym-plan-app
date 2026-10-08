@@ -408,7 +408,8 @@
               "kit": "Two dumbbells.",
               "tip": "Palms up. Curl both dumbbells without swinging and lower for a count of three.",
               "videos": [
-                { "id": "MtXdEcW3Eog", "label": "How to double arm curl (dumbbell bicep curl)", "by": "PureGym", "seconds": 29 }
+                { "id": "MtXdEcW3Eog", "label": "How to double arm curl (dumbbell bicep curl)", "by": "PureGym", "seconds": 29 },
+                { "id": "Zl1eiQN5Dxs", "label": "How to do a single arm curl", "by": "PureGym", "seconds": 22 }
               ],
               "animation": { "exercisedb": "NbVPDMW", "fallback": "Dumbbell_Bicep_Curl", "note": null },
               "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/dumbbell-bicep-curls/"
@@ -550,7 +551,8 @@
               "kit": "Two dumbbells at your sides, or one held at the chest.",
               "tip": "Feet shoulder width. Sit back and down until the thighs are parallel, then drive up.",
               "videos": [
-                { "id": "px3fnV8dCl0", "label": "Leg press taken? Grab a dumbbell and try this (Short)", "by": "PureGym", "seconds": null }
+                { "id": "px3fnV8dCl0", "label": "Leg press taken? Grab a dumbbell and try this (Short)", "by": "PureGym", "seconds": null },
+                { "id": "zBV3ceGyAxw", "label": "How to do a goblet squat", "by": "PureGym", "seconds": 22 }
               ],
               "animation": { "exercisedb": "HsvHqgf", "fallback": "Dumbbell_Squat", "note": null },
               "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/goblet-squat/"
