@@ -416,14 +416,14 @@ function buildLogCard() {
   const card = el('section', 'card log-card'); card.setAttribute('aria-labelledby', 'log-title');
   const h = el('h2', 'log-title', 'Your weight log'); h.id = 'log-title';
   const count = el('p', 'log-count');
-  const recovered = el('p', 'log-note', "Some saved weights couldn't be read, so they aren't shown. A copy was kept on this phone.");
   const backup = el('p', 'log-backup');
   const status = el('p', 'log-status'); status.setAttribute('role', 'status');
   const paint = () => {
     const n = L.countSessions(freshLog() ?? state.log);
+    // An unreadable log is set aside whole, so none of it can show. This line goes once a new set replaces it.
     count.textContent = !state.logOk ? "This phone isn't letting the app save. Check that site storage is allowed."
-      : n ? `${n} ${n === 1 ? 'session' : 'sessions'} saved on this phone.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
-    recovered.hidden = !state.logRecovered; // gone once a new set replaces the unreadable value
+      : state.logRecovered ? "Your saved weights couldn't be read, so none are shown. A copy was kept on this phone, and new sets save as normal."
+        : n ? `${n} ${n === 1 ? 'session' : 'sessions'} saved on this phone.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
     const at = L.loadMeta(store).lastExportAt;
     const age = at ? Math.floor((Date.now() - Date.parse(at)) / 86400000) : null;
     backup.textContent = at ? `Last backup: ${L.formatDay(L.localDate(new Date(at)))}` : 'Last backup: never';
@@ -439,7 +439,7 @@ function buildLogCard() {
     if (f) { await importBackup(f, status); paint(); }
   });
   const row = el('div', 'log-actions'); row.append(exp, imp);
-  card.append(h, count, recovered, backup);
+  card.append(h, count, backup);
   if (inAppWebView()) {
     const note = el('p', 'log-note', 'In the Workout Plan Android app? Update it to back up or restore your log. ');
     const get = link(LATEST_APK, null, 'Get the new app'); note.append(get);
