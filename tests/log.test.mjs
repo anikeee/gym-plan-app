@@ -141,10 +141,12 @@ test('restoring a backup fills gaps but never overwrites what is on the phone', 
     [KEY]: [session('2026-07-09', [[30, 12], [32.5, 10], [32.5, 10], [35, 8]]), session('2026-07-16', [[99, 1], [42.5, 10], null, null])],
     'leg-press.machine': [session('2026-07-10', [[100, 12]])],
   } };
-  const { log, added } = L.mergeLogs(phone, backup);
+  const { log, added, filled } = L.mergeLogs(phone, backup);
   assert.deepEqual(L.todayEntry(log, KEY, '2026-07-16').sets, [{ w: 40, r: 12 }, { w: 42.5, r: 10 }, null, null]);
   assert.deepEqual(L.entriesFor(log, KEY).map((e) => e.date), ['2026-07-09', '2026-07-16']);
   assert.equal(added, 2);
+  assert.equal(filled, 1); // only set 2 on 16 July: the two new days are counted by added, not again as sets
+  assert.equal(L.mergeLogs(L.emptyLog(), backup).filled, 0); // an empty phone gets whole days, nothing is "filled in"
   assert.equal(L.countSessions(log), 3);
 });
 
@@ -215,4 +217,102 @@ test('storage: round trip, unreadable data is copied aside, blocked storage is r
   assert.equal(L.loadLog(blocked).ok, false);
   assert.equal(L.saveLog(blocked, log), false);
   assert.equal(L.exportFileName(new Date(2026, 6, 16, 0, 30)), 'workout-log-2026-07-16.json');
+});
+
+// ---- Training days, Done marks and exercise order ----
+
+const at = (h, m = 0, d = 8) => new Date(2026, 9, d, h, m).getTime(); // October 2026, London time
+
+test('a set keeps the time it was saved, and nonsense times are dropped instead of rejecting the log', () => {
+  const log = L.setSlot(L.emptyLog(), KEY, '2026-10-08', 0, { w: 30, r: 12, t: at(18, 40) }, 4);
+  assert.deepEqual(log.entries[KEY][0].sets[0], { w: 30, r: 12, t: at(18, 40) });
+  const checked = L.validateBackup({ app: L.APP_MARK, v: 1, entries: { [KEY]: [{ date: '2026-10-08', sets: [{ w: 30, r: 12, t: 'soon' }] }] } });
+  assert.equal(checked.ok, true);
+  assert.deepEqual(checked.log.entries[KEY][0].sets[0], { w: 30, r: 12 });
+  assert.equal(L.lastSetTime(log, '2026-10-08'), at(18, 40));
+  assert.equal(L.lastSetTime(log, '2026-10-07'), null);
+});
+
+test('start and finish a session, and a session left running is closed at its last set the next day', () => {
+  let days = L.emptyDays();
+  const r1 = L.startSession(days, 'push', new Date(2026, 9, 8, 18, 32));
+  assert.equal(r1.started, true);
+  days = r1.days;
+  assert.equal(L.activeSession(days, '2026-10-08').day, 'push');
+  const r2 = L.startSession(days, 'legs', new Date(2026, 9, 8, 18, 40)); // a second Start while one runs changes nothing
+  assert.equal(r2.started, false);
+  assert.equal(r2.days.sessions.length, 1);
+  const done = L.finishSession(days, new Date(2026, 9, 8, 19, 24));
+  assert.equal(done.session.end - done.session.start, 52 * 60000);
+  assert.equal(L.activeSession(done.days, '2026-10-08'), null);
+  // Forgot to finish: the next day it is closed at the last saved set.
+  const forgot = L.startSession(L.emptyDays(), 'pull', new Date(2026, 9, 9, 18, 0)).days;
+  const log = L.setSlot(L.emptyLog(), 'lat-pulldown.machine', '2026-10-09', 0, { w: 50, r: 12, t: at(18, 50, 9) }, 4);
+  const closed = L.closeStale(forgot, log, '2026-10-10');
+  assert.equal(closed.closed, 1);
+  assert.deepEqual(closed.days.sessions[0], { date: '2026-10-09', day: 'pull', start: at(18, 0, 9), end: at(18, 50, 9), auto: true });
+  assert.equal(L.closeStale(forgot, log, '2026-10-09').closed, 0); // still the same session day: left running
+  // A session started at 1 am belongs to the evening before, so it stays active until 4 am.
+  const late = L.startSession(L.emptyDays(), 'legs', new Date(2026, 9, 9, 1, 0));
+  assert.equal(late.session.date, '2026-10-08');
+});
+
+test('Done marks toggle per day and training days are numbered across sessions, sets and marks', () => {
+  let days = L.toggleDone(L.emptyDays(), '2026-10-08', 'push-1');
+  days = L.toggleDone(days, '2026-10-08', 'push-2');
+  assert.deepEqual(L.doneOn(days, '2026-10-08'), ['push-1', 'push-2']);
+  days = L.toggleDone(days, '2026-10-08', 'push-1');
+  assert.deepEqual(L.doneOn(days, '2026-10-08'), ['push-2']);
+  assert.equal(L.isDone(days, '2026-10-08', 'push-2'), true);
+  assert.deepEqual(L.toggleDone(days, '2026-10-08', 'push-2').done, {}); // the last mark removes the day
+  days = L.startSession(days, 'push', new Date(2026, 9, 6, 18, 0)).days;
+  const log = L.setSlot(L.emptyLog(), KEY, '2026-10-01', 0, { w: 30, r: 12 }, 4);
+  const td = L.trainingDays(days, log);
+  assert.deepEqual(td.map((d) => [d.number, d.date, d.sessions.length, d.done.length]), [[1, '2026-10-01', 0, 0], [2, '2026-10-06', 1, 0], [3, '2026-10-08', 0, 1]]);
+});
+
+test('the days store validates, saves and loads, and a restore adds only unknown sessions and marks', () => {
+  const s = fakeStorage();
+  const days = L.toggleDone(L.startSession(L.emptyDays(), 'push', new Date(2026, 9, 8, 18, 32)).days, '2026-10-08', 'push-1');
+  assert.equal(L.saveDays(s, days), true);
+  assert.deepEqual(L.loadDays(s).days, days);
+  assert.equal(L.validateDays({ v: 1, sessions: [{ date: '2026-10-08', day: 'push', start: 5, end: 4 }], done: {} }).ok, false); // ends before it starts
+  assert.equal(L.validateDays({ v: 1, sessions: [], done: { '2026-10-08': ['Push 1'] } }).ok, false);
+  const twice = L.validateDays({ v: 1, sessions: [{ date: '2026-10-08', day: 'push', start: 5, end: null }, { date: '2026-10-08', day: 'legs', start: 5, end: 9 }], done: {} });
+  assert.deepEqual(twice.days.sessions, [{ date: '2026-10-08', day: 'legs', start: 5, end: 9 }]);
+  const backup = { v: 1, sessions: [{ date: '2026-10-08', day: 'push', start: days.sessions[0].start, end: 99 }, { date: '2026-10-01', day: 'legs', start: at(18, 0, 1), end: at(19, 0, 1) }], done: { '2026-10-08': ['push-1', 'push-3'], '2026-10-01': ['legs-1'] } };
+  const merged = L.mergeDays(days, backup);
+  assert.equal(merged.added, 1);
+  assert.equal(merged.days.sessions[1].end, null); // the phone's own running session is kept as it is
+  assert.deepEqual(merged.days.done, { '2026-10-08': ['push-1', 'push-3'], '2026-10-01': ['legs-1'] });
+  const broken = fakeStorage({ [L.DAYS_KEY]: '[1' });
+  const r = L.loadDays(broken);
+  assert.equal(r.recovered, true);
+  assert.deepEqual(r.days, L.emptyDays());
+  assert.equal([...broken.map.keys()].filter((k) => k.startsWith(`${L.DAYS_KEY}.unreadable.`)).length, 1);
+});
+
+test('the exercise order applies per day, moves items, and the backup carries it', () => {
+  const push = data.days.find((d) => d.id === 'push').exercises;
+  const ids = push.map((e) => e.id);
+  assert.deepEqual(L.applyOrder(push, []).map((e) => e.id), ids);
+  const moved = L.moveItem(ids, 6, 0); // the last exercise first
+  assert.deepEqual(moved, ['push-7', 'push-1', 'push-2', 'push-3', 'push-4', 'push-5', 'push-6']);
+  assert.deepEqual(L.applyOrder(push, moved).map((e) => e.id), moved);
+  assert.deepEqual(L.applyOrder(push, ['push-3', 'legs-9']).map((e) => e.id), ['push-3', 'push-1', 'push-2', 'push-4', 'push-5', 'push-6', 'push-7']); // unknown ids are ignored, the rest keep plan order
+  assert.deepEqual(L.moveItem(ids, 2, 9), ids);
+  assert.equal(L.validateOrder({ v: 1, order: { push: ['push-1', 'push-1'] } }).ok, false);
+  const s = fakeStorage();
+  const order = { v: 1, order: { push: moved } };
+  assert.equal(L.saveOrder(s, order), true);
+  assert.deepEqual(L.loadOrder(s).order, order);
+  assert.deepEqual(L.mergeOrder(order, { v: 1, order: { push: ids, legs: ['legs-7'] } }).order, { push: moved, legs: ['legs-7'] });
+  const payload = L.exportPayload(L.emptyLog(), new Date('2026-10-08T10:00:00Z'), L.toggleDone(L.emptyDays(), '2026-10-08', 'push-1'), order);
+  const checked = L.validateBackup(JSON.parse(JSON.stringify(payload)));
+  assert.equal(checked.ok, true);
+  assert.deepEqual(checked.days.done, { '2026-10-08': ['push-1'] });
+  assert.deepEqual(checked.order.order, { push: moved });
+  const old = L.validateBackup({ app: L.APP_MARK, v: 1, entries: {} }); // a backup from before training days
+  assert.equal(old.ok, true);
+  assert.deepEqual(old.days, L.emptyDays());
 });
