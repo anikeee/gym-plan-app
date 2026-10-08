@@ -1,6 +1,6 @@
-const VERSION = 'gym-v4'; // bump on every data or code change
+const VERSION = 'gym-v5'; // bump on every data or code change
 const FONTS = ['./fonts/barlow-400.woff2', './fonts/barlow-600.woff2', './fonts/barlow-condensed-600.woff2', './fonts/barlow-condensed-700.woff2'];
-const SHELL = ['./', './index.html', './styles.css', './app.js', './data/exercises.json', './manifest.webmanifest', './icon.svg', ...FONTS];
+const SHELL = ['./', './index.html', './styles.css', './app.js', './log.js', './data/exercises.json', './manifest.webmanifest', './icon.svg', ...FONTS];
 
 // The offline pictures are listed in the data file, so read it here instead of keeping a second list.
 async function precacheUrls() {
