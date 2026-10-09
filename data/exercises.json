@@ -11,7 +11,7 @@
   "sets": 4,
   "reps": [12, 10, 10, 8],
   "rest": { "compound": "75 to 90 sec", "isolation": "45 to 60 sec" },
-  "progression": "When you hit every rep on all 4 sets, add one step of weight next time.",
+  "progression": "The app suggests one step more weight after a session where you hit every rep on all 4 sets.",
   "days": [
     {
       "id": "push",
