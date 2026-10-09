@@ -1,7 +1,7 @@
 import { readFile, mkdir, writeFile, access } from 'node:fs/promises';
 const data = JSON.parse(await readFile(new URL('../data/exercises.json', import.meta.url), 'utf8'));
 const BASE = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
-const ids = new Set(data.days.flatMap((d) => d.exercises.flatMap((e) => Object.values(e.variants).map((v) => v.animation.fallback).filter(Boolean))));
+const ids = new Set(data.plans.flatMap((p) => p.days).flatMap((d) => d.exercises.flatMap((e) => Object.values(e.variants).map((v) => v.animation.fallback).filter(Boolean))));
 for (const id of ids) {
   const dir = new URL(`../media/fallback/${id}/`, import.meta.url);
   await mkdir(dir, { recursive: true });

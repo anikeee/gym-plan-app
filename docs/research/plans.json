@@ -1,0 +1,1722 @@
+{
+ "collected": "2026-10-09",
+ "note": "Push pull legs programs read from their sources, and the three plans chosen and adapted from them for data/exercises.json.",
+ "programsRead": [
+  {
+   "title": "The Best Gym Workout Plan For Gaining Muscle (push/pull/legs example, Days 1 to 3)",
+   "sourceUrl": "https://www.puregym.com/blog/the-best-gym-workout-plan-for-gaining-muscle/",
+   "publisher": "PureGym",
+   "readOk": true,
+   "level": "not stated (the page says machines suit beginners and free weights suit more experienced lifters; this plan is mostly free weights)",
+   "frequency": "6 days a week: Day 1 Push, Day 2 Pull, Day 3 Legs, Day 4 Push, Day 5 Pull, Day 6 Legs, Day 7 Rest",
+   "days": {
+    "push": [
+     {
+      "exercise": "Barbell bench press",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Barbell military press",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Dumbbell incline press",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Dumbbell lateral raises",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Dumbbell tricep extensions",
+      "sets": "3",
+      "reps": "8-12"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Barbell deadlifts",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Barbell bent over rows",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Lat pulldowns",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Dumbbell upright rows",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Dumbbell single arm bicep curls",
+      "sets": "3",
+      "reps": "8-12"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Barbell squats",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Bulgarian split squat",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Leg press",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Leg extensions",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Standing calf raises",
+      "sets": "3",
+      "reps": "8-12"
+     }
+    ]
+   },
+   "notes": "Author: Spencer Cartwright, personal trainer at PureGym Bristol Brislington. Dated Wednesday 15 November 2023, 'page last updated 30th June' (no year). The page gives no rest time between sets. Second half of the week (Days 4 to 6, also all 3 sets of 8-12): Push = Push ups, Barbell incline bench press, Dumbbell shoulder press, Tricep pushdowns. Pull = Pull ups, Seated cable row, Face pulls, Barbell bicep curl, Barbell good mornings. Legs = Goblet squats, Lunges, Hip thrust, Romanian deadlifts, Glute kickbacks. Guidance on the page, in short: do compound lifts first, then isolation work. Start with a dynamic warm up and end with static stretches. Leave at least a day before training the same muscle group again, and take at least one full rest day a week. Pick a weight where the last couple of reps are hard and one more good rep is not possible. Progression example: 10 kg for 3 x 8 one week, 3 x 10 the next, 3 x 12 the next, then move to a weight you can only lift 8 times and repeat. The author calls it 'just an example'. Also read but left out: PureGym's 'The Ultimate Guide To Push Pull Legs Routine' (https://www.puregym.com/blog/push-pull-legs/, 20 March 2026). It lists exercise ideas for each day but gives no sets or reps, so it is not a full session. It does give 3, 5 and 6 day schedules and says to keep one PPL plan for 8 to 12 weeks before big changes."
+  },
+  {
+   "title": "Gym Workout Plans For Men: Beginner Gym Workout Plan For Men (3-day split)",
+   "sourceUrl": "https://www.puregym.com/blog/gym-workout-plans-for-men/",
+   "publisher": "PureGym",
+   "readOk": true,
+   "level": "Beginner",
+   "frequency": "3 days a week (3-day split: Day 1 Push, Day 2 Pull, Day 3 Legs; the page names no weekdays)",
+   "days": {
+    "push": [
+     {
+      "exercise": "Dumbbell bench press",
+      "sets": "4",
+      "reps": "6-8, 10-12, 10-12, 12+"
+     },
+     {
+      "exercise": "Chest press machine",
+      "sets": "3",
+      "reps": "6-8, 8-10, 10-12"
+     },
+     {
+      "exercise": "Cable flys",
+      "sets": "2",
+      "reps": "12-15"
+     },
+     {
+      "exercise": "Shoulder press machine",
+      "sets": "3",
+      "reps": "10-21"
+     },
+     {
+      "exercise": "Tricep push down",
+      "sets": "3",
+      "reps": "12"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Lat pulldown",
+      "sets": "4",
+      "reps": "6-8, 10-12, 10-12, 12+"
+     },
+     {
+      "exercise": "Bent over rows",
+      "sets": "3",
+      "reps": "6-8, 10-12, 10-12"
+     },
+     {
+      "exercise": "Chest supported row",
+      "sets": "3",
+      "reps": "6-8, 10-12, 12+"
+     },
+     {
+      "exercise": "Face pulls",
+      "sets": "3",
+      "reps": "12-15"
+     },
+     {
+      "exercise": "Bicep curls",
+      "sets": "1",
+      "reps": "7 half reps (bottom), 7 half reps (top), 7 full reps"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Dumbbell squats",
+      "sets": "3",
+      "reps": "10-12"
+     },
+     {
+      "exercise": "Leg press",
+      "sets": "4",
+      "reps": "6-8, 10-12, 10-12, 12-15"
+     },
+     {
+      "exercise": "Hamstring curl",
+      "sets": "3",
+      "reps": "12-15"
+     },
+     {
+      "exercise": "Walking lunges",
+      "sets": "2",
+      "reps": "12 steps each side"
+     },
+     {
+      "exercise": "Calf raises",
+      "sets": "3",
+      "reps": "25-30"
+     }
+    ]
+   },
+   "notes": "Author: Lysander Maynard, PT, Assistant Manager and bodybuilder at PureGym Calcot. Dated Wednesday 15 November 2023. Aimed at building muscle and strength. The page gives no rest time between sets. Start each workout with a 5 to 10 minute warm up and finish with stretches. Pick a weight that leaves only 1 to 2 reps in reserve (for a range of 8-10 you could not lift more than 11-12). Follow the plan for 6+ weeks, then adjust or change it. The shoulder press machine reps are printed as '10-21' on the page; this is copied as printed and is probably a typo for 10-12. The bicep curls are a single set of 7 bottom half reps, 7 top half reps, then 7 full reps. The same page also has an intermediate 4-day plan (Quads & Hamstrings / Chest, Arms & Delts / Back / Shoulders & Arms) and an advanced 5-day plan (Legs / Push & Biceps / Upper / Pull & Calves / Arms & Abs). They are not pure push, pull and legs, so they are not copied here."
+  },
+  {
+   "title": "What's the best workout split for women? Push/pull/legs (6 days/week)",
+   "sourceUrl": "https://www.thegymgroup.com/blog/workout-split-for-women/",
+   "publisher": "The Gym Group (UK gym chain)",
+   "readOk": true,
+   "level": "not stated (the page says beginners may start with full body and move to upper/lower or push/pull/legs as they get more experienced)",
+   "frequency": "6 days a week: Day 1 Push, Day 2 Pull, Day 3 Legs, Day 4 Rest, Day 5 Repeat Push, Day 6 Repeat Pull, Day 7 Repeat Legs",
+   "days": {
+    "push": [
+     {
+      "exercise": "Bench Press (Flat or incline)",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Overhead Press",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Triceps Extensions",
+      "sets": "3",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Incline Dumbbell Press",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Lateral Raises",
+      "sets": "3",
+      "reps": "12-20"
+     },
+     {
+      "exercise": "Dips",
+      "sets": "2-3",
+      "reps": "not given"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Deadlift or Rack Pull (alternate weekly)",
+      "sets": "3-4",
+      "reps": "4-6"
+     },
+     {
+      "exercise": "Barbell or Dumbbell Rows",
+      "sets": "3",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Lat Pulldowns",
+      "sets": "3",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Bicep Curls",
+      "sets": "3",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Face Pulls / Rear Delt Flyes",
+      "sets": "3",
+      "reps": "12-20"
+     },
+     {
+      "exercise": "Bicep Curls (barbell/dumbbell/hammer)",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Shrugs (Optional)",
+      "sets": "2-3",
+      "reps": "not given (page says 'for traps')"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Squats",
+      "sets": "3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Romanian Deadlifts",
+      "sets": "3",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Leg Press",
+      "sets": "3",
+      "reps": "12-20"
+     },
+     {
+      "exercise": "Calf Raises",
+      "sets": "3",
+      "reps": "15-20"
+     },
+     {
+      "exercise": "Lunges / Bulgarian Split Squats",
+      "sets": "3",
+      "reps": "8-12 per leg"
+     }
+    ]
+   },
+   "notes": "The page shows no author and no date, and gives no rest time between sets. The pull day lists Bicep Curls twice, as printed: once at 3 x 10-15 and again as 'Bicep Curls (barbell/dumbbell/hammer)' at 3 x 8-12. The page's general advice, in short: progressive overload (slowly add weight, reps or sets), good form before heavy weight, a balanced diet and enough sleep for recovery, and listen to your body and take rest days when needed. The Gym Group is a UK gym chain ('over 260 locations' per the page). Also read but left out: The Gym Group's 'Push pull exercises for a solid split routine' (https://www.thegymgroup.com/exercises/total-body-exercises/push-pull-exercises-for-a-solid-split-routine/). Its days are Chest and back / Legs and core / Arms and shoulder, so it is not a push, pull and legs split. Village Gym (UK) publishes only a pull day (https://www.villagegym.co.uk/blog/gym-pull-day-workout-routines/), so it was left out too. Searches found no push/pull/legs plan from Nuffield Health, David Lloyd, JD Gyms, Fitness First, Anytime Fitness UK, Gymbox, Everlast, Xercise4Less or Energie."
+  },
+  {
+   "title": "Reddit PPL: A Linear Progression Based PPL Program for Beginners (by u/Metallicdpa)",
+   "sourceUrl": "https://thefitness.wiki/reddit-archive/a-linear-progression-based-ppl-program-for-beginners/",
+   "publisher": "The Fitness Wiki (the r/Fitness wiki), archive of the original r/Fitness post by u/Metallicdpa",
+   "readOk": true,
+   "level": "Beginner (the source says it is a beginner routine for people who can still add weight every session)",
+   "frequency": "6 days a week, run as PPLRPPL or PPLPPLR (R = rest day). The author prefers the Pull, Push, Legs order.",
+   "days": {
+    "push": [
+     {
+      "exercise": "bench press",
+      "sets": "5",
+      "reps": "5, 5, 5, 5, 5+ (4x5, 1x5+; last set as many reps as possible with good form)",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "overhead press",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "incline dumbbell press",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "triceps pushdowns (superset with lateral raises)",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "lateral raises (superset with triceps pushdowns)",
+      "sets": "3",
+      "reps": "15-20",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "overhead triceps extensions (superset with lateral raises)",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "lateral raises (superset with overhead triceps extensions)",
+      "sets": "3",
+      "reps": "15-20",
+      "rest": "1-3 min"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Deadlifts",
+      "sets": "1",
+      "reps": "5+ (1x5+; one set of at least 5, as many as possible with good form)",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "Pulldowns OR Pullups OR chinups",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "seated cable rows OR chest supported rows",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "face pulls",
+      "sets": "5",
+      "reps": "15-20",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "hammer curls",
+      "sets": "4",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "dumbbell curls",
+      "sets": "4",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "squat",
+      "sets": "3",
+      "reps": "5, 5, 5+ (2x5, 1x5+; last set as many reps as possible)",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "Romanian Deadlift",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "leg press",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "leg curls",
+      "sets": "3",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     },
+     {
+      "exercise": "calf raises",
+      "sets": "5",
+      "reps": "8-12",
+      "rest": "1-3 min"
+     }
+    ]
+   },
+   "notes": "Source: I tried the original post at old.reddit.com/r/Fitness/comments/37ylk5/ but Reddit returned 403 Blocked, so I read the full archive copy on the r/Fitness wiki (thefitness.wiki). A and B days: the lists above are the first version, with deadlifts on pull day and bench press on push day. The main lifts alternate each time. The next pull day swaps deadlifts for barbell rows at 4x5, 1x5+. The next push day opens with overhead press at 4x5, 1x5+, and the second push exercise becomes bench press at 3x8-12, so you always do the opposite press. Progression: add 2.5 kg every session to bench, row, overhead press and squat, and 5 kg to deadlift. For accessories, add weight once you get 3 sets of 12 with good form, and lower it if you drop below 8. Starting weight: work up from the empty bar in sets of 5 until the bar slows, then take 2.5 kg off. Warm up: lighter sets of the same lift, and no static stretching before lifting. Rest: 3-5 min on the first exercise, 1-3 min on the rest. Failure: if you miss the same weight 3 sessions in a row, take 10% off and build back up. Swaps: keep the main barbell lifts (squat, bench, deadlift, overhead press, bent over row), and the source says not on a Smith machine. Everything else can be swapped, for example dumbbell or T-bar rows for cable rows, rear delt flyes plus band pull aparts for face pulls, landmine press for incline dumbbell press, front squats for leg press, glute ham raises for leg curls, and any triceps or curl variation. Cutting: drop accessories from 3 sets to 2 if recovery suffers. Abs are optional on squat and deadlift days. Rest times are the source's general guideline per exercise position, not set per exercise."
+  },
+  {
+   "title": "The Best \"Push Pull Legs Routine\" For Growth",
+   "sourceUrl": "https://builtwithscience.com/fitness-tips/push-pull-legs-routine/",
+   "publisher": "Built With Science (Jeremy Ethier), article dated 4 January 2020",
+   "readOk": true,
+   "level": "Novice to experienced. The source says novices should use the lower set numbers and experienced lifters the higher ones.",
+   "frequency": "6 days a week, with a rest day after every 3 days in a row (each muscle trained twice a week). The source says the split can be adjusted to fit your schedule.",
+   "days": {
+    "push": [
+     {
+      "exercise": "Incline Barbell Bench Press",
+      "sets": "3-4",
+      "reps": "6-8"
+     },
+     {
+      "exercise": "Standing Dumbbell Shoulder Press",
+      "sets": "3-4",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Paused Flat Dumbbell Press",
+      "sets": "3-4",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Lean-Away Dumbbell Lateral Raise",
+      "sets": "2-3",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Seated Decline Cable Flies W/ Supination",
+      "sets": "2-3",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Incline Dumbbell Overhead Extensions",
+      "sets": "2-3",
+      "reps": "10-15"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Pull-Ups OR Kneeling Lat Pulldowns",
+      "sets": "3-4",
+      "reps": "6-10 (pull-ups) or 10-15 (kneeling lat pulldowns)"
+     },
+     {
+      "exercise": "Barbell Row",
+      "sets": "3-4",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Reverse Grip Pulldowns",
+      "sets": "3-4",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Chest Supported Rear Delt Row",
+      "sets": "3-4",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Narrow Grip Barbell Curl",
+      "sets": "2-3",
+      "reps": "8-12"
+     },
+     {
+      "exercise": "Kneeling Face Pulls",
+      "sets": "2-3",
+      "reps": "10-15"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Back Squats OR Front Squats",
+      "sets": "3-4",
+      "reps": "6-10"
+     },
+     {
+      "exercise": "Hip Thrusts",
+      "sets": "3-4",
+      "reps": "12-15"
+     },
+     {
+      "exercise": "Split Squats (2 sets Bulgarian, 2 sets contralateral)",
+      "sets": "4",
+      "reps": "8-12 (each side)"
+     },
+     {
+      "exercise": "Glute Ham Raise (or Bosu Ball alternative)",
+      "sets": "3-4",
+      "reps": "10-15"
+     },
+     {
+      "exercise": "Standing Single Leg Calf Raise",
+      "sets": "2-4",
+      "reps": "6-10"
+     },
+     {
+      "exercise": "Seated Calf Raise",
+      "sets": "2-4",
+      "reps": "10-15"
+     }
+    ]
+   },
+   "notes": "Rest times are not in the article. The page says they are in a free PDF behind a download button, which I did not open, so rest is left blank. The leg list is the article's second, full version, which adds the two calf raises. A and B days: the article gives one push, one pull and one leg workout. For the second push and pull day of the week it says to keep the same outline and target muscles but switch to other exercises, and it gives no list. For the second leg day it says to include a hip-dominant hamstring exercise like deadlifts and a knee-dominant quad exercise, and to fill the rest with variations of the day 1 exercises. The pull day goes vertical pull, horizontal pull, vertical pull, horizontal pull, then two accessory moves. The summary calls the face pull 'Kneeling Face Pulls', but the text says to do the first 2 sets kneeling or standing and the last 2 sets lying down, to hit the rear delts more. The overhead triceps extensions use lighter weight and higher reps to be easier on the elbows. In the text the curl is called 'Close Grip Barbell Curl' and in the summary 'Narrow Grip Barbell Curl'. The summary name is used above."
+  },
+  {
+   "title": "The Best Push/Pull/Legs (PPL) Routine for Building Muscle",
+   "sourceUrl": "https://outlift.com/push-pull-legs-ppl-routine/",
+   "publisher": "Outlift (Shane Duquette and Marco Walker-Ng, BHSc, PTS), dated 23 October 2024",
+   "readOk": true,
+   "frequency": "6 days a week: Mon Push (Bench), Tue Pull (Chin-Up), Wed Legs (Squat), Thu Push (Overhead Press), Fri Pull (Pull-Up), Sat Legs (Deadlift), Sun rest. The source says that if you train less often than 6 days, a full body or upper/lower split suits you better.",
+   "days": {
+    "push": [
+     {
+      "exercise": "Bench Press",
+      "sets": "4-5",
+      "reps": "6-12",
+      "rest": "2-4 min"
+     },
+     {
+      "exercise": "Incline Bench Press",
+      "sets": "3-4",
+      "reps": "8-12",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Overhead Dumbbell Press",
+      "sets": "3",
+      "reps": "10-15",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Skull Crushers",
+      "sets": "3",
+      "reps": "10-15",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Lounging Lateral Raises",
+      "sets": "3",
+      "reps": "12-15",
+      "rest": "1 min"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Chin-Up",
+      "sets": "4-5",
+      "reps": "6-12",
+      "rest": "2-4 min"
+     },
+     {
+      "exercise": "Seated Cable Row",
+      "sets": "4-5",
+      "reps": "8-12",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Lat Pulldown",
+      "sets": "4",
+      "reps": "10-15",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Lying Biceps Curl",
+      "sets": "3",
+      "reps": "10-15",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Forearm Curl",
+      "sets": "3",
+      "reps": "12-15",
+      "rest": "1 min"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Squat",
+      "sets": "3-4",
+      "reps": "6-10",
+      "rest": "2-4 min"
+     },
+     {
+      "exercise": "Romanian Deadlift",
+      "sets": "2-3",
+      "reps": "8-12",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Leg Extension",
+      "sets": "3",
+      "reps": "10-15",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Hamstring Curl",
+      "sets": "3",
+      "reps": "10-15",
+      "rest": "2 min"
+     },
+     {
+      "exercise": "Standing Calf Raise",
+      "sets": "3",
+      "reps": "12-15",
+      "rest": "1 min"
+     }
+    ]
+   },
+   "notes": "The lists above are workouts 1 to 3. The second half of the week is different. Workout 4, Push (Overhead Press): Overhead Press 4-5 x 6-10, Dips 4-5 x AMRAP, Chest Fly 3 x 10-15, Overhead Extensions 3 x 10-15, Lateral Raises 3 x 12-15. Workout 5, Pull (Pull-Up): Pull-Up 4-5 x AMRAP, T-Bar Row 4-5 x 8-12, Pullover 3 x 10-15, Dumbbell Curl 3 x 10-15, Hammer Curl 3 x 10-15. Workout 6, Legs (Deadlift): Deadlift 3-5 x 6-12, Leg Press 3-5 x 8-12, Back Extensions 3 x 10-15, Reverse Crunches 3 x AMRAP. Rest as the source gives it: 2-4 min between sets of the first exercise, 2 min after that, and 1 min on the final exercise. Progression: try to beat the first exercise every workout. When you hit your rep targets, add a little weight. Otherwise try to get more total reps than last time across all sets. Effort: leave 1-2 reps in reserve on the first exercise and 0-2 on the others. The authors take the last exercise to failure. Swaps are encouraged, for example a chest press machine or dips for bench press, a hack squat machine or front squats for squat, 1-arm dumbbell rows or a T-bar row machine for the seated cable row, and a dumbbell pullover for the lat pulldown. Each workout has 4-5 exercises. One mismatch on the page: the workout 2 table lists 'Lying Biceps Curl', but the text under it says preacher curls. The table name is used above. The page gives no level for this routine."
+  },
+  {
+   "title": "The Best Push Pull Legs Routines for Mass Gains",
+   "sourceUrl": "https://legionathletics.com/push-pull-legs/",
+   "publisher": "Legion Athletics (Michael Matthews, certified personal trainer), updated 12 December 2024",
+   "readOk": true,
+   "level": "Not stated overall. The source says the 6 day version is only for experienced lifters who recover well.",
+   "frequency": "Options from 2 to 6 days a week. The author recommends 4 to 6 days and calls the 5 day version his preferred split. 3 day: Mon Push 1, Wed Pull 1, Fri Legs 1. 6 day: Mon Push 1, Tue Pull 1, Wed Legs 1, Thu Push 2, Fri Pull 2, Sat Legs 2, Sun rest.",
+   "days": {
+    "push": [
+     {
+      "exercise": "Flat Barbell Bench Press",
+      "sets": "3",
+      "reps": "4-6",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "Standing Overhead Press",
+      "sets": "3",
+      "reps": "4-6",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "Close-Grip Bench Press",
+      "sets": "3",
+      "reps": "6-8",
+      "rest": "2-3 min"
+     },
+     {
+      "exercise": "Dumbbell Side Lateral Raise",
+      "sets": "3",
+      "reps": "6-8",
+      "rest": "2-3 min"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Deadlift",
+      "sets": "3",
+      "reps": "4-6",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "Pull-up",
+      "sets": "3",
+      "reps": "4-6",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "One-Arm Dumbbell Row",
+      "sets": "3",
+      "reps": "6-8",
+      "rest": "2-3 min"
+     },
+     {
+      "exercise": "Dumbbell Curl",
+      "sets": "3",
+      "reps": "6-8",
+      "rest": "2-3 min"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Back Squat",
+      "sets": "3",
+      "reps": "4-6",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "Leg Press",
+      "sets": "3",
+      "reps": "4-6",
+      "rest": "3-5 min"
+     },
+     {
+      "exercise": "Bulgarian Split Squat",
+      "sets": "3",
+      "reps": "6-8",
+      "rest": "2-3 min"
+     },
+     {
+      "exercise": "Leg Curl",
+      "sets": "3",
+      "reps": "6-8",
+      "rest": "2-3 min"
+     }
+    ]
+   },
+   "notes": "The lists above are Push Workout #1, Pull Workout #1 and Leg Workout #1. The page also has a #2 version of each. Push Workout #2: Incline Barbell Bench Press 3 x 4-6 (3-5 min), Seated Overhead Press 3 x 4-6 (3-5 min), Cable Side Lateral Raise 3 x 6-8 (2-3 min), Dumbbell Rear Lateral Raise 3 x 6-8 (2-3 min). Pull Workout #2: Barbell Row 3 x 4-6 (3-5 min), Chin-up 3 x 4-6 (3-5 min), Cable Row 3 x 6-8 (2-3 min), Hammer Curl 3 x 6-8 (2-3 min). Leg Workout #2: Front Squat 3 x 4-6 (3-5 min), Romanian Deadlift 3 x 4-6 (3-5 min), Lunge 3 x 6-8 (2-3 min), Seated Calf Raise 3 x 6-8 (2-3 min). Effort: end every set 1 to 3 reps short of failure. Progression: when you reach the top of the rep range on a set, add weight. The page's example adds 10 lb (about 4.5 kg) to the deadlift after 6 reps, and takes 5 lb off if you then get 3 reps or fewer. Aim to add weight or reps every session. The page also gives 2, 4 and 5 day schedules. Both 5 day routines on the page are headed 'Lower Body Focus', which looks like a labelling slip for the first one, reported as the page has it. The page ends with a supplement sales section, which is left out here. It is a heavier, lower rep plan than the trainer's 12, 10, 10, 8."
+  },
+  {
+   "title": "Bodybuilding Machine Workout Routine, 5x/Week (Day 1 Push, Day 2 Pull, Day 3 Legs)",
+   "sourceUrl": "https://www.strengthlog.com/bodybuilding-machine-workout-routine/",
+   "publisher": "StrengthLog (author Andreas Abelsson)",
+   "readOk": true,
+   "level": "Intermediate to advanced (the page says it is not a beginner program)",
+   "frequency": "5 days a week: Day 1 Push, Day 2 Pull, Day 3 Legs (quad focus) + Abs, Day 4 Rest, Day 5 Upper Body, Day 6 Legs (glute and hamstring focus) + Abs, Day 7 Rest. Rest days can be moved.",
+   "days": {
+    "push": [
+     {
+      "exercise": "Incline Machine Chest Press",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Machine Chest Press",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Machine Chest Fly",
+      "sets": "2",
+      "reps": "12"
+     },
+     {
+      "exercise": "Machine Shoulder Press",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Cable Lateral Raise",
+      "sets": "3",
+      "reps": "12"
+     },
+     {
+      "exercise": "Overhead Cable Triceps Extension",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Tricep Pushdown",
+      "sets": "2",
+      "reps": "12"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Machine Lat Pulldown",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Cable Seated Row",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Seated Machine Row",
+      "sets": "2",
+      "reps": "12"
+     },
+     {
+      "exercise": "Straight Arm Lat Pulldown",
+      "sets": "2",
+      "reps": "12"
+     },
+     {
+      "exercise": "Reverse Machine Fly",
+      "sets": "2",
+      "reps": "12"
+     },
+     {
+      "exercise": "Machine Biceps Curl",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Cable Curl With Rope",
+      "sets": "2",
+      "reps": "12"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Smith Machine Squat",
+      "sets": "3",
+      "reps": "8"
+     },
+     {
+      "exercise": "Leg Press",
+      "sets": "3",
+      "reps": "12"
+     },
+     {
+      "exercise": "Leg Extension",
+      "sets": "2",
+      "reps": "12"
+     },
+     {
+      "exercise": "Smith Machine Bulgarian Split Squat",
+      "sets": "2",
+      "reps": "10"
+     },
+     {
+      "exercise": "Seated Leg Curl",
+      "sets": "3",
+      "reps": "12"
+     },
+     {
+      "exercise": "Machine Crunch",
+      "sets": "4",
+      "reps": "12"
+     }
+    ]
+   },
+   "notes": "Read twice; exercise lines copied as printed. Almost all machines, cables and Smith machine, so it fits a PureGym well. The page gives no rest time between sets and no session length. Machine Crunch is on the legs day because the source puts abs there (Leg Day (Quad Focus) + Abs). The other two days, not used here: Day 5 Upper Body: Smith Machine Incline Bench Press 3x8, Lat Pulldown 3x8, Seated Machine Row 2x10, Standing Cable Chest Fly 2x12, Machine Lateral Raise 3x12, Machine Biceps Curl 3x12, Machine Triceps Press 3x12. Day 6 Legs (Glute & Hamstring Focus) + Abs: Seated Leg Press 3x8, Smith Machine Romanian Deadlift 3x8, Seated Leg Curl 3x10, Hip Thrust Machine 3x8, Smith Machine Lunge 2x8, Horizontal Wood Chop with Cable 4x12. Warm up: 5 to 8 minutes of easy cardio plus 2 to 3 dynamic drills, then one or two light warm up sets of the first exercise; one warm up set is likely enough for later compound lifts, and isolation lifts for already worked muscles may need none. Progression: triple progression, add reps first, then sets, then weight (for example work from 3 sets of 8 toward 12 reps on all sets, then add a set, then add weight). Compound lifts: add about 1 to 2.5 kg upper body or 2.5 to 5 kg lower body once all sets hit the target, stopping 1 to 2 reps short of failure is fine. Accessories: add the smallest machine step once all sets hit target reps at 0 to 2 reps in reserve; if the jump is too big, add a rep instead. The program runs 5 weeks, then restart with the higher weights. Swaps allowed, for example hack squat for Smith machine squat. Pages that could NOT be read and are left out: Muscle & Strength (every page and its PDF returned 403 Forbidden), Garage Gym Reviews push pull legs routine (404 at every URL tried), Men's Health and Women's Health (blocked to the fetch tool), T3 (only menus came back, not the article)."
+  },
+  {
+   "title": "The Ultimate Push-Pull-Legs Workout Split for Every Experience Level (Beginner)",
+   "sourceUrl": "https://barbend.com/push-pull-legs-workout-split/",
+   "publisher": "BarBend (author Eric Bugera, CSCS, CISSN; last updated 20 November 2024)",
+   "readOk": true,
+   "level": "Beginner (the page also has Intermediate and Advanced versions, listed in notes)",
+   "frequency": "Push, Pull, Legs as a three day rotation, then a day off; the article says it is often run twice per week so each muscle is trained twice a week",
+   "days": {
+    "push": [
+     {
+      "exercise": "Push-Up",
+      "sets": "3",
+      "reps": "AMRAP"
+     },
+     {
+      "exercise": "Machine Pec Flye",
+      "sets": "3",
+      "reps": "15"
+     },
+     {
+      "exercise": "Dumbbell Z-Press",
+      "sets": "3",
+      "reps": "12"
+     },
+     {
+      "exercise": "Machine Dip",
+      "sets": "3",
+      "reps": "12"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Assisted Pull-Up",
+      "sets": "3",
+      "reps": "AMRAP"
+     },
+     {
+      "exercise": "Single-Arm Cable Row",
+      "sets": "3",
+      "reps": "12"
+     },
+     {
+      "exercise": "Chest-Supported T-Bar Row",
+      "sets": "3",
+      "reps": "10"
+     },
+     {
+      "exercise": "Cable Reverse Flye",
+      "sets": "3",
+      "reps": "15"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Goblet Squat",
+      "sets": "3",
+      "reps": "6"
+     },
+     {
+      "exercise": "Landmine Romanian Deadlift",
+      "sets": "3",
+      "reps": "8"
+     },
+     {
+      "exercise": "Leg Extension",
+      "sets": "3",
+      "reps": "12"
+     },
+     {
+      "exercise": "Seated Hamstring Curl",
+      "sets": "3",
+      "reps": "12"
+     }
+    ]
+   },
+   "notes": "Read three times; all three levels copied word for word. AMRAP means as many reps as possible (the article's own footnote). The article gives no rest times and no warm up. The page has three levels, not A and B days; Beginner is listed first and uses the most machines and cables. Intermediate version: Push: Dumbbell Bench Press 3x10, Dip 3xAMRAP, Cable Pec Flye 3x12, Single-Arm Cable Triceps Pushdown 3x10, Cable Lateral Raise 3x15. Pull: Pull-Up 3xAMRAP, Single-Arm Dumbbell Row 3x12, Single-Arm Lat Pulldown 2x12, Chest-Supported T-Bar Row 3x10, Cable Reverse Flye 3x15. Legs: High-Bar Squat 3x5, Dumbbell Romanian Deadlift 3x10, Rear-Foot Elevated Split Squat 2x12, Leg Extension 3x10, Lying Hamstring Curl 3x12. Advanced version: Push: Barbell Bench Press 3x6, Weighted Dip 3x8, Cable Pec Flye 3x10, Single-Arm Cable Triceps Pushdown 2x8, Single-Arm Overhead Cable Triceps Extension 2x12, Dumbbell Lateral Raise 3x15 + drop set. Pull: Barbell Row 3x8, Single-Arm Machine Row 2x10, Underhand Single-Arm Lat Pulldown 2x12, Chest-Supported T-Bar Row 3x8, Cable Reverse Fly 3x12, Alternating Dumbbell Biceps Curl 3x8. Legs: Hack Squat 3x10, Barbell Romanian Deadlift 3x8, Leg Extension 3x10, Lying Hamstring Curl 3x12, Bodyweight Walking Lunge 2xAMRAP. Advice from the article: beginners start with machine and cable versions and add dumbbell or bodyweight skill work; intermediates put the hardest free weight or bodyweight lift first and take isolation work closer to failure; advanced lifters go heavier with lower reps and more isolation. Main progression is to add weight over time. Drop sets or forced reps on last sets, mostly in the last week or two of a cycle. Calves and abs can go on any day. The article also describes a double rotation with two different versions of each day (six workouts per rotation)."
+  },
+  {
+   "title": "Push Pull Legs – 3, 4, 5 & 6-Day Splits (+12 Exercises to Do) (3-day program)",
+   "sourceUrl": "https://www.hevyapp.com/push-pull-legs-ultimate-guide/",
+   "publisher": "Hevy (author Guillem Ros)",
+   "readOk": true,
+   "level": "Intermediate (the page says this is a typical 3-day intermediate-level push/pull/legs workout)",
+   "frequency": "3 days a week on non-consecutive days, for example Monday Push, Wednesday Pull, Friday Legs, with a rest day between sessions",
+   "days": {
+    "push": [
+     {
+      "exercise": "Bench Press (Barbell)",
+      "sets": "3",
+      "reps": "6 to 10"
+     },
+     {
+      "exercise": "Incline Press (Dumbbell)",
+      "sets": "3",
+      "reps": "8 to 12"
+     },
+     {
+      "exercise": "Seated Shoulder Press (Dumbbell)",
+      "sets": "3",
+      "reps": "10 to 12"
+     },
+     {
+      "exercise": "Cable Fly Crossover",
+      "sets": "3",
+      "reps": "12-15"
+     },
+     {
+      "exercise": "Lateral Raise (Dumbbell)",
+      "sets": "3",
+      "reps": "12 to 15"
+     },
+     {
+      "exercise": "Tricep Rope Pushdown",
+      "sets": "3",
+      "reps": "12 to 15"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Bent Over Row (Barbell)",
+      "sets": "3",
+      "reps": "6 to 10"
+     },
+     {
+      "exercise": "Lat Pulldown (Cable)",
+      "sets": "3",
+      "reps": "8 to 12"
+     },
+     {
+      "exercise": "Seated Cable Row",
+      "sets": "3",
+      "reps": "10 to 12"
+     },
+     {
+      "exercise": "Shrug (Dumbbell)",
+      "sets": "3",
+      "reps": "10 to 12"
+     },
+     {
+      "exercise": "Bicep Curl (Barbell)",
+      "sets": "3",
+      "reps": "12 to 15"
+     },
+     {
+      "exercise": "Face Pull",
+      "sets": "2 to 3",
+      "reps": "15 to 20"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Squat (Barbell)",
+      "sets": "3",
+      "reps": "6 to 10"
+     },
+     {
+      "exercise": "Romanian Deadlift (Dumbbell)",
+      "sets": "3",
+      "reps": "10 to 12"
+     },
+     {
+      "exercise": "Leg Extension (Machine)",
+      "sets": "3",
+      "reps": "12 to 15"
+     },
+     {
+      "exercise": "Seated Leg Curl (Machine)",
+      "sets": "3",
+      "reps": "12 to 15"
+     },
+     {
+      "exercise": "Seated Calf Raise",
+      "sets": "3",
+      "reps": "12 to 15"
+     },
+     {
+      "exercise": "Cable Crunch",
+      "sets": "3",
+      "reps": "15 to 20"
+     }
+    ]
+   },
+   "notes": "Read twice; exercise lines copied as printed. No rest time is given (the FAQ only says a session should allow adequate rest between sets); intermediate sessions are said to take about 50 to 75 minutes including warm up. No warm up routine and no set progression rule, only a link to general progressive overload advice; exercises can be swapped, for example barbell for dumbbell. No publish date shown on the page. The page also gives a 6-day advanced plan (Push 1, Pull 1, Legs 1, Push 2, Pull 2, Legs 2, Sunday off): Push 1: Bench Press (Barbell) 3x6-10, Seated Shoulder Press (Machine) 3x10-12, Low Cable Fly Crossovers 2x12-15, Push Up 2x10-20. Pull 1: Pull Up 3x5-10, Lat Pulldown (Cable) 3x8-12, Bicep Curl (Dumbbell) 2x12-15, Face Pull 2x15-25. Legs 1: Squat (Barbell) 3x6-10, Romanian Deadlift (Barbell) 3x8-10, Glute Ham Raise 3x8-12, Lying Leg Curl 2-3x12-15, Standing Calf Raise (Smith) 3x8-12. Push 2: Incline Bench Press (Dumbbell) 3x8-10, Shoulder Press (Dumbbell) 3x8-12, Triceps Kickback (Dumbbell) 3x12-15, Triceps Extension (Dumbbell) 2x12-15. Pull 2: Bent Over Row (Barbell) 3x6-10, Straight Arm Lat Pulldown (Cable) 3x10-15, EZ Bar Biceps Curl 3x10-15. Legs 2: Leg Press (Machine) 3x8-12, Lunge (Dumbbell) 3x10-15 per leg, Leg Extension (Machine) 2-3x12-15, Seated Calf Raise 3-4x12-20, Cable Crunch 3-4x12-15. These 6-day lists were read once only. The page also shows 4-day and 5-day three week cycles of the same days."
+  },
+  {
+   "title": "Push-Pull Workouts: Routines and Guide for Building Muscle",
+   "sourceUrl": "https://www.healthline.com/nutrition/push-pull-workout",
+   "publisher": "Healthline (author Gavin Van De Walle, MS, RD; medically reviewed by Micky Lal, MA, CSCS, RYT; updated 10 February 2025)",
+   "readOk": true,
+   "level": "Beginner and intermediate (3 days a week); the page also gives a 6 day advanced schedule using the same workouts",
+   "frequency": "Beginner and intermediate: Day 1 Push, Day 2 Rest, Day 3 Pull, Day 4 Rest, Day 5 Legs and core. Advanced: Push, Pull, Legs and core, Rest, Push, Pull, Legs and core.",
+   "days": {
+    "push": [
+     {
+      "exercise": "Seated dumbbell shoulder press",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Dumbbell incline chest press",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Skull crushers",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Cable rope triceps pushdown",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Incline dumbbell chest fly",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Dumbbell lateral shoulder raises",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     }
+    ],
+    "pull": [
+     {
+      "exercise": "Bent-over barbell row",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Cable pulldown",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Dumbbell shrugs",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Bicep curls",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     }
+    ],
+    "legs": [
+     {
+      "exercise": "Deadlift",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Barbell back squat",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Lunges",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Seated hamstring leg curls",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Dumbbell standing calf raise",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     },
+     {
+      "exercise": "Hanging leg raises",
+      "sets": "3 to 4",
+      "reps": "8 to 12",
+      "rest": "2 to 3 min"
+     }
+    ]
+   },
+   "notes": "Read twice; exercise lines copied as printed. The source gives one rule for every exercise: 3 to 4 sets of 8 to 12 reps with 2 to 3 minutes rest between sets. The third day is called Legs and core in the source, which is why Hanging leg raises sits in legs. The pull day has only 4 exercises in the source; nothing was added. The article calls it a push pull split, but its third day is a legs day. Progression: pick a weight that makes the last couple of reps hard with good form; if you can do more than 10 reps with good form, add weight; log reps and weight each time; vary things, for example cables instead of dumbbells or one arm or leg at a time. Rest days mean no weight training. Each major muscle gets 48 to 72 hours to recover. Level guide on the page: beginners (under 6 months) up to 3 days a week, intermediate (6 months to 2 years) 3 to 4 days, advanced (over 2 years) up to 6 days. No warm up is given. Uses more barbell work (deadlift, back squat, bent over row) than the other plans."
+  }
+ ],
+ "chosen": [
+  {
+   "name": "Muscle Building PPL",
+   "tagline": "Suits someone ready to move from machines to barbells and dumbbells who wants a simple muscle building plan of five lifts a day.",
+   "basedOn": "The Best Gym Workout Plan For Gaining Muscle, push/pull/legs example Days 1 to 3, PureGym blog, by Spencer Cartwright, personal trainer at PureGym Bristol Brislington (adapted)",
+   "sourceUrl": "https://www.puregym.com/blog/the-best-gym-workout-plan-for-gaining-muscle/",
+   "minutes": 45,
+   "restCompound": "75 to 90 s (the page gives none, so this uses your trainer's rest)",
+   "restIsolation": "45 to 60 s (the page gives none, so this uses your trainer's rest)",
+   "progression": "Start with a weight you can lift for 3 sets of 8, add reps each week until you reach 3 sets of 12, then move to a weight you can only lift 8 times and build up again.",
+   "days": {
+    "push": [
+     {
+      "name": "Barbell Bench Press",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Barbell bench press"
+     },
+     {
+      "name": "Barbell Overhead Press",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Barbell military press"
+     },
+     {
+      "name": "Incline Barbell Bench Press",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Barbell incline bench press"
+     },
+     {
+      "name": "Lateral Raise",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Dumbbell lateral raises"
+     },
+     {
+      "name": "Overhead Dumbbell Tricep Extension",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Dumbbell tricep extensions"
+     }
+    ],
+    "pull": [
+     {
+      "name": "Deadlift",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Barbell deadlifts"
+     },
+     {
+      "name": "Barbell Bent Over Row",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Barbell bent over rows"
+     },
+     {
+      "name": "Pull Up",
+      "type": "compound",
+      "asWritten": "other",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Pull ups"
+     },
+     {
+      "name": "Dumbbell Upright Row",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Dumbbell upright rows"
+     },
+     {
+      "name": "Dumbbell Curl",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Dumbbell single arm bicep curls"
+     }
+    ],
+    "legs": [
+     {
+      "name": "Barbell Back Squat",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Barbell squats"
+     },
+     {
+      "name": "Bulgarian Split Squat",
+      "type": "compound",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Bulgarian split squat"
+     },
+     {
+      "name": "Leg Press",
+      "type": "compound",
+      "asWritten": "machine",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Leg press"
+     },
+     {
+      "name": "Leg Extension",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Leg extensions"
+     },
+     {
+      "name": "Seated Calf Raise",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Standing calf raises"
+     }
+    ]
+   },
+   "differenceFromTrainer": "An exercise counts as new only when it is not a trainer exercise and not one of the versions the app already lists for a trainer exercise. Push: 3 new of 5 (Barbell Bench Press, Barbell Overhead Press, Incline Barbell Bench Press). Pull: 4 new of 5 (Deadlift, Barbell Bent Over Row, Pull Up, Dumbbell Upright Row). Legs: 3 new of 5 (Barbell Back Squat, Bulgarian Split Squat, Seated Calf Raise). 10 new in all. Shared with the trainer plan: Lateral Raise, Overhead Dumbbell Tricep Extension, Leg Press, Leg Extension. Dumbbell Curl is close to a trainer lift (the app lists it as the dumbbell version of Barbell Curl), so it is not counted as new.",
+   "adaptations": [
+    "Swap, push: Day 1's 'Dumbbell incline press' is replaced by 'Barbell incline bench press' from the same page's Day 4, because the app already lists incline dumbbell press as the dumbbell version of the trainer's Incline Chest Press Machine.",
+    "Swap, pull: 'Lat pulldowns' is replaced by 'Pull ups' from the same page's Day 5, because the trainer plan already has Lat Pulldown. Use the assisted pull up machine if you cannot do 8 yet.",
+    "Swap, legs: 'Standing calf raises' is replaced by Seated Calf Raise, the standard alternative, because the trainer plan already has Standing Calf Raise. If your gym has no seated calf machine, sit on a bench with dumbbells on your knees.",
+    "Not a swap: the page says only 'Dumbbell tricep extensions' and links to a general tricep extension page. This uses the overhead version under the trainer's name so the weight history carries over.",
+    "Not a swap: 'Barbell military press' is the same lift as the overhead press and is named Barbell Overhead Press to match the other plans.",
+    "Source name rule: when the page itself names the new lift (Days 4 and 5), sourceName holds those words. Otherwise it holds the line that was replaced.",
+    "The page runs 6 days a week (Push, Pull, Legs, Push, Pull, Legs, Rest) with a different second half on Days 4 to 6. The app has one day of each, so this uses Days 1 to 3.",
+    "Rest and minutes are not on the page. Rest copies the trainer plan's, and 45 minutes is an estimate from 15 working sets plus a warm up."
+   ]
+  },
+  {
+   "name": "Barbell Strength PPL",
+   "tagline": "Suits a newer lifter who can still add weight every session, wants to get stronger on the big barbell lifts and can train six days a week.",
+   "basedOn": "A Linear Progression Based PPL Program for Beginners, by u/Metallicdpa on r/Fitness, read from the archive copy on The Fitness Wiki (adapted)",
+   "sourceUrl": "https://thefitness.wiki/reddit-archive/a-linear-progression-based-ppl-program-for-beginners/",
+   "minutes": 65,
+   "restCompound": "3 to 5 min on the first lift of the day, 1 to 3 min on the rest",
+   "restIsolation": "1 to 3 min",
+   "progression": "Add 2.5 kg every session to the 5 rep main lift (bench press or overhead press on push day, squat) and 5 kg to the deadlift, doing the last set of the bench press and squat and the single deadlift set for as many reps as you can (AMRAP, at least 5), add weight to every other lift once you hit 3 sets of 12 with good form, and take 10% off any lift you fail 3 sessions in a row.",
+   "days": {
+    "push": [
+     {
+      "name": "Barbell Bench Press",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 5,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "sourceName": "bench press"
+     },
+     {
+      "name": "Barbell Overhead Press",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "overhead press"
+     },
+     {
+      "name": "Incline Dumbbell Press",
+      "type": "compound",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "incline dumbbell press"
+     },
+     {
+      "name": "Tricep Pushdown",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "triceps pushdowns"
+     },
+     {
+      "name": "Lateral Raise",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 6,
+      "repsLow": 15,
+      "repsHigh": 20,
+      "sourceName": "lateral raises"
+     },
+     {
+      "name": "Skull Crusher",
+      "type": "isolation",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "overhead triceps extensions"
+     }
+    ],
+    "pull": [
+     {
+      "name": "Deadlift",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 1,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "sourceName": "Deadlifts"
+     },
+     {
+      "name": "Pull Up",
+      "type": "compound",
+      "asWritten": "other",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Pulldowns OR Pullups OR chinups"
+     },
+     {
+      "name": "T Bar Row",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "t-bar rows"
+     },
+     {
+      "name": "Face Pull",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 5,
+      "repsLow": 15,
+      "repsHigh": 20,
+      "sourceName": "face pulls"
+     },
+     {
+      "name": "Hammer Curl",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 4,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "hammer curls"
+     },
+     {
+      "name": "Preacher Curl",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 4,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "dumbbell curls"
+     }
+    ],
+    "legs": [
+     {
+      "name": "Barbell Back Squat",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "sourceName": "squat"
+     },
+     {
+      "name": "Romanian Deadlift",
+      "type": "compound",
+      "asWritten": "other",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Romanian Deadlift"
+     },
+     {
+      "name": "Front Squat",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "front squats"
+     },
+     {
+      "name": "Leg Curl",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "leg curls"
+     },
+     {
+      "name": "Seated Calf Raise",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 5,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "calf raises"
+     }
+    ]
+   },
+   "differenceFromTrainer": "An exercise counts as new only when it is not a trainer exercise and not one of the versions the app already lists for a trainer exercise. Push: 3 new of 6 (Barbell Bench Press, Barbell Overhead Press, Skull Crusher). Pull: 4 new of 6 (Deadlift, Pull Up, T Bar Row, Preacher Curl). Legs: 3 new of 5 (Barbell Back Squat, Front Squat, Seated Calf Raise). 10 new in all. Shared with the trainer plan: Tricep Pushdown, Lateral Raise, Face Pull, Hammer Curl, Romanian Deadlift, Leg Curl. Incline Dumbbell Press is close to a trainer lift (the app lists it as the dumbbell version of Incline Chest Press Machine), so it is not counted as new.",
+   "adaptations": [
+    "The main lifts alternate in the source. The next pull day opens with Barbell Row 4 x 5 then 1 x 5+ instead of the deadlift. The next push day opens with Overhead Press 4 x 5 then 1 x 5+, and the bench press moves to 3 x 8 to 12. The app has one day of each, so it shows the first version; swap the two presses and the deadlift and row on alternate weeks yourself.",
+    "Swap, push: 'overhead triceps extensions' is replaced by Skull Crusher (EZ bar), because the trainer plan already has Overhead Dumbbell Tricep Extension and the source says any general triceps exercise is fine.",
+    "Swap, pull: 'seated cable rows OR chest supported rows' is replaced by T Bar Row, a swap the source names itself, because the trainer plan already has both of those rows. PureGym does this with a bar in the landmine or the T bar row machine.",
+    "Swap, pull: 'dumbbell curls' is replaced by Preacher Curl with a dumbbell, because the app already lists the dumbbell curl as the dumbbell version of the trainer's Barbell Curl and the source says any curl variation is fine.",
+    "Swap, legs: 'leg press' is replaced by Front Squat, the swap the source names itself, because the trainer plan already has Leg Press.",
+    "Not a swap: Pull Up is picked from the source's own 'Pulldowns OR Pullups OR chinups', because the trainer plan already has Lat Pulldown. Use the assisted pull up machine if you cannot do 8 yet.",
+    "Not a swap: the source says 'any kind of calf raise will be fine', so Seated Calf Raise is used because the trainer plan already has the standing one.",
+    "Not a swap: the source does lateral raises twice, 3 x 15 to 20 as a superset with each triceps exercise. The app logs by exercise name, so they are one Lateral Raise entry of 6 sets; do 3 between the pushdown sets and 3 between the skull crusher sets.",
+    "The source does not say barbell or dumbbell for the Romanian Deadlift, so asWritten is 'other', the same as the trainer's entry. If the app should open on a free barbell, a barbell version needs adding to that exercise, because the trainer's entry has only a Smith machine and a dumbbell version.",
+    "Source name rule: when the source names the new lift (t-bar rows, front squats), sourceName holds those words. Otherwise it holds the line that was replaced.",
+    "The source runs 6 days a week (PPLRPPL or PPLPPLR) and suggests the Pull, Push, Legs order. It says the main barbell lifts should use a free bar, not a Smith machine.",
+    "Minutes are not in the source. 65 is an estimate from the long rests on the first lift, the warm up sets from the empty bar and 14 to 21 working sets."
+   ]
+  },
+  {
+   "name": "Science Based PPL",
+   "tagline": "Suits someone who wants to build muscle with exercises chosen from research, with extra upper chest, glute and calf work, training six days a week.",
+   "basedOn": "The Best \"Push Pull Legs Routine\" For Growth, Built With Science (Jeremy Ethier), 4 January 2020 (adapted)",
+   "sourceUrl": "https://builtwithscience.com/fitness-tips/push-pull-legs-routine/",
+   "minutes": 55,
+   "restCompound": "2 to 3 min (the article gives none, so this is a common choice for these lifts)",
+   "restIsolation": "1 to 2 min (the article gives none, so this is a common choice)",
+   "progression": "The article only says to add weight over time with good form, so add the smallest step once every set reaches the top of its rep range.",
+   "days": {
+    "push": [
+     {
+      "name": "Incline Barbell Bench Press",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "sourceName": "Incline Barbell Bench Press"
+     },
+     {
+      "name": "Standing Dumbbell Shoulder Press",
+      "type": "compound",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Standing Dumbbell Shoulder Press"
+     },
+     {
+      "name": "Paused Dumbbell Bench Press",
+      "type": "compound",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Paused Flat Dumbbell Press"
+     },
+     {
+      "name": "Lateral Raise",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 2,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Lean-Away Dumbbell Lateral Raise"
+     },
+     {
+      "name": "Cable Chest Fly",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 2,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Seated Decline Cable Flies W/ Supination"
+     },
+     {
+      "name": "Skull Crusher",
+      "type": "isolation",
+      "asWritten": "dumbbell",
+      "sets": 2,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Incline Dumbbell Overhead Extensions"
+     }
+    ],
+    "pull": [
+     {
+      "name": "Pull Up",
+      "type": "compound",
+      "asWritten": "other",
+      "sets": 3,
+      "repsLow": 6,
+      "repsHigh": 10,
+      "sourceName": "Pull-Ups OR Kneeling Lat Pulldowns"
+     },
+     {
+      "name": "Barbell Bent Over Row",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Barbell Row"
+     },
+     {
+      "name": "Reverse Grip Lat Pulldown",
+      "type": "compound",
+      "asWritten": "machine",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Reverse Grip Pulldowns"
+     },
+     {
+      "name": "Chest Supported Rear Delt Row",
+      "type": "compound",
+      "asWritten": "dumbbell",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Chest Supported Rear Delt Row"
+     },
+     {
+      "name": "Preacher Curl",
+      "type": "isolation",
+      "asWritten": "barbell",
+      "sets": 2,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Narrow Grip Barbell Curl"
+     },
+     {
+      "name": "Face Pull",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 2,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Kneeling Face Pulls"
+     }
+    ],
+    "legs": [
+     {
+      "name": "Barbell Back Squat",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 6,
+      "repsHigh": 10,
+      "sourceName": "Back Squats OR Front Squats"
+     },
+     {
+      "name": "Hip Thrust",
+      "type": "compound",
+      "asWritten": "barbell",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "sourceName": "Hip Thrusts"
+     },
+     {
+      "name": "Bulgarian Split Squat",
+      "type": "compound",
+      "asWritten": "dumbbell",
+      "sets": 4,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "sourceName": "Split Squats (2 sets Bulgarian, 2 sets contralateral)"
+     },
+     {
+      "name": "Leg Curl",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Glute Ham Raise (or Bosu Ball alternative)"
+     },
+     {
+      "name": "Single Leg Calf Raise",
+      "type": "isolation",
+      "asWritten": "other",
+      "sets": 2,
+      "repsLow": 6,
+      "repsHigh": 10,
+      "sourceName": "Standing Single Leg Calf Raise"
+     },
+     {
+      "name": "Seated Calf Raise",
+      "type": "isolation",
+      "asWritten": "machine",
+      "sets": 2,
+      "repsLow": 10,
+      "repsHigh": 15,
+      "sourceName": "Seated Calf Raise"
+     }
+    ]
+   },
+   "differenceFromTrainer": "An exercise counts as new only when it is not a trainer exercise, not one of the versions the app already lists for a trainer exercise, and not a trainer lift with only the grip, stance or elbow path changed. Push: 3 new of 6 (Incline Barbell Bench Press, Standing Dumbbell Shoulder Press, Skull Crusher). Pull: 3 new of 6 (Pull Up, Barbell Bent Over Row, Preacher Curl). Legs: 4 new of 6 (Barbell Back Squat, Hip Thrust, Bulgarian Split Squat, Seated Calf Raise). 10 new in all. Shared with the trainer plan: Lateral Raise, Cable Chest Fly, Face Pull, Leg Curl. Close to a trainer lift and not counted as new: Paused Dumbbell Bench Press (the app lists the flat dumbbell press as the dumbbell version of Chest Press Machine), Reverse Grip Lat Pulldown (a grip change on Lat Pulldown), Chest Supported Rear Delt Row (the app lists the chest supported incline dumbbell row as the dumbbell version of Diverging Chest Supported Row) and Single Leg Calf Raise (a one leg Standing Calf Raise).",
+   "adaptations": [
+    "Sets: where the article gives a range (3 to 4, 2 to 3, 2 to 4), this uses the lower number, which the article recommends for novices. Experienced lifters can add one set to each.",
+    "Swap, push: 'Incline Dumbbell Overhead Extensions' is replaced by Skull Crusher with dumbbells, a lying triceps extension close to the original, because the trainer plan already has Overhead Dumbbell Tricep Extension. Keep the weight light, as the article says.",
+    "Swap, pull: 'Narrow Grip Barbell Curl' is replaced by Preacher Curl with an EZ bar, the standard biceps alternative, because the trainer plan already has Barbell Curl.",
+    "Swap, legs (equipment): PureGym gyms do not usually have a glute ham raise bench, so 'Glute Ham Raise' becomes the Leg Curl machine, the standard alternative for the same hamstring job. The article's own alternative, the same movement kneeling on a Bosu ball against a wall, also works if your gym has one.",
+    "Not a swap: Pull Up is picked from the article's own 'Pull-Ups OR Kneeling Lat Pulldowns', because the trainer plan already has Lat Pulldown. Use the assisted pull up machine if needed, or the kneeling lat pulldown for 10 to 15 reps.",
+    "Not a swap: Barbell Back Squat is picked from the article's own 'Back Squats OR Front Squats'.",
+    "Not a swap: the article does 2 of the 4 split squat sets as Bulgarian split squats and 2 as contralateral split squats (one dumbbell in the hand opposite the front leg). The app logs them as one Bulgarian Split Squat entry of 4 sets, 8 to 12 each side.",
+    "Form kept from the article under the trainer's names: Lateral Raise is done leaning away from a post, one arm at a time; Cable Chest Fly is done seated on a high incline bench with the cables just above shoulder height, turning the palms up at the end; Face Pull is done kneeling or standing.",
+    "Source name rule: sourceName holds the article's own words for the lift, or the line that was replaced when the article does not name the new lift.",
+    "The article gives one push, pull and legs day and says to repeat the outline with other exercises later in the week, without a list. It runs 6 days a week with a rest day after every 3.",
+    "Rest, minutes and the add weight rule are not in the article (it says rest times are in its PDF, which was not opened). 55 minutes is an estimate from 15 to 17 working sets plus a warm up."
+   ]
+  }
+ ],
+ "rejected": [
+  {
+   "title": "Gym Workout Plans For Men: Beginner Gym Workout Plan For Men (3-day split), PureGym",
+   "why": "Too close to the trainer plan. Push repeats Chest Press Machine, cable flys and Tricep Pushdown. Pull repeats Lat Pulldown, the chest supported row, Face Pull and the curl. Legs repeats Leg Press, Leg Curl and calf raises. Pull and legs would each need more than the 2 allowed swaps to reach 3 new exercises. The shoulder press is also printed as '10-21' reps, which looks like a typo. The other PureGym page was used instead."
+  },
+  {
+   "title": "What's the best workout split for women? Push/pull/legs, The Gym Group",
+   "why": "Weaker source: no author and no date. Bicep curls are listed twice on pull day, and dips and shrugs have no reps. It is also a free weight 3 x 8 to 12 plan much like the PureGym muscle plan, which covers that slot with a named PureGym trainer."
+  },
+  {
+   "title": "The Best Push/Pull/Legs (PPL) Routine for Building Muscle, Outlift",
+   "why": "A good, well written source, but its legs day shares 4 of 5 exercises with the trainer plan (Romanian Deadlift, Leg Extension, hamstring curl, Standing Calf Raise). It would need both allowed swaps on that day and one on pull. It also competes for the hypertrophy slot, which Built With Science fills with fewer changes."
+  },
+  {
+   "title": "The Best Push Pull Legs Routines for Mass Gains, Legion Athletics",
+   "why": "Only 4 exercises a day, and it overlaps the strength slot. The r/Fitness linear progression plan is the clearer strength choice, with a set rule for adding weight every session. Legs reaches only 2 new exercises without a swap, and the page ends with a supplement sales section."
+  },
+  {
+   "title": "Bodybuilding Machine Workout Routine 5x/Week, StrengthLog",
+   "why": "Almost the same machines as the trainer plan: incline machine press, machine chest press, Tricep Pushdown, lat pulldown, seated cable row, straight arm pulldown, Leg Press and Leg Extension. Push and pull cannot reach 3 new exercises each with 2 swaps. It is also for intermediate to advanced lifters, and its legs day ends with an ab exercise."
+  },
+  {
+   "title": "The Ultimate Push-Pull-Legs Workout Split for Every Experience Level, BarBend",
+   "why": "The beginner version has only 4 exercises a day, and its legs day is mostly the trainer's (leg extension, hamstring curl, a Romanian deadlift variant). The intermediate and advanced versions also fall short of 3 new exercises on push or legs (cable fly, pushdown, lateral raise, leg extension, leg curl repeat)."
+  },
+  {
+   "title": "Push Pull Legs, 3, 4, 5 and 6-Day Splits (3-day program), Hevy",
+   "why": "An app company blog with no date. Pull shares Lat Pulldown, Seated Cable Row, Barbell Curl and Face Pull, and legs shares the Romanian deadlift, Leg Extension and Leg Curl, so both days need swaps. It adds nothing the three chosen plans do not already cover."
+  },
+  {
+   "title": "Push-Pull Workouts: Routines and Guide for Building Muscle, Healthline",
+   "why": "A general health site with one blanket rule (3 to 4 sets of 8 to 12, 2 to 3 min rest) for every exercise. Its pull day has only 4 exercises and only 2 are new (barbell row, shrugs), and its third day mixes in core work (hanging leg raises)."
+  },
+  {
+   "title": "Push pull legs pages from Muscle and Strength, Garage Gym Reviews, Men's Health, Women's Health and T3",
+   "why": "Could not be read. Muscle and Strength returned 403 Forbidden, Garage Gym Reviews returned 404, Men's Health and Women's Health blocked the fetch tool, and T3 returned only menus. They were left out."
+  }
+ ]
+}

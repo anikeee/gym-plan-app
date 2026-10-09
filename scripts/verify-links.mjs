@@ -5,7 +5,7 @@ const UA = { 'User-Agent': 'gym-plan-app verify script' };
 let failures = 0;
 const row = (ok, what) => { console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}`); if (!ok) failures++; };
 
-const variants = data.days.flatMap((d) => d.exercises.flatMap((e) => Object.entries(e.variants).map(([k, v]) => [`${e.id}.${k}`, v])));
+const variants = data.plans.flatMap((p) => p.days).flatMap((d) => d.exercises.flatMap((e) => Object.entries(e.variants).map(([k, v]) => [`${e.id}.${k}`, v])));
 
 // 1. YouTube: oEmbed answers 200 for public videos.
 const seen = new Set();

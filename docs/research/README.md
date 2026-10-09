@@ -9,4 +9,6 @@ Collected on 2026-10-07 while writing `docs/gym-exercise-app-plan.md`.
 - `ytsearch-gaps.txt` and `ytsearch-rp.txt`: raw YouTube search results used to pick clips the PureGym channel does not have.
 - `animation-head-check.txt`: HTTP HEAD results for every ExerciseDB GIF id and every free-exercise-db image the data file references.
 
+- `plans.json`: the push pull legs programs read online on 2026-10-09, and the three plans chosen and adapted from them (Muscle Building PPL, Barbell Strength PPL, Science Based PPL), with every swap and the reason.
+
 Nothing in this folder is app code. The app reads only `data/exercises.json`.
