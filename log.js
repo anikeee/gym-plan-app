@@ -17,6 +17,7 @@ const MAX_REPS = 50;
 const KEY_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*\.[a-z]+$/;
 const ID_RE = /^[a-z]+-\d+$/; // exercise ids in data/exercises.json, like push-1
 const DAY_ID_RE = /^[a-z]+$/;
+const PLAN_ID_RE = /^[a-z]+$/; // plan ids in data/exercises.json, like trainer
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 // Keyed by the exercise name from the plan, not its position (push-1), so a reordered or new plan never
@@ -85,6 +86,11 @@ function cleanSlot(s) {
   return validTime(s.t) ? { w, r, t: s.t } : { w, r };
 }
 const validTime = (t) => Number.isInteger(t) && t > 0;
+// tg: the rep target of every set when the session was logged. Plans differ (12, 10, 10, 8 or 5 x 5), so advice only
+// compares sessions with the same targets. Optional, and dropped when it makes no sense, so it never rejects a log.
+const validTargets = (tg) => Array.isArray(tg) && tg.length >= 1 && tg.length <= MAX_SLOTS && tg.every((r) => Number.isInteger(r) && r >= 1 && r <= MAX_REPS);
+const sameTargets = (a, b) => a.length === b.length && a.every((r, i) => r === b[i]);
+const withTargets = (entry, tg) => (validTargets(tg) ? { ...entry, tg: tg.slice() } : entry);
 const byDate = (a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 
 // Strict check used for both the stored log and an imported backup. Duplicate dates collapse (last wins),
@@ -101,7 +107,7 @@ export function validateLog(obj) {
       for (const e of list) {
         if (!e || typeof e !== 'object' || !validDate(e.date)) throw new Error('date');
         if (!Array.isArray(e.sets) || e.sets.length < 1 || e.sets.length > MAX_SLOTS) throw new Error('sets');
-        byDay.set(e.date, { date: e.date, sets: e.sets.map(cleanSlot) });
+        byDay.set(e.date, withTargets({ date: e.date, sets: e.sets.map(cleanSlot) }, e.tg));
       }
       const kept = [...byDay.values()].filter((e) => e.sets.some(Boolean)).sort(byDate);
       if (kept.length) entries[key] = kept;
@@ -162,10 +168,12 @@ export function todayEntry(log, key, day) {
 }
 
 // Returns a new log with one set saved (slot = {w, r}) or cleared (slot = null). A session left with no sets is removed.
-export function setSlot(log, key, day, index, slot, nSets) {
-  const list = entriesFor(log, key).map((e) => ({ date: e.date, sets: e.sets.slice() }));
+// targets: the rep target of every set on the plan the set was logged on. Kept on the session as tg.
+export function setSlot(log, key, day, index, slot, nSets, targets) {
+  const list = entriesFor(log, key).map((e) => withTargets({ date: e.date, sets: e.sets.slice() }, e.tg));
   let entry = list.find((e) => e.date === day);
   if (!entry) { entry = { date: day, sets: [] }; list.push(entry); }
+  if (slot && validTargets(targets)) entry.tg = targets.slice();
   while (entry.sets.length < Math.max(nSets, index + 1)) entry.sets.push(null);
   // An edit keeps the time the set was first saved, so fixing a weight at home does not stretch the training.
   const t = validTime(entry.sets[index]?.t) ? entry.sets[index].t : slot?.t;
@@ -180,18 +188,26 @@ export function setSlot(log, key, day, index, slot, nSets) {
 // last: the newest earlier session with at least one set (today is "this session", never "last time").
 // Each set's weight comes from the newest earlier session that logged that set.
 // Go up a step only when the last session logged every set and hit every target, as the plan asks.
-export function guide(log, key, day, targets, step) {
+// Only sessions logged with the same rep targets count: a 5 rep squat weight is no guide for 12 reps.
+// legacy: the targets of sessions saved before plans existed (all from the personal trainer's plan).
+// step < 0 for an assisted machine, where the weight is help: progress means taking assist off, never down to 0.
+export function guide(log, key, day, targets, step, legacy = targets) {
   const prior = entriesFor(log, key).filter((e) => e.date < day && e.sets.some(Boolean));
   const last = prior.length ? prior[prior.length - 1] : null;
-  const allHit = Boolean(last) && targets.every((t, i) => last.sets[i] && last.sets[i].r >= t);
+  const isSame = (e) => sameTargets(e.tg || legacy, targets);
+  const sameScheme = Boolean(last) && isSame(last);
+  const allHit = sameScheme && targets.every((t, i) => last.sets[i] && last.sets[i].r >= t);
   const suggestions = targets.map((t, i) => {
     for (let k = prior.length - 1; k >= 0; k--) {
+      if (!isSame(prior[k])) continue;
       const s = prior[k].sets[i];
-      if (s) return { w: allHit ? roundWeight(s.w + step) : s.w, up: allHit };
+      if (!s) continue;
+      const next = roundWeight(s.w + step);
+      return allHit && next > 0 ? { w: next, up: true } : { w: s.w, up: false };
     }
     return null;
   });
-  return { last, allHit, suggestions };
+  return { last, allHit, sameScheme, suggestions };
 }
 
 // The weight the sheet opens with: today's value, else the suggestion, else the nearest set already logged today.
@@ -221,10 +237,11 @@ export function mergeLogs(current, imported) {
   for (const list of Object.values(current.entries)) for (const e of list) phoneDates.add(e.date);
   const keys = new Set([...Object.keys(current.entries), ...Object.keys(imported.entries)]);
   for (const key of keys) {
-    const byDay = new Map(entriesFor(current, key).map((e) => [e.date, { date: e.date, sets: e.sets.slice() }]));
+    const byDay = new Map(entriesFor(current, key).map((e) => [e.date, withTargets({ date: e.date, sets: e.sets.slice() }, e.tg)]));
     for (const e of entriesFor(imported, key)) {
       const mine = byDay.get(e.date);
-      if (!mine) { byDay.set(e.date, { date: e.date, sets: e.sets.slice() }); if (phoneDates.has(e.date)) filled += e.sets.filter(Boolean).length; continue; }
+      if (!mine) { byDay.set(e.date, withTargets({ date: e.date, sets: e.sets.slice() }, e.tg)); if (phoneDates.has(e.date)) filled += e.sets.filter(Boolean).length; continue; }
+      if (!mine.tg && validTargets(e.tg)) mine.tg = e.tg.slice();
       e.sets.forEach((s, i) => { if (s && !mine.sets[i]) { mine.sets[i] = { ...s }; filled++; } });
       for (let i = 0; i < mine.sets.length; i++) if (mine.sets[i] === undefined) mine.sets[i] = null;
     }
@@ -255,6 +272,7 @@ export function validateDays(obj) {
       if (s.end !== null && s.end !== undefined && (!validTime(s.end) || s.end < s.start)) throw new Error('end');
       const clean = { date: s.date, day: s.day, start: s.start, end: validTime(s.end) ? s.end : null };
       if (s.auto === 'set' || s.auto === 'start') clean.auto = s.auto; // closed by the app, not by Finish: at the last set, or at its start
+      if (typeof s.plan === 'string' && PLAN_ID_RE.test(s.plan)) clean.plan = s.plan; // no plan: the trainer plan, the default
       byKey.set(s.start, clean); // the same start twice: last wins
     }
     const sessions = [...byKey.values()].sort(byStart);
@@ -303,10 +321,11 @@ export function activeSession(days, today) {
   return null;
 }
 // today is passed in by the app, so the card, the sets and the session all use the same session day across 4 am.
-export function startSession(days, dayId, now = new Date(), today = sessionDay(now)) {
+export function startSession(days, dayId, now = new Date(), today = sessionDay(now), planId) {
   const running = activeSession(days, today);
   if (running) return { days, session: running, started: false };
   const session = { date: today, day: dayId, start: now.getTime(), end: null };
+  if (planId) session.plan = planId;
   return { days: { ...days, sessions: [...days.sessions, session].sort(byStart) }, session, started: true };
 }
 export function finishSession(days, now = new Date(), today = sessionDay(now)) {
@@ -435,6 +454,12 @@ export function applyOrder(exercises, ids = []) {
   const seen = new Set(first.map((e) => e.id));
   return [...first, ...exercises.filter((e) => !seen.has(e.id))];
 }
+// One plan's new order for a day. Every plan shares the day key (push, pull, legs) and exercise ids are unique across
+// plans, so the other plans' ids stay in the list, after this plan's, in their own order. applyOrder ignores them.
+export function setDayOrder(order, dayId, ids) {
+  const others = (order.order[dayId] || []).filter((id) => !ids.includes(id));
+  return { ...order, order: { ...order.order, [dayId]: [...ids, ...others] } };
+}
 export function moveItem(ids, from, to) {
   if (from === to || from < 0 || to < 0 || from >= ids.length || to >= ids.length) return ids;
   const next = ids.slice();
@@ -442,8 +467,11 @@ export function moveItem(ids, from, to) {
   next.splice(to, 0, moved);
   return next;
 }
+// Per day: the phone's own order first, then the ids only the backup has (another plan's order for the same day).
 export function mergeOrder(current, imported) {
-  return { v: 1, order: { ...imported.order, ...current.order } }; // the phone's own order wins
+  const order = { ...imported.order };
+  for (const [day, mine] of Object.entries(current.order)) order[day] = [...mine, ...(imported.order[day] || []).filter((id) => !mine.includes(id))];
+  return { v: 1, order };
 }
 
 // Shared by every store: unreadable data is copied aside (see loadLog) and ok is false when that copy failed.

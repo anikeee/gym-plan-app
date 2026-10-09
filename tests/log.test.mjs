@@ -6,6 +6,8 @@ import { readFile } from 'node:fs/promises';
 import * as L from '../log.js';
 
 const data = JSON.parse(await readFile(new URL('../data/exercises.json', import.meta.url), 'utf8'));
+const trainerDays = data.plans[0].days; // the personal trainer's plan, the default
+const allNames = [...new Set(data.plans.flatMap((p) => p.days.flatMap((d) => d.exercises.map((e) => e.name))))];
 const TARGETS = [12, 10, 10, 8];
 const KEY = 'incline-chest-press-machine.machine';
 const fakeStorage = (init = {}) => {
@@ -14,8 +16,8 @@ const fakeStorage = (init = {}) => {
 };
 const session = (date, sets) => ({ date, sets: sets.map((s) => (s ? { w: s[0], r: s[1] } : null)) });
 
-test('every exercise name gives a unique log key that the validator accepts', () => {
-  const names = data.days.flatMap((d) => d.exercises.map((e) => e.name));
+test('every exercise name in every plan gives a unique log key that the validator accepts', () => {
+  const names = allNames; // one name in two plans is one movement with one history (tests/data.test.mjs checks that)
   const keys = names.map((n) => L.entryKey(n, 'machine'));
   assert.equal(new Set(keys).size, names.length);
   const log = { v: 1, entries: Object.fromEntries(keys.map((k) => [k, [session('2026-07-15', [[20, 12]])]])) };
@@ -174,7 +176,7 @@ test('anything the validator accepts loads back after saving', () => {
 });
 
 test('five years of a 6 day week exports well under the import cap and restores', () => {
-  const names = data.days.flatMap((d) => d.exercises.map((e) => e.name));
+  const names = trainerDays.flatMap((d) => d.exercises.map((e) => e.name));
   let log = L.emptyLog();
   const start = new Date(2026, 0, 5);
   for (let day = 0; day < 7 * 52 * 5; day++) { // five years, to leave room
@@ -301,7 +303,7 @@ test('the days store validates, saves and loads, and a restore adds only unknown
 });
 
 test('the exercise order applies per day, moves items, and the backup carries it', () => {
-  const push = data.days.find((d) => d.id === 'push').exercises;
+  const push = trainerDays.find((d) => d.id === 'push').exercises;
   const ids = push.map((e) => e.id);
   assert.deepEqual(L.applyOrder(push, []).map((e) => e.id), ids);
   const moved = L.moveItem(ids, 6, 0); // the last exercise first
@@ -405,4 +407,89 @@ test('a restore counts the Done marks it adds, and a training started by mistake
   assert.deepEqual(days.sessions, []);
   const finished = L.finishSession(L.startSession(L.emptyDays(), 'push', new Date(2026, 9, 8, 18, 0)).days, new Date(2026, 9, 8, 19, 0)).days;
   assert.equal(L.discardSession(finished, '2026-10-08').sessions.length, 1); // only a running training can be discarded
+});
+
+// ---- Several plans ----
+
+test('a training records its plan, and the plan survives saving and loading', () => {
+  const r = L.startSession(L.emptyDays(), 'pull', new Date(2026, 9, 9, 18, 0), '2026-10-09', 'strength');
+  assert.equal(r.session.plan, 'strength');
+  const s = fakeStorage();
+  L.saveDays(s, r.days);
+  assert.equal(L.loadDays(s).days.sessions[0].plan, 'strength');
+  assert.equal(L.startSession(L.emptyDays(), 'pull', new Date(2026, 9, 9, 18, 0)).session.plan, undefined); // older callers: the trainer plan
+  assert.equal(L.validateDays({ v: 1, sessions: [{ date: '2026-10-09', day: 'pull', start: 5, end: 9, plan: 'Bad Plan' }], done: {} }).days.sessions[0].plan, undefined); // a bad plan id is dropped, not fatal
+});
+
+test('saving one plan\'s order keeps the other plans\' order on the same day', () => {
+  let order = L.setDayOrder(L.emptyOrder(), 'push', ['push-3', 'push-1', 'push-2']);
+  order = L.setDayOrder(order, 'push', ['push-102', 'push-101']);
+  assert.deepEqual(order.order.push, ['push-102', 'push-101', 'push-3', 'push-1', 'push-2']);
+  order = L.setDayOrder(order, 'push', ['push-1', 'push-3', 'push-2']);
+  assert.deepEqual(order.order.push, ['push-1', 'push-3', 'push-2', 'push-102', 'push-101']);
+  const trainerPush = [{ id: 'push-1' }, { id: 'push-2' }, { id: 'push-3' }];
+  assert.deepEqual(L.applyOrder(trainerPush, order.order.push).map((e) => e.id), ['push-1', 'push-3', 'push-2']);
+});
+
+// ---- Review fixes for several plans ----
+
+const TRAINER = [12, 10, 10, 8];
+const FIVE = [5, 5, 5];
+const SQUAT = 'barbell-back-squat.barbell';
+
+test('advice only compares sessions with the same rep targets', () => {
+  // 3 x 5 at 100 kg on the strength plan, every rep hit.
+  let log = L.setSlot(L.emptyLog(), SQUAT, '2026-10-02', 0, { w: 100, r: 5 }, 3, FIVE);
+  log = L.setSlot(log, SQUAT, '2026-10-02', 1, { w: 100, r: 5 }, 3, FIVE);
+  log = L.setSlot(log, SQUAT, '2026-10-02', 2, { w: 100, r: 5 }, 3, FIVE);
+  assert.deepEqual(log.entries[SQUAT][0].tg, FIVE);
+  const same = L.guide(log, SQUAT, '2026-10-05', FIVE, 2.5, TRAINER);
+  assert.equal(same.allHit, true);
+  assert.deepEqual(same.suggestions.map((s) => s.w), [102.5, 102.5, 102.5]);
+  // Opened on a plan where the squat is 3 x 8 to 12: last time is shown, but no 100 kg for 12 reps and no nudge.
+  const other = L.guide(log, SQUAT, '2026-10-05', [12, 12, 12], 2.5, TRAINER);
+  assert.equal(other.last.date, '2026-10-02');
+  assert.equal(other.sameScheme, false);
+  assert.equal(other.allHit, false);
+  assert.deepEqual(other.suggestions, [null, null, null]);
+  // An older session with the same targets still guides.
+  let mixed = L.setSlot(L.emptyLog(), SQUAT, '2026-09-28', 0, { w: 60, r: 12 }, 3, [12, 12, 12]);
+  mixed = L.setSlot(mixed, SQUAT, '2026-10-02', 0, { w: 100, r: 5 }, 3, FIVE);
+  assert.deepEqual(L.guide(mixed, SQUAT, '2026-10-05', [12, 12, 12], 2.5, TRAINER).suggestions[0], { w: 60, up: false });
+});
+
+test('sets logged before plans existed count as the trainer plan\'s 12, 10, 10, 8', () => {
+  const legacy = { v: 1, entries: { [KEY]: [{ date: '2026-10-01', sets: [{ w: 30, r: 12 }, { w: 32.5, r: 10 }, { w: 32.5, r: 10 }, { w: 35, r: 8 }] }] } };
+  assert.equal(L.guide(legacy, KEY, '2026-10-05', TRAINER, 2.5, TRAINER).allHit, true);
+  assert.equal(L.guide(legacy, KEY, '2026-10-05', [20, 20, 20, 20, 20, 20], 2, TRAINER).sameScheme, false);
+});
+
+test('the targets of a session survive edits, restores and saving', () => {
+  let log = L.setSlot(L.emptyLog(), SQUAT, '2026-10-02', 0, { w: 100, r: 5 }, 3, FIVE);
+  log = L.setSlot(log, SQUAT, '2026-10-02', 1, { w: 100, r: 5 }, 3); // an older caller without targets keeps them
+  assert.deepEqual(log.entries[SQUAT][0].tg, FIVE);
+  assert.deepEqual(L.mergeLogs(L.emptyLog(), log).log.entries[SQUAT][0].tg, FIVE);
+  assert.deepEqual(L.mergeLogs(log, { v: 1, entries: { [SQUAT]: [{ date: '2026-10-02', sets: [null, null, { w: 100, r: 5 }] }] } }).log.entries[SQUAT][0].tg, FIVE);
+  const s = fakeStorage();
+  L.saveLog(s, log);
+  assert.deepEqual(L.loadLog(s).log.entries[SQUAT][0].tg, FIVE);
+  const odd = L.validateLog({ v: 1, entries: { [SQUAT]: [{ date: '2026-10-02', sets: [{ w: 100, r: 5 }], tg: ['five'] }] } });
+  assert.equal(odd.ok, true); // nonsense targets are dropped, never fatal
+  assert.equal(odd.log.entries[SQUAT][0].tg, undefined);
+});
+
+test('an assisted exercise progresses by taking assist off, and never below one step', () => {
+  const PULL = 'pull-up.machine';
+  let log = L.emptyLog();
+  for (let i = 0; i < 3; i++) log = L.setSlot(log, PULL, '2026-10-02', i, { w: 30, r: 12 }, 3, [12, 12, 12]);
+  assert.deepEqual(L.guide(log, PULL, '2026-10-05', [12, 12, 12], -2.5, TRAINER).suggestions.map((s) => [s.w, s.up]), [[27.5, true], [27.5, true], [27.5, true]]);
+  let light = L.emptyLog();
+  for (let i = 0; i < 3; i++) light = L.setSlot(light, PULL, '2026-10-02', i, { w: 2.5, r: 12 }, 3, [12, 12, 12]);
+  assert.deepEqual(L.guide(light, PULL, '2026-10-05', [12, 12, 12], -2.5, TRAINER).suggestions[0], { w: 2.5, up: false });
+});
+
+test('a restore keeps the phone\'s order first and adds the other plans\' order for the same day', () => {
+  const phone = { v: 1, order: { push: ['push-3', 'push-1', 'push-2'] } };
+  const backup = { v: 1, order: { push: ['push-102', 'push-101', 'push-1'], legs: ['legs-7'] } };
+  assert.deepEqual(L.mergeOrder(phone, backup).order, { push: ['push-3', 'push-1', 'push-2', 'push-102', 'push-101'], legs: ['legs-7'] });
 });
