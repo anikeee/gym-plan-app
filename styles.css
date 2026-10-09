@@ -45,6 +45,7 @@ main:empty + .foot { display: none; }
 /* Day list */
 .dayhead { position: sticky; top: 0; z-index: 2; display: flex; flex-direction: column; gap: 14px; padding: calc(20px + env(safe-area-inset-top)) 20px 12px; background: var(--bg); }
 .dayhead-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.dayhead-row .duration { flex: none; }
 .duration { margin: 0; display: flex; align-items: center; gap: 6px; font: 600 15px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .day { display: flex; flex-direction: column; gap: 16px; padding: 10px 20px 28px; }
 .day-titles { display: flex; flex-direction: column; gap: 6px; }
@@ -60,6 +61,20 @@ span.ex-thumb { background: var(--raised); }
 .ex-name { font-weight: 600; font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
 .ex-rest { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
 .chev { color: var(--dim); }
+/* The plan picker in the day header and its sheet */
+.plan-btn { display: inline-flex; align-items: center; gap: 6px; min-width: 0; min-height: 40px; padding: 0; border: 0; background: transparent; color: var(--accent); font: 700 15px/1.2 var(--display); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
+.plan-btn-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plan-btn .i { flex: none; }
+.plan-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.plan-item { display: flex; flex-direction: column; gap: 4px; }
+.plan-opt { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); color: var(--text); text-align: left; cursor: pointer; }
+.plan-opt.is-on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.plan-opt-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 700 22px/1.1 var(--display); letter-spacing: .03em; text-transform: uppercase; }
+.plan-opt-head .i { color: var(--accent); }
+.plan-opt-meta { font-size: 13px; color: var(--muted); }
+.plan-opt-tag { font-size: 15px; line-height: 1.4; color: var(--soft); }
+.plan-source { align-self: flex-start; padding: 6px 16px; font-size: 13px; color: var(--muted); }
+.train-plan { display: block; margin-top: 6px; font: 600 13px/1.2 var(--display); letter-spacing: .12em; color: var(--accent); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .chip.is-done { gap: 6px; color: var(--accent); border-color: rgba(198, 244, 50, .45); }
 .ex-card.is-done { border-color: rgba(198, 244, 50, .55); }
@@ -121,10 +136,14 @@ span.ex-thumb { background: var(--raised); }
 .count { font: 600 15px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
 .ex-head { display: flex; flex-direction: column; gap: 8px; padding: 22px 20px 0; }
 .sets-block { display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 0; }
-.sets { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.sets { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 8px; } /* --n: the exercise's number of sets */
 .set { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 0 10px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
-.set-reps { font: 700 clamp(28px, 9.5vw, 36px)/1 var(--display); } /* 122.5 kg still fits a 320 px phone */
-.set-reps.is-long { font-size: clamp(22px, 7.6vw, 32px); } /* six characters, like 102.25 */
+/* Sized by the number of boxes in a row, so 122.5 kg still fits 5 boxes on a 320 px phone. */
+.set-reps { font: 700 clamp(20px, calc(38vw / var(--n, 4)), 36px)/1 var(--display); }
+.set-reps.is-long { font-size: clamp(16px, calc(30.4vw / var(--n, 4)), 32px); } /* six characters, like 102.25 */
+.sets-block.many .set-hint, .sets-block.many .set-label { font-size: 13px; letter-spacing: .06em; }
+.sets-block.many .last-sets { font-size: 13px; }
+.scheme { margin: 0; font-size: 15px; line-height: 1.45; color: var(--soft); }
 .set-unit { font-size: 12px; color: var(--muted); }
 .rest { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--soft); }
 .rest .i { color: var(--accent); }
@@ -136,7 +155,8 @@ span.ex-thumb { background: var(--raised); }
 .anim { position: relative; width: 100%; aspect-ratio: 1; background: #FFFFFF; border-radius: 14px; overflow: hidden; }
 .anim > img, .frames img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .frames img { animation: frameSwap 2.4s steps(1) infinite; }
-.frames img + img { animation-delay: -1.2s; } /* a negative delay starts it half a cycle in, so exactly one frame shows from the start */
+.frames img + img { animation-delay: -1.2s; }
+.frames.single img { animation: none; opacity: 1; } /* only one frame stored offline: show it still */ /* a negative delay starts it half a cycle in, so exactly one frame shows from the start */
 @keyframes frameSwap { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 .anim-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: #3F444C; font-size: 15px; font-weight: 600; }
 .spinner { animation: spin .9s linear infinite; }
@@ -168,7 +188,7 @@ span.ex-thumb { background: var(--raised); }
 .last p { margin: 0; }
 .last-head { display: flex; justify-content: space-between; gap: 12px; font: 600 13px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .last-unit { letter-spacing: .06em; }
-.last-sets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--soft); }
+.last-sets { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 8px; text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--soft); }
 .last-nudge { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(198, 244, 50, .12); color: var(--accent); font-weight: 600; font-size: 15px; }
 .last-nudge .i { stroke-width: 2.5; }
 .sets li { display: flex; min-width: 0; }
@@ -213,6 +233,8 @@ dialog.sheet::backdrop { background: rgba(0, 0, 0, .6); }
 .log-status, .train-status { font-size: 14px; color: var(--accent); }
 .log-status.is-error, .train-status.is-error { color: var(--warn); }
 @media (hover: hover) {
+  .plan-opt:not(.is-on):hover { border-color: var(--line-hi); }
+  .plan-btn:hover .plan-btn-name { text-decoration: underline; }
   button.set:hover, .log-btn:hover, .history-more:hover, .move-btn:not(:disabled):hover, .stepper-btn:hover, .sheet-cancel:hover, .sheet-clear:hover, .handle:hover, .done-btn:not(.is-done):hover, .train-btn.is-finish:hover { border-color: var(--line-hi); background-color: #2C3038; }
   .reorder-btn:not([aria-pressed="true"]):hover { background-color: #2C3038; }
   .train-btn:not(.is-finish):hover { filter: brightness(1.08); }

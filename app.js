@@ -2,8 +2,8 @@ import * as L from './log.js';
 
 const API = 'https://oss.exercisedb.dev/api/v1/exercises/';
 const GIF_TIMEOUT_MS = 6000;
-const SESSION_LENGTH = '45 min'; // docs/research/anik-workout-plan-1.txt:3
-const state = { data: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: false, day: null, days: null, order: null, timer: null, reorder: false }; // live: exerciseId -> API response for this page load only
+const PLAN_KEY = 'gymplan.plan'; // the plan picked in the day page header; the personal trainer's plan when unset
+const state = { data: null, plan: null, index: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: false, day: null, days: null, order: null, timer: null, reorder: false }; // live: exerciseId -> API response for this page load only
 const LATEST_APK = 'https://github.com/anikeee/gym-plan-app/releases/latest/download/workout-plan.apk';
 const SAVE_FAILED = "Couldn't save on this phone. Storage may be full or blocked.";
 // Reading the localStorage global itself throws when site data is blocked, so read it once here. The log
@@ -13,6 +13,8 @@ const store = (() => { try { return window.localStorage; } catch { return null; 
 async function main() {
   const res = await fetch('data/exercises.json', { cache: 'no-cache' });
   state.data = await res.json();
+  state.index = buildIndex(state.data.plans);
+  state.plan = pickedPlan();
   state.log = L.emptyLog(); state.days = L.emptyDays(); state.order = L.emptyOrder();
   freshLog(); freshDays(); freshOrder();
   state.day = L.currentDay(state.days, state.log);
@@ -26,12 +28,14 @@ async function main() {
   // Another tab changed something (key null means storage was cleared): show it here too.
   window.addEventListener('storage', (e) => {
     const all = e.key === null;
+    if (all || e.key === PLAN_KEY) state.plan = pickedPlan();
+    if (e.key === PLAN_KEY) { if (!route().exercise) redraw(); return; }
     const logChanged = all || e.key === L.STORE_KEY;
     const daysChanged = all || e.key === L.DAYS_KEY || e.key === L.ORDER_KEY;
     if (!logChanged && !daysChanged) return;
     if (logChanged) freshLog();
     if (daysChanged) { freshDays(); freshOrder(); }
-    if (!route().exercise) { render(); return; } // the day list and the diary hold no animation, so a redraw is cheap
+    if (!route().exercise) { redraw(); return; } // the day list and the diary hold no animation, so a redraw is cheap
     if (logChanged) state.repaintSets?.();
     if (daysChanged) { state.repaintDone?.(); state.repaintPosition?.(); } // the exercise page keeps its live animation
   });
@@ -50,11 +54,58 @@ async function main() {
   render();
   takeBackupResult(); // a result from before this page could listen: Android restarted the app while its save picker was open
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  warmPictures(state.plan);
+}
+
+// The trainer plan's offline pictures come with the app. Another plan's are fetched once, while online, when it is
+// picked; the service worker keeps every picture it serves, so that plan's offline pictures work at the gym too.
+async function warmPictures(plan) {
+  if (plan === state.data.plans[0] || !('serviceWorker' in navigator) || !navigator.onLine) return;
+  await navigator.serviceWorker.ready;
+  if (!navigator.serviceWorker.controller) await new Promise((r) => navigator.serviceWorker.addEventListener('controllerchange', r, { once: true }));
+  const ids = new Set(plan.days.flatMap((d) => d.exercises.flatMap((e) => Object.values(e.variants).map((v) => v.animation.fallback).filter(Boolean))));
+  const urls = [...ids].flatMap((id) => [`media/fallback/${id}/0.jpg`, `media/fallback/${id}/1.jpg`]);
+  const next = () => { const url = urls.shift(); if (url && state.plan === plan) fetch(url).catch(() => {}).finally(next); };
+  next(); next(); // two at a time, and it stops if another plan is picked meanwhile
+}
+
+// Every exercise of every plan by id, every plan by id, and every weight log key, built once.
+function buildIndex(plans) {
+  const exercises = new Map(); const keys = new Map(); const planById = new Map();
+  plans.forEach((plan, planRank) => {
+    planById.set(plan.id, plan);
+    plan.days.forEach((day) => day.exercises.forEach((ex, i) => {
+      exercises.set(ex.id, { plan, day, ex, rank: planRank * 1000 + plan.days.indexOf(day) * 100 + i });
+      for (const k of Object.keys(ex.variants)) { const key = L.entryKey(ex.name, k); if (!keys.has(key)) keys.set(key, { ex, variant: k, rank: exercises.get(ex.id).rank }); }
+    }));
+  });
+  return { exercises, keys, planById };
+}
+function planById(id) { return state.index.planById.get(id) || state.data.plans[0]; }
+function pickedPlan() {
+  let id = null;
+  try { id = store.getItem(PLAN_KEY); } catch { /* blocked storage: the default plan */ }
+  return planById(id);
+}
+function planOf(ex) { return state.index.exercises.get(ex.id)?.plan || state.data.plans[0]; }
+// The rep target of every set: the exercise's own, else the plan's (the trainer plan: 12, 10, 10, 8).
+function targetsFor(ex) { return ex.reps || planOf(ex).reps; }
+// "4 × 12, 10, 10, 8", or "3 × 8 to 12" for a range, whose target is its top: reach it on every set, then add weight.
+function schemeText(ex) {
+  const t = targetsFor(ex);
+  if (ex.repRange) return `${t.length} × ${ex.repRange[0]} to ${ex.repRange[1]}`;
+  return t.every((r) => r === t[0]) ? `${t.length} × ${t[0]}` : `${t.length} × ${t.join(', ')}`;
+}
+
+// A redraw from outside the page (another tab): an open sheet is closed first, so its back step goes with it.
+function redraw() {
+  document.querySelector('dialog.sheet[open]')?.close();
+  render();
 }
 
 function route() {
   const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
-  const dayIds = state.data.days.map((d) => d.id);
+  const dayIds = state.plan.days.map((d) => d.id);
   let saved = null;
   try { saved = store.getItem('day'); } catch { /* blocked storage: start on push */ }
   const history = parts[0] === 'history'; // #/history: the training days diary. Its back link goes to the last day shown.
@@ -70,8 +121,10 @@ function render() {
   state.tick = null;
   state.drag?.cancel(); // a drag whose list is about to vanish must not keep scrolling the page
   try { store.setItem('day', r.day); } catch { /* blocked storage: the day is only remembered in the URL */ }
-  const day = state.data.days.find((d) => d.id === r.day);
-  const ex = r.exercise ? day.exercises.find((e) => e.id === r.exercise) : null;
+  // An exercise is found in whichever plan holds it, so a link keeps working after another plan is picked.
+  const found = r.exercise ? state.index.exercises.get(r.exercise) : null;
+  const day = found ? found.day : state.plan.days.find((d) => d.id === r.day);
+  const ex = found ? found.ex : null;
   const view = document.getElementById('view');
   // A version switch keeps the scroll position. A new day or exercise starts at the top, and leaves Reorder mode.
   const shown = r.history ? 'history' : `${day.id}/${ex ? ex.id : ''}`;
@@ -101,6 +154,7 @@ const ICONS = {
   video: '<rect x="3" y="5" width="14" height="14" rx="3"/><path d="M17 10l4-2v8l-4-2"/>',
   play: '<path d="M8 5v14l11-7z"/>',
   up: '<path d="M12 19V5"/><path d="M6 11l6-6 6 6"/>',
+  down: '<path d="M12 5v14"/><path d="M6 13l6 6 6-6"/>',
   check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
   minus: '<path d="M5 12h14"/>',
   plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
@@ -118,7 +172,8 @@ function icon(name, size, cls) {
   return s;
 }
 
-function restFor(ex) { return state.data.plan.rest[ex.type].replace(/ sec$/, ' s'); }
+// An exercise may set its own rest (the strength plan's first lift: 3 to 5 min), else the plan's rest for its type.
+function restFor(ex) { return (ex.rest || planOf(ex).rest[ex.type]).replace(/ sec$/, ' s'); }
 // "Chest / Shoulders / Triceps" reads as "Chest, shoulders and triceps".
 function focusText(focus) {
   const p = focus.split(' / ').map((w, i) => (i ? w.toLowerCase() : w));
@@ -130,7 +185,7 @@ function defaultVariant(ex) { return ex.variants[ex.asWritten] ? ex.asWritten : 
 function exerciseHref(day, ex) { return `#/${day.id}/${ex.id}/${defaultVariant(ex)}`; }
 // The day's exercises in the user's own order (Reorder on the day page), plan order until they change it.
 function orderedExercises(day) { return L.applyOrder(day.exercises, state.order.order[day.id]); }
-function dayName(id) { return state.data.days.find((d) => d.id === id)?.name || cap(id); }
+function dayName(id) { return state.plan.days.find((d) => d.id === id)?.name || cap(id); }
 // How many of a plan day's exercises carry a Done mark on a date. The day chip and the training card both use it.
 function doneCount(planDay, date) { return L.doneOn(state.days, date).filter((id) => planDay.exercises.some((e) => e.id === id)).length; }
 function fmtTime(ms) { return new Date(ms).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
@@ -147,9 +202,13 @@ function thumbFor(ex) {
 function renderDay(view, day) {
   const head = el('header', 'dayhead');
   const row = el('div', 'dayhead-row');
-  row.append(el('p', 'eyebrow', 'Workout plan #1'), withIcon(el('p', 'duration'), 'clock', 15, SESSION_LENGTH));
+  const picker = el('button', 'plan-btn'); picker.type = 'button';
+  picker.setAttribute('aria-haspopup', 'dialog'); picker.setAttribute('aria-label', `Plan: ${state.plan.name}. Change plan`);
+  picker.append(el('span', 'plan-btn-name', state.plan.name), icon('chevronDown', 16));
+  picker.addEventListener('click', () => openPlanSheet(view, picker));
+  row.append(picker, withIcon(el('p', 'duration'), 'clock', 15, `${state.plan.minutes} min`));
   const nav = el('nav', 'seg'); nav.setAttribute('aria-label', 'Training day');
-  for (const d of state.data.days) {
+  for (const d of state.plan.days) {
     const a = link(`#/${d.id}`, 'seg-btn', d.name);
     if (d.id === day.id) a.setAttribute('aria-current', 'page');
     nav.append(a);
@@ -161,7 +220,8 @@ function renderDay(view, day) {
   titles.append(el('h1', 'title-xl', `${day.name} day`), el('p', 'focus', focusText(day.focus)));
   const chips = el('div', 'chips');
   const doneToday = doneCount(day, state.day);
-  chips.append(el('span', 'chip', `${day.exercises.length} exercises`), el('span', 'chip', `${state.data.plan.sets} sets: ${state.data.plan.reps.join(', ')}`));
+  const uniform = day.exercises.every((e) => !e.reps);
+  chips.append(el('span', 'chip', `${day.exercises.length} exercises`), el('span', 'chip', uniform ? `${state.plan.sets} sets: ${state.plan.reps.join(', ')}` : 'Sets and reps per exercise'));
   if (doneToday) chips.append(withIcon(el('span', 'chip is-done'), 'check', 14, `${doneToday} of ${day.exercises.length} done`));
 
   const listHead = el('div', 'list-head');
@@ -188,6 +248,49 @@ function renderDay(view, day) {
   view.append(head, body);
 }
 
+// The plan picker: every plan, who it comes from and who it suits. The personal trainer's plan is first and the default.
+function openPlanSheet(view, opener) {
+  const sheet = el('dialog', 'sheet plan-sheet'); sheet.setAttribute('aria-labelledby', 'plan-title');
+  const head = el('div', 'sheet-head');
+  const title = el('h2', 'sheet-title', 'Choose a plan'); title.id = 'plan-title';
+  const close = el('button', 'sheet-clear', 'Close'); close.type = 'button';
+  head.append(title, close);
+  const list = el('div', 'plan-list'); list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-labelledby', 'plan-title');
+  for (const plan of state.data.plans) {
+    const on = plan === state.plan;
+    const item = el('div', 'plan-item');
+    const opt = el('button', `plan-opt${on ? ' is-on' : ''}`); opt.type = 'button';
+    opt.setAttribute('role', 'radio'); opt.setAttribute('aria-checked', String(on));
+    const name = el('span', 'plan-opt-head'); name.append(el('span', null, plan.name));
+    if (on) name.append(icon('checkCircle', 22));
+    const counts = plan.days.map((d) => d.exercises.length);
+    const lo = Math.min(...counts); const hi = Math.max(...counts);
+    opt.append(name, el('span', 'plan-opt-meta', `${plan.by} · ${plan.minutes} min · ${lo === hi ? lo : `${lo} to ${hi}`} exercises a day`), el('span', 'plan-opt-tag', plan.tagline), el('span', 'plan-opt-meta', plan.progression));
+    opt.addEventListener('click', () => {
+      try { store.setItem(PLAN_KEY, plan.id); } catch { /* blocked storage: the pick lasts until the page reloads */ }
+      state.plan = plan;
+      sheet.close();
+      render();
+      warmPictures(plan);
+      document.querySelector('.plan-btn')?.focus({ preventScroll: true });
+    });
+    item.append(opt);
+    if (plan.sourceUrl) { const src = link(plan.sourceUrl, 'plan-source', 'Read the source'); src.target = '_blank'; src.rel = 'noopener'; item.append(src); }
+    list.append(item);
+  }
+  sheet.append(head, list);
+  close.addEventListener('click', () => sheet.close());
+  sheet.addEventListener('close', () => {
+    if (history.state?.sheet) history.back(); // the phone's back button closes the sheet (popstate in main)
+    sheet.remove();
+    if (opener.isConnected) opener.focus({ preventScroll: true });
+  });
+  view.append(sheet);
+  sheet.showModal();
+  history.pushState({ sheet: 1 }, '');
+  list.querySelector('[aria-checked="true"]')?.focus();
+}
+
 function exerciseRow(day, ex, i) {
   const done = L.isDone(state.days, state.day, ex.id);
   const a = link(exerciseHref(day, ex), `ex-card${done ? ' is-done' : ''}`);
@@ -203,7 +306,7 @@ function exerciseThumb(ex) {
 function exerciseText(ex, i, done) {
   const text = el('span', 'ex-text');
   text.append(el('span', `tag is-${ex.type}`, `${String(i + 1).padStart(2, '0')} · ${cap(ex.type)}`), el('span', 'ex-name', ex.name),
-    withIcon(el('span', 'ex-rest'), 'clock', 14, `Rest ${restFor(ex)}`));
+    withIcon(el('span', 'ex-rest'), 'clock', 14, ex.reps ? `${schemeText(ex)} · Rest ${restFor(ex)}` : `Rest ${restFor(ex)}`));
   if (done) text.append(el('span', 'sr-only', 'Done today'));
   return text;
 }
@@ -219,7 +322,7 @@ function reorderRow(day, ex, i, ordered, list, paintList, moved, listStatus) {
     const next = L.moveItem(ids, i, to);
     if (next === ids) return false;
     const cur = freshOrder();
-    const order = cur && { ...cur, order: { ...cur.order, [day.id]: next } };
+    const order = cur && L.setDayOrder(cur, day.id, next); // keeps the other plans' order for this day
     if (!order || !L.saveOrder(store, order)) { say(listStatus, SAVE_FAILED, true); return false; }
     state.order = order;
     listStatus.textContent = '';
@@ -339,8 +442,14 @@ function renderExercise(view, day, ex, variantKey) {
   head.append(el('p', 'eyebrow', cap(ex.type)), el('h1', 'title-lg', ex.name));
 
   const setsBlock = el('div', 'sets-block');
+  const nSets = targetsFor(ex).length;
+  const cols = nSets <= 5 ? nSets : Math.ceil(nSets / 2); // 6 sets: two rows of 3, so every box keeps a readable size
+  setsBlock.style.setProperty('--n', String(cols)); // the boxes and the Last time row share one column count
+  setsBlock.classList.toggle('many', cols >= 5);
   const setLog = buildSetLog(ex, key);
-  setsBlock.append(setLog.lastLine, setLog.list, withIcon(el('p', 'rest'), 'clock', 18, `Rest ${restFor(ex)} between sets`), buildDoneButton(ex));
+  const rest = withIcon(el('p', 'rest'), 'clock', 18, `Rest ${restFor(ex)} between sets`);
+  const scheme = ex.repRange ? el('p', 'scheme', `${schemeText(ex)} reps. Reach ${ex.repRange[1]} on every set, then ${ex.variants[key].assisted ? 'take one step of assist off' : 'add weight'}.`) : null;
+  setsBlock.append(...[setLog.lastLine, setLog.list, scheme, rest, buildDoneButton(ex)].filter(Boolean));
 
   // Buttons, not links: switching version replaces the hash so the back button still goes to the day.
   const seg = el('div', `seg seg-versions${keys.length > 2 ? ' three' : ''}`); seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Version');
@@ -409,23 +518,27 @@ function renderExercise(view, day, ex, variantKey) {
 // Weight log for one exercise version: the "Last time" line, the set boxes, and the sheet that logs a set.
 // Saving repaints only the tapped box. It never calls render(), which would restart the animation and refetch it on weak signal.
 function buildSetLog(ex, variantKey) {
-  const targets = state.data.plan.reps;
+  const targets = targetsFor(ex);
   const logKey = L.entryKey(ex.name, variantKey);
   let today = state.day;
-  const step = L.stepFor(variantKey);
+  // An exercise may set its own step for the version the plan writes (the strength plan's deadlift: 5 kg).
+  const step = (variantKey === ex.asWritten && ex.step) || L.stepFor(variantKey);
+  // An assisted machine counts help, not load: less is progress, so the guide steps down.
+  const assisted = Boolean(ex.variants[variantKey].assisted);
+  const legacy = state.data.plans[0].reps; // sessions saved before plans existed came from the trainer's plan
   const versionName = VARIANT_LABEL[variantKey] || cap(variantKey);
   const lastLine = el('div', 'last');
   let g; // the guide: last session, nudge and suggested weights. Rebuilt only when earlier days change (another tab).
   function paintLast() {
-    g = L.guide(state.log, logKey, today, targets, step);
+    g = L.guide(state.log, logKey, today, targets, assisted ? -step : step, legacy);
     lastLine.replaceChildren();
     lastLine.hidden = !g.last;
     if (!g.last) return;
-    const head = el('p', 'last-head'); head.append(el('span', null, `Last time · ${L.formatDay(g.last.date)}`), el('span', 'last-unit', 'kg × reps'));
+    const head = el('p', 'last-head'); head.append(el('span', null, `Last time · ${L.formatDay(g.last.date)}${g.sameScheme ? '' : ' · other reps'}`), el('span', 'last-unit', assisted ? 'assist kg × reps' : 'kg × reps'));
     const cells = el('p', 'last-sets');
     targets.forEach((t, i) => { const s = g.last.sets[i]; cells.append(el('span', null, s ? `${L.formatWeight(s.w)}×${s.r}` : 'skipped')); });
     lastLine.append(head, cells);
-    if (g.allHit) lastLine.append(withIcon(el('p', 'last-nudge'), 'up', 16, 'You hit every rep. Go up a step today.'));
+    if (g.allHit && g.suggestions.some((x) => x?.up)) lastLine.append(withIcon(el('p', 'last-nudge'), 'up', 16, assisted ? 'You hit every rep. Take one step of assist off today.' : 'You hit every rep. Go up a step today.'));
   }
   paintLast();
 
@@ -454,7 +567,8 @@ function buildSetLog(ex, variantKey) {
     let say;
     if (s) {
       const w = L.formatWeight(s.w);
-      if (s.up) { hint.classList.add('is-up'); hint.append(icon('up', 14), w); say = `try ${w} kilograms, up from last time`; }
+      if (s.up && assisted) { hint.classList.add('is-up'); hint.append(icon('down', 14), w); say = `try ${w} kilograms of assist, one step less than last time`; }
+      else if (s.up) { hint.classList.add('is-up'); hint.append(icon('up', 14), w); say = `try ${w} kilograms, up from last time`; }
       else { hint.append(w); say = `last time ${w} kilograms`; }
     } else { hint.append('Add kg'); say = 'not logged yet'; }
     b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', 'set-reps', String(t)), el('span', 'set-unit', 'reps'), hint);
@@ -471,7 +585,7 @@ function buildSetLog(ex, variantKey) {
   const headText = el('div', 'sheet-head-text'); headText.append(title, el('p', 'sheet-version', versionName));
   const head = el('div', 'sheet-head'); head.append(headText, clear);
   const context = el('p', 'sheet-context');
-  const wLabel = el('label', 'sheet-label', 'Weight'); wLabel.htmlFor = 'sheet-weight';
+  const wLabel = el('label', 'sheet-label', assisted ? 'Assist (kg of help)' : 'Weight'); wLabel.htmlFor = 'sheet-weight';
   const wInput = el('input', 'stepper-input'); wInput.id = 'sheet-weight'; wInput.type = 'text';
   wInput.inputMode = 'decimal'; wInput.enterKeyHint = 'done'; wInput.autocomplete = 'off'; wInput.spellcheck = false;
   const wField = el('span', 'stepper-field'); wField.append(wInput, el('span', 'stepper-unit', 'kg'));
@@ -502,7 +616,7 @@ function buildSetLog(ex, variantKey) {
   // The newest earlier session that logged this set, for the line at the top of the sheet.
   const lastFor = (i) => {
     const prior = L.entriesFor(state.log, logKey).filter((e) => e.date < today);
-    for (let k = prior.length - 1; k >= 0; k--) if (prior[k].sets[i]) return { date: prior[k].date, ...prior[k].sets[i] };
+    for (let k = prior.length - 1; k >= 0; k--) if (prior[k].sets[i]) return { date: prior[k].date, tg: prior[k].tg || legacy, ...prior[k].sets[i] };
     return null;
   };
   // The clock passed 4 am with this page open: the boxes belong to a new session now.
@@ -524,10 +638,16 @@ function buildSetLog(ex, variantKey) {
     if (!last) context.textContent = `No earlier ${variantKey} sets yet. Log today's weight and it will show here next time.`;
     else {
       const lw = L.formatWeight(last.w);
-      let text = `Last time, ${L.formatDay(last.date)}: ${lw} kg × ${last.r} of ${t}.`;
-      if (s?.up) text += ` You hit every rep, so try ${L.formatWeight(s.w)} kg.`;
-      else if (last.r < t) text += ` Stay at ${lw} kg until you hit ${t}.`;
-      else text += ' Hit every rep on all 4 sets to go up a step.';
+      const unit = assisted ? 'kg of assist' : 'kg';
+      const same = last.tg.length === targets.length && last.tg.every((r, k) => r === targets[k]);
+      let text;
+      if (!same) text = `Last time, ${L.formatDay(last.date)}: ${lw} ${unit} × ${last.r}, on a plan with different reps. Pick ${assisted ? 'the help you need' : 'a weight you can lift'} for ${t} reps.`;
+      else {
+        text = `Last time, ${L.formatDay(last.date)}: ${lw} ${unit} × ${last.r} of ${t}.`;
+        if (s?.up) text += ` You hit every rep, so try ${L.formatWeight(s.w)} ${unit}.`;
+        else if (last.r < t) text += ` Stay at ${lw} ${unit} until you hit ${t}.`;
+        else text += ` Hit every rep on all ${targets.length} sets to ${assisted ? 'take one step of assist off' : 'go up a step'}.`;
+      }
       context.textContent = text;
     }
     sheet.showModal();
@@ -536,7 +656,7 @@ function buildSetLog(ex, variantKey) {
   // Saves one set (slot) or clears it (null), starting from the stored log. False when nothing could be saved.
   const persist = (slot) => {
     const cur = freshLog();
-    const next = cur && L.setSlot(cur, logKey, today, current, slot, targets.length);
+    const next = cur && L.setSlot(cur, logKey, today, current, slot, targets.length, targets);
     if (!next || !L.saveLog(store, next)) { status.textContent = SAVE_FAILED; return false; }
     state.log = next;
     return true;
@@ -783,10 +903,12 @@ function buildTrainingCard(day) {
     const h = el('h2', 'train-title'); h.id = 'train-title';
     const more = link('#/history', 'train-link'); more.append(`${all.length ? `All ${all.length} training ${all.length === 1 ? 'day' : 'days'}` : 'Training days'}`, icon('chevronRight', 18));
     if (running) {
-      const planDay = state.data.days.find((d) => d.id === running.day) ?? day;
+      const runPlan = planById(running.plan);
+      const planDay = runPlan.days.find((d) => d.id === running.day) ?? day;
       const total = planDay.exercises.length;
       const doneN = doneCount(planDay, today);
-      h.textContent = `Day ${todayEntry.number} · ${dayName(running.day)}`;
+      h.textContent = `Day ${todayEntry.number} · ${planDay.name}`;
+      if (runPlan !== state.plan) h.append(el('span', 'train-plan', runPlan.name)); // the running plan, when another one is picked
       const big = el('p', 'train-big');
       const time = el('p', 'train-time');
       big.setAttribute('aria-live', 'off'); time.setAttribute('aria-live', 'off'); // the page is a live region; a clock read out every 30 s is noise
@@ -833,7 +955,7 @@ function buildTrainingCard(day) {
     start.addEventListener('click', () => {
       const rolled = syncDay();
       const cur = freshDays();
-      const r = cur && L.startSession(cur, day.id, new Date(), state.day);
+      const r = cur && L.startSession(cur, day.id, new Date(), state.day, state.plan === state.data.plans[0] ? undefined : state.plan.id);
       if (!r || (r.started && !L.saveDays(store, r.days))) { say(status, SAVE_FAILED, true); return; }
       state.days = r.days;
       status.textContent = '';
@@ -906,15 +1028,29 @@ function dayCard(d, open, sets) {
   const sum = el('summary', 'day-sum');
   const setCount = Object.values(sets).reduce((n, s) => n + L.countSets(s), 0);
   // Which plan days were trained: from the sessions, else from the exercises that have sets or a Done mark.
-  const names = new Set(d.sessions.map((s) => dayName(s.day)));
-  const rows = [];
-  for (const planDay of state.data.days) for (const ex of orderedExercises(planDay)) {
-    const done = d.done.includes(ex.id);
-    const versions = Object.keys(ex.variants).map((k) => [k, sets[L.entryKey(ex.name, k)]]).filter(([, s]) => s);
-    if (!done && !versions.length) continue;
-    if (!d.sessions.length) names.add(planDay.name);
-    rows.push({ ex, done, versions });
+  const names = new Set(d.sessions.map((s) => `${dayName(s.day)}${s.plan && s.plan !== state.data.plans[0].id ? ` (${planById(s.plan).name})` : ''}`));
+  const byName = new Map(); // one row per exercise name: the same lift in two plans is one history
+  const rowFor = (ex, rank) => {
+    let row = byName.get(ex.name);
+    if (!row) { row = { ex, done: false, versions: [], rank }; byName.set(ex.name, row); }
+    row.rank = Math.min(row.rank, rank);
+    return row;
+  };
+  for (const id of d.done) { const hit = state.index.exercises.get(id); if (hit) rowFor(hit.ex, hit.rank).done = true; }
+  for (const [key, s] of Object.entries(sets)) {
+    const hit = state.index.keys.get(key);
+    if (hit) rowFor(hit.ex, hit.rank).versions.push([hit.variant, s]);
   }
+  // Order: first set time that day (the order trained), then the plan that was trained, in the user's own order.
+  const plan = d.sessions[0] ? planById(d.sessions[0].plan) : state.plan; // no Start pressed: the plan picked now
+  const planPos = new Map(plan.days.flatMap((day) => orderedExercises(day).map((ex, i) => [ex.name, plan.days.indexOf(day) * 100 + i])));
+  for (const r of byName.values()) {
+    const times = r.versions.flatMap(([, s]) => s.filter((x) => x && Number.isInteger(x.t)).map((x) => x.t));
+    r.first = times.length ? Math.min(...times) : Infinity;
+    r.pos = planPos.has(r.ex.name) ? planPos.get(r.ex.name) : 10000 + r.rank;
+  }
+  const rows = [...byName.values()].sort((a, b) => a.first - b.first || a.pos - b.pos);
+  if (!d.sessions.length) for (const r of rows) names.add(state.index.exercises.get(r.ex.id).day.name);
   const running = d.sessions.find((s) => s.end === null);
   const first = d.sessions[0]; const lastEnd = Math.max(...d.sessions.map((s) => s.end ?? 0));
   let when;
@@ -989,16 +1125,22 @@ async function loadAnimation(v, ui) {
 // One place draws the fallback. Called when the API fails and when the GIF fails to load.
 function renderFallback(a, ui) {
   setSteps(ui, null, a.exercisedb ? 'Needs the live animation' : null);
-  if (!a.fallback) {
+  const none = () => {
     const btn = el('button', 'watch-btn'); btn.type = 'button'; btn.append(icon('play', 16, 'fill'), 'Watch the video');
     btn.addEventListener('click', ui.toVideos);
     // With an ExerciseDB id the live animation exists, only the offline picture is missing.
     const title = a.exercisedb ? 'No offline picture for this version' : 'No animation for this version';
     setAnim(ui, 'none', [icon('video', 40), el('span', 'none-title', title), el('span', 'none-sub', 'Watch the video below instead.')], [btn]);
-    return;
-  }
+  };
+  if (!a.fallback) { none(); return; }
   const frames = el('div', 'frames');
-  for (const n of [0, 1]) { const img = el('img'); img.src = `media/fallback/${a.fallback}/${n}.jpg`; img.alt = n ? 'End position' : 'Start position'; frames.append(img); }
+  // A picture that was never stored offline must not show as a broken image: keep the one that loaded, else no picture.
+  let loaded = 2;
+  for (const n of [0, 1]) {
+    const img = el('img'); img.src = `media/fallback/${a.fallback}/${n}.jpg`; img.alt = n ? 'End position' : 'Start position';
+    img.onerror = () => { img.remove(); loaded--; if (loaded === 1) frames.classList.add('single'); else if (ui.box.contains(frames)) none(); };
+    frames.append(img);
+  }
   const chip = el('span', 'anim-chip'); chip.append(icon('wifiOff', 14), 'Offline picture');
   const foot = [el('span', 'caption', 'Start and end position')];
   if (a.note) foot.push(el('p', 'anim-note', a.note));
