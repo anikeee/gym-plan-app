@@ -35,7 +35,7 @@ The times are estimates. Every change made to the online plans, and the reason f
 
 ## What the app does
 
-- **Machine and dumbbell versions:** every exercise shows the PureGym machine and the dumbbell way to do it, plus a barbell way where the plan uses one.
+- **Machine and dumbbell versions:** every exercise shows the PureGym machine and the dumbbell way to do it, plus a barbell way where the plan uses one. Pull Up also has a bodyweight way on the bar, where you log the weight added and 0 kg means bodyweight only.
 - **Videos and pictures:** short YouTube clips, an animation, and pictures that work offline.
 - **Weight log:** type the weight and reps for each set. After a session where you hit every rep, the app suggests one step more weight.
 - **Training days:** tap Start training and Finish. The diary shows each day with its time and every set.
