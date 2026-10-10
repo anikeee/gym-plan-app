@@ -30,7 +30,7 @@ async function main() {
     const all = e.key === null;
     if (all || e.key === PLAN_KEY) state.plan = pickedPlan();
     if (e.key === PLAN_KEY) { if (!route().exercise) redraw(); return; }
-    const logChanged = all || e.key === L.STORE_KEY;
+    const logChanged = all || e.key === L.STORE_KEY || e.key === L.BODYWEIGHT_KEY;
     const daysChanged = all || e.key === L.DAYS_KEY || e.key === L.ORDER_KEY;
     if (!logChanged && !daysChanged) return;
     if (logChanged) freshLog();
@@ -413,7 +413,12 @@ function startDrag(e, handle, list, from, commit) {
   raf = requestAnimationFrame(tick);
 }
 
-const VARIANT_LABEL = { machine: 'Machine', dumbbell: 'Dumbbells', barbell: 'Barbell' };
+const VARIANT_LABEL = { machine: 'Machine', bodyweight: 'Bodyweight', dumbbell: 'Dumbbells', barbell: 'Barbell' };
+// A set's weight in a box, the Last time row and the diary. A bodyweight version logs what was added: BW is bodyweight only.
+function weightText(variantKey, w) {
+  if (variantKey !== 'bodyweight') return L.formatWeight(w);
+  return w ? `BW+${L.formatWeight(w)}` : 'BW';
+}
 
 function renderExercise(view, day, ex, variantKey) {
   const keys = Object.keys(ex.variants);
@@ -525,6 +530,13 @@ function buildSetLog(ex, variantKey) {
   const step = (variantKey === ex.asWritten && ex.step) || L.stepFor(variantKey);
   // An assisted machine counts help, not load: less is progress, so the guide steps down.
   const assisted = Boolean(ex.variants[variantKey].assisted);
+  // A bodyweight version counts the weight added, so 0 kg is a real set (log.js keeps it apart from the main log).
+  const bodyweight = L.isBodyweightKey(logKey);
+  const parse = bodyweight ? L.parseAdded : L.parseWeight;
+  const short = (w) => weightText(variantKey, w);
+  const spoken = (w) => (bodyweight ? (w ? `bodyweight plus ${L.formatWeight(w)} kilograms` : 'bodyweight only') : `${L.formatWeight(w)} kilograms`);
+  const written = (w) => (bodyweight ? (w ? `bodyweight + ${L.formatWeight(w)} kg` : 'bodyweight only') : `${L.formatWeight(w)} ${assisted ? 'kg of assist' : 'kg'}`);
+  const toBarText = ex.variants.bodyweight ? 'try the bar with no assist: tap Bodyweight' : 'try it with no assist';
   const legacy = state.data.plans[0].reps; // sessions saved before plans existed came from the trainer's plan
   const versionName = VARIANT_LABEL[variantKey] || cap(variantKey);
   const lastLine = el('div', 'last');
@@ -534,11 +546,12 @@ function buildSetLog(ex, variantKey) {
     lastLine.replaceChildren();
     lastLine.hidden = !g.last;
     if (!g.last) return;
-    const head = el('p', 'last-head'); head.append(el('span', null, `Last time · ${L.formatDay(g.last.date)}${g.sameScheme ? '' : ' · other reps'}`), el('span', 'last-unit', assisted ? 'assist kg × reps' : 'kg × reps'));
+    const head = el('p', 'last-head'); head.append(el('span', null, `Last time · ${L.formatDay(g.last.date)}${g.sameScheme ? '' : ' · other reps'}`), el('span', 'last-unit', assisted ? 'assist kg × reps' : bodyweight ? 'bodyweight × reps' : 'kg × reps'));
     const cells = el('p', 'last-sets');
-    targets.forEach((t, i) => { const s = g.last.sets[i]; cells.append(el('span', null, s ? `${L.formatWeight(s.w)}×${s.r}` : 'skipped')); });
+    targets.forEach((t, i) => { const s = g.last.sets[i]; cells.append(el('span', null, s ? `${short(s.w)}×${s.r}` : 'skipped')); });
     lastLine.append(head, cells);
     if (g.allHit && g.suggestions.some((x) => x?.up)) lastLine.append(withIcon(el('p', 'last-nudge'), 'up', 16, assisted ? 'You hit every rep. Take one step of assist off today.' : 'You hit every rep. Go up a step today.'));
+    else if (g.toBar) lastLine.append(withIcon(el('p', 'last-nudge'), 'up', 16, `You hit every rep with the least assist. Now ${toBarText} above.`));
   }
   paintLast();
 
@@ -558,19 +571,21 @@ function buildSetLog(ex, variantKey) {
     b.classList.toggle('done', Boolean(done));
     if (done) {
       // A logged set shows exactly what was lifted: the weight large, the reps under it. The plan target is in the sheet.
-      const w = L.formatWeight(done.w);
+      // On the bar: BW for bodyweight only, else the weight added, like +2.5.
+      const w = bodyweight && done.w ? `+${L.formatWeight(done.w)}` : short(done.w);
+      const unit = bodyweight ? (done.w ? 'kg added' : 'bodyweight') : 'kg';
       hint.classList.add('is-done'); hint.append(icon('check', 14), `${done.r} reps`);
-      b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', `set-reps${w.length >= 6 ? ' is-long' : ''}`, w), el('span', 'set-unit', 'kg'), hint); // 102.25 is six characters
-      b.setAttribute('aria-label', `Set ${i + 1}, done: ${w} kilograms, ${done.r} reps. Plan ${t} reps. Tap to change.`);
+      b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', `set-reps${w.length >= 6 ? ' is-long' : ''}`, w), el('span', 'set-unit', unit), hint); // 102.25 is six characters
+      b.setAttribute('aria-label', `Set ${i + 1}, done: ${spoken(done.w)}, ${done.r} reps. Plan ${t} reps. Tap to change.`);
       return;
     }
     let say;
     if (s) {
-      const w = L.formatWeight(s.w);
-      if (s.up && assisted) { hint.classList.add('is-up'); hint.append(icon('down', 14), w); say = `try ${w} kilograms of assist, one step less than last time`; }
-      else if (s.up) { hint.classList.add('is-up'); hint.append(icon('up', 14), w); say = `try ${w} kilograms, up from last time`; }
-      else { hint.append(w); say = `last time ${w} kilograms`; }
-    } else { hint.append('Add kg'); say = 'not logged yet'; }
+      const w = short(s.w);
+      if (s.up && assisted) { hint.classList.add('is-up'); hint.append(icon('down', 14), w); say = `try ${spoken(s.w)} of assist, one step less than last time`; }
+      else if (s.up) { hint.classList.add('is-up'); hint.append(icon('up', 14), w); say = `try ${spoken(s.w)}, up from last time`; }
+      else { hint.append(w); say = `last time ${spoken(s.w)}`; }
+    } else { hint.append(bodyweight ? 'Add reps' : 'Add kg'); say = 'not logged yet'; }
     b.replaceChildren(el('span', 'set-label', `Set ${i + 1}`), el('span', 'set-reps', String(t)), el('span', 'set-unit', 'reps'), hint);
     b.setAttribute('aria-label', `Set ${i + 1}, ${t} reps, ${say}. Tap to log.`);
   }
@@ -585,7 +600,7 @@ function buildSetLog(ex, variantKey) {
   const headText = el('div', 'sheet-head-text'); headText.append(title, el('p', 'sheet-version', versionName));
   const head = el('div', 'sheet-head'); head.append(headText, clear);
   const context = el('p', 'sheet-context');
-  const wLabel = el('label', 'sheet-label', assisted ? 'Assist (kg of help)' : 'Weight'); wLabel.htmlFor = 'sheet-weight';
+  const wLabel = el('label', 'sheet-label', assisted ? 'Assist (kg of help)' : bodyweight ? 'Weight added (0 for none)' : 'Weight'); wLabel.htmlFor = 'sheet-weight';
   const wInput = el('input', 'stepper-input'); wInput.id = 'sheet-weight'; wInput.type = 'text';
   wInput.inputMode = 'decimal'; wInput.enterKeyHint = 'done'; wInput.autocomplete = 'off'; wInput.spellcheck = false;
   const wField = el('span', 'stepper-field'); wField.append(wInput, el('span', 'stepper-unit', 'kg'));
@@ -628,24 +643,23 @@ function buildSetLog(ex, variantKey) {
     const done = L.todayEntry(state.log, logKey, today)?.sets[i];
     const w = L.prefill(state.log, logKey, today, i, g.suggestions);
     title.textContent = `Set ${i + 1} · ${t} reps`;
-    wInput.value = w == null ? '' : L.formatWeight(w);
+    wInput.value = w == null ? (bodyweight ? '0' : '') : L.formatWeight(w); // on the bar, most sets add nothing
     setReps(done ? done.r : t);
     clear.hidden = !done;
     status.textContent = '';
     const last = lastFor(i);
     const s = g.suggestions[i];
     // The version key reads as a plain noun here (machine, dumbbell, barbell sets); the label "Dumbbells" would not.
-    if (!last) context.textContent = `No earlier ${variantKey} sets yet. Log today's weight and it will show here next time.`;
+    if (!last) context.textContent = bodyweight ? 'No earlier bodyweight sets yet. Log 0 kg added for bodyweight only, and your reps will show here next time.' : `No earlier ${variantKey} sets yet. Log today's weight and it will show here next time.`;
     else {
-      const lw = L.formatWeight(last.w);
-      const unit = assisted ? 'kg of assist' : 'kg';
       const same = last.tg.length === targets.length && last.tg.every((r, k) => r === targets[k]);
       let text;
-      if (!same) text = `Last time, ${L.formatDay(last.date)}: ${lw} ${unit} × ${last.r}, on a plan with different reps. Pick ${assisted ? 'the help you need' : 'a weight you can lift'} for ${t} reps.`;
+      if (!same) text = `Last time, ${L.formatDay(last.date)}: ${written(last.w)} × ${last.r}, on a plan with different reps. Pick ${assisted ? 'the help you need' : bodyweight ? 'the weight to add, or 0' : 'a weight you can lift'} for ${t} reps.`;
       else {
-        text = `Last time, ${L.formatDay(last.date)}: ${lw} ${unit} × ${last.r} of ${t}.`;
-        if (s?.up) text += ` You hit every rep, so try ${L.formatWeight(s.w)} ${unit}.`;
-        else if (last.r < t) text += ` Stay at ${lw} ${unit} until you hit ${t}.`;
+        text = `Last time, ${L.formatDay(last.date)}: ${written(last.w)} × ${last.r} of ${t}.`;
+        if (s?.up) text += ` You hit every rep, so try ${written(s.w)}.`;
+        else if (last.r < t) text += ` Stay at ${written(last.w)} until you hit ${t}.`;
+        else if (g.toBar) text += ` You hit every rep with the least assist, so ${toBarText}.`;
         else text += ` Hit every rep on all ${targets.length} sets to ${assisted ? 'take one step of assist off' : 'go up a step'}.`;
       }
       context.textContent = text;
@@ -662,17 +676,17 @@ function buildSetLog(ex, variantKey) {
     return true;
   };
   function doSave() {
-    const w = L.parseWeight(wInput.value);
-    if (w == null) { status.textContent = 'Enter the weight in kg, for example 32.5.'; wInput.focus(); return; }
+    const w = parse(wInput.value);
+    if (w == null) { status.textContent = bodyweight ? 'Enter the weight added in kg, or 0 for bodyweight only.' : 'Enter the weight in kg, for example 32.5.'; wInput.focus(); return; }
     if (!persist({ w, r: reps, t: Date.now() })) return; // t: when the set was first saved, for the training day's times. Saves to the day the sheet opened for.
     paintSet(current);
     sheet.close();
   }
   const bump = (dir) => {
-    const w = L.parseWeight(wInput.value);
+    const w = parse(wInput.value);
     if (w == null) { if (dir > 0) wInput.value = L.formatWeight(step); else wInput.focus(); return; } // + from empty starts at one step
     const next = L.roundWeight(w + dir * step);
-    if (next > 0 && next <= 500) wInput.value = L.formatWeight(next);
+    if ((bodyweight ? next >= 0 : next > 0) && next <= 500) wInput.value = L.formatWeight(next); // on the bar, minus goes down to bodyweight only
   };
   wMinus.addEventListener('click', () => bump(-1));
   wPlus.addEventListener('click', () => bump(1));
@@ -873,7 +887,7 @@ async function importBackup(f) {
   const days = L.mergeDays(curDays, checked.days);
   const order = L.mergeOrder(curOrder, checked.order);
   const newOrderDays = Object.keys(order.order).length - Object.keys(curOrder.order).length;
-  const before = [L.STORE_KEY, L.DAYS_KEY, L.ORDER_KEY].map((k) => [k, store.getItem(k)]);
+  const before = [L.STORE_KEY, L.BODYWEIGHT_KEY, L.DAYS_KEY, L.ORDER_KEY].map((k) => [k, store.getItem(k)]);
   if (!L.saveLog(store, log) || !L.saveDays(store, days.days) || !L.saveOrder(store, order)) {
     for (const [k, v] of before) { try { if (v === null) store.removeItem(k); else store.setItem(k, v); } catch { /* the old value was smaller, so this only fails if storage is gone */ } }
     return fail(SAVE_FAILED);
@@ -1070,7 +1084,8 @@ function dayCard(d, open, sets) {
     const name = el('span', 'day-ex-name'); name.append(r.ex.name);
     if (r.done) name.append(' ', icon('checkCircle', 16));
     row.append(name);
-    for (const [k, s] of r.versions) row.append(el('span', 'day-ex-sets', `${VARIANT_LABEL[k] || cap(k)}: ${s.map((x) => (x ? `${L.formatWeight(x.w)}×${x.r}` : 'skipped')).join(' · ')}`));
+    // An assisted machine logs help, not load, so its label says so: the way from the machine to the bar reads right.
+    for (const [k, s] of r.versions) row.append(el('span', 'day-ex-sets', `${VARIANT_LABEL[k] || cap(k)}${r.ex.variants[k]?.assisted ? ' (assist kg)' : ''}: ${s.map((x) => (x ? `${weightText(k, x.w)}×${x.r}` : 'skipped')).join(' · ')}`));
     if (!r.versions.length) row.append(el('span', 'day-ex-sets', 'Done, no weights logged'));
     body.append(row);
   }
