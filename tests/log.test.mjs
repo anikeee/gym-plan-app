@@ -493,3 +493,103 @@ test('a restore keeps the phone\'s order first and adds the other plans\' order 
   const backup = { v: 1, order: { push: ['push-102', 'push-101', 'push-1'], legs: ['legs-7'] } };
   assert.deepEqual(L.mergeOrder(phone, backup).order, { push: ['push-3', 'push-1', 'push-2', 'push-102', 'push-101'], legs: ['legs-7'] });
 });
+
+// ---- Bodyweight sets: Pull Up on the bar logs the weight added, and 0 kg means bodyweight only ----
+
+const BAR = 'pull-up.bodyweight';
+const BAR_TG = [12, 12, 12];
+
+test('a bodyweight version takes 0 kg as bodyweight only, while every other weight stays above 0', () => {
+  assert.equal(L.parseAdded('0'), 0);
+  assert.equal(L.parseAdded('2,5'), 2.5);
+  assert.equal(L.parseAdded(''), null);
+  assert.equal(L.parseAdded('-5'), null);
+  assert.equal(L.parseAdded('501'), null);
+  assert.equal(L.parseWeight('0'), null); // unchanged: no 0 kg anywhere else
+  assert.equal(L.isBodyweightKey(BAR), true);
+  assert.equal(L.isBodyweightKey('pull-up.machine'), false);
+  const zero = { v: 1, entries: { [BAR]: [session('2026-10-02', [[0, 8]])] } };
+  assert.equal(L.validateLog(zero).ok, false); // the main rule, the one older copies use, still refuses 0 kg
+  assert.equal(L.validateLog(zero, { bodyweight: true }).ok, true);
+  assert.equal(L.validateLog({ v: 1, entries: { [KEY]: [session('2026-10-02', [[0, 8]])] } }, { bodyweight: true }).ok, false); // only bodyweight keys
+  assert.equal(L.validateLog({ v: 1, entries: { [BAR]: [session('2026-10-02', [[-1, 8]])] } }, { bodyweight: true }).ok, false);
+});
+
+test('bodyweight sets are stored under their own key, so the main log never holds a 0 kg set', () => {
+  const s = fakeStorage();
+  let log = L.setSlot(L.emptyLog(), KEY, '2026-10-02', 0, { w: 40, r: 12, t: at(18) }, 4, TARGETS);
+  assert.equal(L.saveLog(s, log), true);
+  assert.equal(s.map.has(L.BODYWEIGHT_KEY), false); // no bodyweight sets: no new key at all
+  log = L.setSlot(log, BAR, '2026-10-02', 0, { w: 0, r: 8, t: at(18, 10) }, 3, BAR_TG);
+  log = L.setSlot(log, BAR, '2026-10-02', 1, { w: 2.5, r: 6, t: at(18, 13) }, 3, BAR_TG);
+  assert.equal(L.saveLog(s, log), true);
+  const main = JSON.parse(s.map.get(L.STORE_KEY));
+  assert.deepEqual(Object.keys(main.entries), [KEY]);
+  assert.equal(L.validateLog(main).ok, true);
+  assert.deepEqual(JSON.parse(s.map.get(L.BODYWEIGHT_KEY)).entries[BAR][0].sets.map((x) => x && [x.w, x.r]), [[0, 8], [2.5, 6], null]);
+  const back = L.loadLog(s);
+  assert.equal(back.ok, true);
+  assert.deepEqual(back.log, log); // the app sees one log
+  assert.equal(L.trainingDays(L.emptyDays(), back.log)[0].lastSet, at(18, 13));
+  assert.equal(L.prefill(back.log, BAR, '2026-10-02', 0, [null, null, null]), 0); // a logged 0 is a weight, not a gap
+  // Clearing the last bodyweight set empties its key instead of leaving the set behind.
+  log = L.setSlot(L.setSlot(log, BAR, '2026-10-02', 0, null, 3), BAR, '2026-10-02', 1, null, 3);
+  assert.equal(L.saveLog(s, log), true);
+  assert.deepEqual(JSON.parse(s.map.get(L.BODYWEIGHT_KEY)), { v: 1, entries: {} });
+});
+
+test('a 0 kg set on any other version is refused before anything is written', () => {
+  const s = fakeStorage();
+  const bad = { v: 1, entries: { [KEY]: [session('2026-10-02', [[0, 8]])], [BAR]: [session('2026-10-02', [[0, 8]])] } };
+  assert.equal(L.saveLog(s, bad), false);
+  assert.equal(s.map.size, 0);
+});
+
+test('an unreadable bodyweight store is copied aside and the main log still loads', () => {
+  const log = L.setSlot(L.emptyLog(), KEY, '2026-10-02', 0, { w: 40, r: 12 }, 4, TARGETS);
+  const s = fakeStorage({ [L.STORE_KEY]: JSON.stringify(log), [L.BODYWEIGHT_KEY]: '{"v":1,"entries":{"pull-up.machine":[]}}' });
+  const r = L.loadLog(s);
+  assert.equal(r.ok, true);
+  assert.equal(r.recovered, true);
+  assert.deepEqual(r.log, log);
+  assert.equal([...s.map.keys()].filter((k) => k.startsWith(`${L.BODYWEIGHT_KEY}.unreadable.`)).length, 1);
+  const full = fakeStorage({ [L.BODYWEIGHT_KEY]: '{not json' });
+  full.setItem = () => { throw new Error('QuotaExceededError'); };
+  assert.equal(L.loadLog(full).ok, false); // no copy could be kept, so nothing may be written
+});
+
+test('a backup carries bodyweight sets in their own field, which an older copy of the app skips', () => {
+  let log = L.setSlot(L.emptyLog(), KEY, '2026-10-02', 0, { w: 40, r: 12 }, 4, TARGETS);
+  log = L.setSlot(log, BAR, '2026-10-02', 0, { w: 0, r: 8 }, 3, BAR_TG);
+  const payload = JSON.parse(JSON.stringify(L.exportPayload(log, new Date(2026, 9, 10))));
+  assert.deepEqual(Object.keys(payload.entries), [KEY]);
+  assert.deepEqual(Object.keys(payload.bodyweight), [BAR]);
+  assert.equal(L.validateLog(payload).ok, true); // what an older copy checks when it restores this file
+  const checked = L.validateBackup(payload);
+  assert.equal(checked.ok, true);
+  assert.deepEqual(checked.log, log);
+  assert.equal('bodyweight' in L.exportPayload(L.emptyLog()), false); // nothing to carry: the file looks as before
+  assert.equal(L.validateBackup({ ...payload, bodyweight: { [KEY]: [session('2026-10-02', [[40, 12]])] } }).ok, false);
+  assert.equal(L.validateBackup({ ...payload, bodyweight: [] }).ok, false);
+  const phone = L.setSlot(L.emptyLog(), BAR, '2026-10-02', 1, { w: 2.5, r: 6 }, 3, BAR_TG);
+  const merged = L.mergeLogs(phone, checked.log);
+  assert.deepEqual(merged.log.entries[BAR][0].sets.map((x) => x && [x.w, x.r]), [[0, 8], [2.5, 6], null]);
+});
+
+test('advice goes from less assist, to the bar with no assist, to added weight', () => {
+  const PULL = 'pull-up.machine';
+  const three = (key, w, r = 12) => { let log = L.emptyLog(); w.forEach((x, i) => { log = L.setSlot(log, key, '2026-10-02', i, { w: x, r }, 3, BAR_TG); }); return log; };
+  // Every rep with the least assist: the next step is the bar.
+  const least = L.guide(three(PULL, [2.5, 2.5, 2.5]), PULL, '2026-10-05', BAR_TG, -2.5);
+  assert.equal(least.toBar, true);
+  assert.deepEqual(least.suggestions.map((s) => [s.w, s.up]), [[2.5, false], [2.5, false], [2.5, false]]);
+  // One set can still lose a step of assist: keep taking it off first.
+  const mixed = L.guide(three(PULL, [5, 2.5, 2.5]), PULL, '2026-10-05', BAR_TG, -2.5);
+  assert.equal(mixed.toBar, false);
+  assert.deepEqual(mixed.suggestions[0], { w: 2.5, up: true });
+  assert.equal(L.guide(three(PULL, [2.5, 2.5, 2.5], 10), PULL, '2026-10-05', BAR_TG, -2.5).toBar, false); // missed reps
+  assert.equal(L.guide(three(KEY, [2.5, 2.5, 2.5]), KEY, '2026-10-05', BAR_TG, 2.5).toBar, false); // never for a normal lift
+  // On the bar: every rep at bodyweight adds one step of weight, a missed rep stays at bodyweight.
+  assert.deepEqual(L.guide(three(BAR, [0, 0, 0]), BAR, '2026-10-05', BAR_TG, 2.5).suggestions.map((s) => [s.w, s.up]), [[2.5, true], [2.5, true], [2.5, true]]);
+  assert.deepEqual(L.guide(three(BAR, [0, 0, 0], 9), BAR, '2026-10-05', BAR_TG, 2.5).suggestions[0], { w: 0, up: false });
+});

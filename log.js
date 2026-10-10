@@ -6,6 +6,11 @@ export const META_KEY = 'gymplan.meta.v1';
 // Stored shapes: { v: 1, sessions: [ { date, day, start, end, auto? } ], done: { "YYYY-MM-DD": [exerciseId] } }
 //                { v: 1, order: { push: [exerciseId, ...] } }
 export const DAYS_KEY = 'gymplan.days.v1';
+// A bodyweight version (Pull Up on the bar) logs the weight added, so 0 kg is a real set: bodyweight only.
+// Its sessions live under their own key with the same shape, because every older copy of this app rejects the WHOLE
+// log when one set has 0 kg. So nothing with 0 kg may ever reach STORE_KEY; saveLog splits the log by key.
+export const BODYWEIGHT_KEY = 'gymplan.bodyweight.v1';
+export const isBodyweightKey = (key) => key.endsWith('.bodyweight');
 export const ORDER_KEY = 'gymplan.order.v1';
 export const APP_MARK = 'gym-plan-app';
 // Above what localStorage can hold (about 5 MB), so any backup this app writes can always be restored.
@@ -54,10 +59,18 @@ export function roundWeight(w) {
 }
 // "32,5" and "32.5" both mean 32.5 kg. Returns null for anything that is not a sensible weight.
 export function parseWeight(text) {
+  const w = parseKg(text);
+  return w !== null && w > 0 ? w : null;
+}
+// The weight added to a bodyweight version, where 0 means bodyweight only.
+export function parseAdded(text) {
+  return parseKg(text);
+}
+function parseKg(text) {
   const t = String(text ?? '').trim().replace(',', '.');
   if (!/^\d{1,3}(\.\d+)?$/.test(t)) return null;
   const w = roundWeight(Number(t));
-  return w > 0 && w <= MAX_WEIGHT ? w : null;
+  return w <= MAX_WEIGHT ? w : null;
 }
 export function formatWeight(w) {
   return String(Number(w.toFixed(2)));
@@ -76,12 +89,13 @@ function validDate(s) {
 }
 // Checks the rounded weight, the value that gets stored: 0.1 kg would round to 0 and make the next load reject the whole log.
 // t is when the set was saved (ms). It is optional and only kept when it makes sense, so a bad t never rejects a log.
-function cleanSlot(s) {
+// zero: 0 kg is allowed, only in the bodyweight store (see BODYWEIGHT_KEY).
+function cleanSlot(s, zero) {
   if (s === null) return null;
   if (typeof s !== 'object' || Array.isArray(s)) throw new Error('set');
-  const w = typeof s.w === 'number' ? roundWeight(s.w) : NaN;
+  const w = typeof s.w === 'number' && s.w >= 0 ? roundWeight(s.w) : NaN;
   const { r } = s;
-  if (!Number.isFinite(w) || w <= 0 || w > MAX_WEIGHT) throw new Error('weight');
+  if (!Number.isFinite(w) || (w === 0 && !zero) || w > MAX_WEIGHT) throw new Error('weight');
   if (!Number.isInteger(r) || r < 0 || r > MAX_REPS) throw new Error('reps');
   return validTime(s.t) ? { w, r, t: s.t } : { w, r };
 }
@@ -95,19 +109,20 @@ const byDate = (a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 
 // Strict check used for both the stored log and an imported backup. Duplicate dates collapse (last wins),
 // each list is re-sorted, and sessions with no sets are dropped.
-export function validateLog(obj) {
+// bodyweight: checks the bodyweight store instead, where every key is a bodyweight version and 0 kg is allowed.
+export function validateLog(obj, { bodyweight = false } = {}) {
   try {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj) || obj.v !== 1) throw new Error('version');
     const src = obj.entries;
     if (!src || typeof src !== 'object' || Array.isArray(src)) throw new Error('entries');
     const entries = {};
     for (const [key, list] of Object.entries(src)) {
-      if (!KEY_RE.test(key) || !Array.isArray(list)) throw new Error(`key ${key}`);
+      if (!KEY_RE.test(key) || !Array.isArray(list) || (bodyweight && !isBodyweightKey(key))) throw new Error(`key ${key}`);
       const byDay = new Map();
       for (const e of list) {
         if (!e || typeof e !== 'object' || !validDate(e.date)) throw new Error('date');
         if (!Array.isArray(e.sets) || e.sets.length < 1 || e.sets.length > MAX_SLOTS) throw new Error('sets');
-        byDay.set(e.date, withTargets({ date: e.date, sets: e.sets.map(cleanSlot) }, e.tg));
+        byDay.set(e.date, withTargets({ date: e.date, sets: e.sets.map((x) => cleanSlot(x, bodyweight)) }, e.tg));
       }
       const kept = [...byDay.values()].filter((e) => e.sets.some(Boolean)).sort(byDate);
       if (kept.length) entries[key] = kept;
@@ -118,11 +133,15 @@ export function validateLog(obj) {
   }
 }
 // A backup holds the log and, since the training days update, the sessions, Done marks and exercise order too.
-// Older backups have only the log; the rest is optional and checked when present.
+// Older backups have only the log; the rest is optional and checked when present. Bodyweight sets travel in their own
+// field, so an older copy of the app still restores everything else from a new backup.
 export function validateBackup(obj) {
   if (!obj || typeof obj !== 'object' || obj.app !== APP_MARK) return { ok: false, error: 'not a backup from this app' };
-  const log = validateLog(obj);
-  if (!log.ok) return log;
+  const main = validateLog(obj);
+  if (!main.ok) return main;
+  const bw = validateLog({ v: 1, entries: obj.bodyweight ?? {} }, { bodyweight: true });
+  if (!bw.ok) return bw;
+  const log = { ok: true, log: joinLogs(main.log, bw.log) };
   const days = validateDays({ v: 1, sessions: obj.sessions ?? [], done: obj.done ?? {} });
   if (!days.ok) return days;
   const order = validateOrder({ v: 1, order: obj.order ?? {} });
@@ -132,26 +151,50 @@ export function validateBackup(obj) {
 
 // ok is false when storage is blocked, and when an unreadable log could not be copied aside.
 // Callers must not write while ok is false, or they would replace the only copy.
+// The log comes from two keys (see BODYWEIGHT_KEY) and is used as one: every other function sees a single log.
 export function loadLog(storage) {
+  const main = readLog(storage, STORE_KEY, {});
+  const bw = readLog(storage, BODYWEIGHT_KEY, { bodyweight: true });
+  const recovered = main.recovered || bw.recovered;
+  return { log: joinLogs(main.log, bw.log), ok: main.ok && bw.ok, ...(recovered ? { recovered } : {}) };
+}
+function readLog(storage, key, opts) {
   let raw;
-  try { raw = storage.getItem(STORE_KEY); } catch { return { log: emptyLog(), ok: false }; }
+  try { raw = storage.getItem(key); } catch { return { log: emptyLog(), ok: false }; }
   if (raw == null) return { log: emptyLog(), ok: true };
   try {
-    const checked = validateLog(JSON.parse(raw));
+    const checked = validateLog(JSON.parse(raw), opts);
     if (checked.ok) return { log: checked.log, ok: true };
   } catch { /* fall through */ }
   // Each unreadable value gets its own key, named by its content, so a later bad value never replaces an earlier copy.
-  const aside = `${STORE_KEY}.unreadable.${hash(raw)}`;
+  const aside = `${key}.unreadable.${hash(raw)}`;
   try { if (storage.getItem(aside) !== raw) storage.setItem(aside, raw); } catch { return { log: emptyLog(), ok: false, recovered: true }; }
   return { log: emptyLog(), ok: true, recovered: true };
+}
+// The two stores never share a key: saveLog files every bodyweight key under BODYWEIGHT_KEY.
+function joinLogs(main, bw) {
+  return Object.keys(bw.entries).length ? { v: 1, entries: { ...main.entries, ...bw.entries } } : main;
+}
+function splitLog(log) {
+  const main = {}; const bw = {};
+  for (const [key, list] of Object.entries(log.entries)) (isBodyweightKey(key) ? bw : main)[key] = list;
+  return { main: { v: 1, entries: main }, bw: { v: 1, entries: bw } };
 }
 function hash(text) {
   let h = 0;
   for (let i = 0; i < text.length; i++) h = (Math.imul(h, 31) + text.charCodeAt(i)) | 0;
   return (h >>> 0).toString(36);
 }
+// The main key is checked with the strict rule before anything is written, so an older copy can always read it.
+// A write that leaves a key's value unchanged does nothing, so a set saves only the store it belongs to.
 export function saveLog(storage, log) {
-  try { storage.setItem(STORE_KEY, JSON.stringify(log)); return true; } catch { return false; }
+  const { main, bw } = splitLog(log);
+  if (!validateLog(main).ok) return false;
+  try {
+    storage.setItem(STORE_KEY, JSON.stringify(main));
+    if (Object.keys(bw.entries).length || storage.getItem(BODYWEIGHT_KEY) !== null) storage.setItem(BODYWEIGHT_KEY, JSON.stringify(bw));
+    return true;
+  } catch { return false; }
 }
 export function loadMeta(storage) {
   try { return JSON.parse(storage.getItem(META_KEY)) || {}; } catch { return {}; }
@@ -191,6 +234,7 @@ export function setSlot(log, key, day, index, slot, nSets, targets) {
 // Only sessions logged with the same rep targets count: a 5 rep squat weight is no guide for 12 reps.
 // legacy: the targets of sessions saved before plans existed (all from the personal trainer's plan).
 // step < 0 for an assisted machine, where the weight is help: progress means taking assist off, never down to 0.
+// toBar: every rep was hit with the least assist there is, so the next step is the bar with no assist at all.
 export function guide(log, key, day, targets, step, legacy = targets) {
   const prior = entriesFor(log, key).filter((e) => e.date < day && e.sets.some(Boolean));
   const last = prior.length ? prior[prior.length - 1] : null;
@@ -207,7 +251,8 @@ export function guide(log, key, day, targets, step, legacy = targets) {
     }
     return null;
   });
-  return { last, allHit, sameScheme, suggestions };
+  const toBar = step < 0 && allHit && !suggestions.some((s) => s?.up);
+  return { last, allHit, sameScheme, suggestions, toBar };
 }
 
 // The weight the sheet opens with: today's value, else the suggestion, else the nearest set already logged today.
@@ -253,7 +298,10 @@ export function mergeLogs(current, imported) {
 }
 
 export function exportPayload(log, now = new Date(), days = emptyDays(), order = emptyOrder()) {
-  return { app: APP_MARK, v: 1, exportedAt: now.toISOString(), entries: log.entries, sessions: days.sessions, done: days.done, order: order.order };
+  const { main, bw } = splitLog(log);
+  const payload = { app: APP_MARK, v: 1, exportedAt: now.toISOString(), entries: main.entries, sessions: days.sessions, done: days.done, order: order.order };
+  if (Object.keys(bw.entries).length) payload.bodyweight = bw.entries;
+  return payload;
 }
 
 // ---- Training days: a day is "trained" when it has a session, a logged set or a Done mark. ----
