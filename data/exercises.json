@@ -1331,6 +1331,31 @@
          "guide": "https://www.puregym.com/exercises/back/pull-up/",
          "assisted": true
         },
+        "bodyweight": {
+         "name": "Pull up on the bar",
+         "kit": "A pull up bar, usually on the rig in the free weights area. Start with your bodyweight only and log 0 kg added. Once you reach the top of the rep range on every set, add weight with a dip belt and a plate, or hold a dumbbell between your feet.",
+         "tip": "Overhand grip a little wider than the shoulders, start from a dead hang. Drive the elbows down to your sides until your chin clears the bar, then lower slowly.",
+         "videos": [
+          {
+           "id": "PHdHnZcbsB8",
+           "label": "How to do pull ups",
+           "by": "PureGym",
+           "seconds": 11
+          },
+          {
+           "id": "jBSMDqs7OzM",
+           "label": "How to do negative pull ups",
+           "by": "PureGym",
+           "seconds": 13
+          }
+         ],
+         "animation": {
+          "exercisedb": "lBDjFxJ",
+          "fallback": "Pullups",
+          "note": null
+         },
+         "guide": "https://www.puregym.com/exercises/back/pull-up/"
+        },
         "dumbbell": {
          "name": "Single arm dumbbell row",
          "kit": "One dumbbell and a bench.",
@@ -2466,6 +2491,31 @@
          },
          "guide": "https://www.puregym.com/exercises/back/pull-up/",
          "assisted": true
+        },
+        "bodyweight": {
+         "name": "Pull up on the bar",
+         "kit": "A pull up bar, usually on the rig in the free weights area. Start with your bodyweight only and log 0 kg added. Once you reach the top of the rep range on every set, add weight with a dip belt and a plate, or hold a dumbbell between your feet.",
+         "tip": "Overhand grip a little wider than the shoulders, start from a dead hang. Drive the elbows down to your sides until your chin clears the bar, then lower slowly.",
+         "videos": [
+          {
+           "id": "PHdHnZcbsB8",
+           "label": "How to do pull ups",
+           "by": "PureGym",
+           "seconds": 11
+          },
+          {
+           "id": "jBSMDqs7OzM",
+           "label": "How to do negative pull ups",
+           "by": "PureGym",
+           "seconds": 13
+          }
+         ],
+         "animation": {
+          "exercisedb": "lBDjFxJ",
+          "fallback": "Pullups",
+          "note": null
+         },
+         "guide": "https://www.puregym.com/exercises/back/pull-up/"
         },
         "dumbbell": {
          "name": "Single arm dumbbell row",
@@ -3684,6 +3734,31 @@
          },
          "guide": "https://www.puregym.com/exercises/back/pull-up/",
          "assisted": true
+        },
+        "bodyweight": {
+         "name": "Pull up on the bar",
+         "kit": "A pull up bar, usually on the rig in the free weights area. Start with your bodyweight only and log 0 kg added. Once you reach the top of the rep range on every set, add weight with a dip belt and a plate, or hold a dumbbell between your feet.",
+         "tip": "Overhand grip a little wider than the shoulders, start from a dead hang. Drive the elbows down to your sides until your chin clears the bar, then lower slowly.",
+         "videos": [
+          {
+           "id": "PHdHnZcbsB8",
+           "label": "How to do pull ups",
+           "by": "PureGym",
+           "seconds": 11
+          },
+          {
+           "id": "jBSMDqs7OzM",
+           "label": "How to do negative pull ups",
+           "by": "PureGym",
+           "seconds": 13
+          }
+         ],
+         "animation": {
+          "exercisedb": "lBDjFxJ",
+          "fallback": "Pullups",
+          "note": null
+         },
+         "guide": "https://www.puregym.com/exercises/back/pull-up/"
         },
         "dumbbell": {
          "name": "Single arm dumbbell row",

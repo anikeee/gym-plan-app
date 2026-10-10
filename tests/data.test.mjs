@@ -115,7 +115,7 @@ test('every exercise has machine and dumbbell versions with complete fields', ()
     assert.ok(ex.variants.machine && ex.variants.dumbbell, ex.id);
     for (const [key, v] of Object.entries(ex.variants)) {
       const where = `${ex.id}.${key}`;
-      assert.ok(['machine', 'dumbbell', 'barbell'].includes(key), where);
+      assert.ok(['machine', 'dumbbell', 'barbell', 'bodyweight'].includes(key), where);
       for (const f of ['name', 'kit', 'tip']) assert.ok(typeof v[f] === 'string' && v[f].length > 10, `${where}.${f}`);
       assert.ok(Array.isArray(v.videos) && v.videos.length >= 1, where);
       const ids = new Set();
@@ -154,4 +154,13 @@ test('every fallback id has both local images', async () => {
 
 test('the assisted pull up machine is marked, so the app takes help off instead of adding it', () => {
   for (const ex of allExercises().filter((e) => e.name === 'Pull Up')) assert.equal(ex.variants.machine.assisted, true, ex.id);
+});
+
+// A bodyweight version logs the weight added (0 kg is bodyweight only), so its sets go to their own store in log.js.
+test('every Pull Up has the same bodyweight version for sets on the bar with no assist', () => {
+  const pulls = allExercises().filter((e) => e.name === 'Pull Up');
+  assert.equal(pulls.length, 3);
+  for (const ex of pulls) assert.deepEqual(ex.variants.bodyweight, pulls[0].variants.bodyweight, ex.id);
+  assert.equal(pulls[0].variants.bodyweight.assisted, undefined);
+  assert.deepEqual(allExercises().filter((e) => e.variants.bodyweight).map((e) => e.name), ['Pull Up', 'Pull Up', 'Pull Up']);
 });
