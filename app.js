@@ -3,7 +3,7 @@ import * as L from './log.js';
 const API = 'https://oss.exercisedb.dev/api/v1/exercises/';
 const GIF_TIMEOUT_MS = 6000;
 const PLAN_KEY = 'gymplan.plan'; // the plan picked in the day page header; the personal trainer's plan when unset
-const state = { data: null, plan: null, index: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: false, day: null, days: null, order: null, timer: null, reorder: false }; // live: exerciseId -> API response for this page load only
+const state = { data: null, plan: null, index: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: null, day: null, days: null, order: null, timer: null, reorder: false }; // live: exerciseId -> API response for this page load only
 const LATEST_APK = 'https://github.com/anikeee/gym-plan-app/releases/latest/download/workout-plan.apk';
 const SAVE_FAILED = "Couldn't save on this phone. Storage may be full or blocked.";
 // Reading the localStorage global itself throws when site data is blocked, so read it once here. The log
@@ -714,7 +714,7 @@ function buildSetLog(ex, variantKey) {
 function freshLog() {
   const r = L.loadLog(store);
   state.logOk = r.ok;
-  state.logRecovered = r.ok && r.recovered === true; // only true once the unreadable value really was copied aside
+  state.logRecovered = r.ok && r.recovered ? r.recovered : null; // the stores set aside, only once their unreadable value really was copied
   if (!r.ok) return null;
   state.log = r.log;
   return state.log;
@@ -766,6 +766,9 @@ function stepButton(iconName, label) {
 // Older Android app versions (1.0.x) and other apps' in-app browsers cannot save or open files.
 const inAppWebView = () => /; wv\)/.test(navigator.userAgent) && typeof window.WorkoutPlanApp?.saveFile !== 'function';
 
+// Which weights were set aside (L.loadLog recovered): the main log holds every weight but the bodyweight sets.
+const unreadableText = (keys) => `${keys.includes(L.STORE_KEY) ? 'Your saved weights' : 'Your bodyweight sets'} couldn't be read, so they aren't shown. A copy was kept on this phone, and new sets save as normal.`;
+
 function buildLogCard() {
   const card = el('section', 'card log-card'); card.setAttribute('aria-labelledby', 'log-title');
   const h = el('h2', 'log-title', 'Your weight log'); h.id = 'log-title';
@@ -774,9 +777,9 @@ function buildLogCard() {
   const status = el('p', 'log-status'); status.setAttribute('role', 'status');
   const paint = () => {
     const n = L.trainingDays(state.days, freshLog() ?? state.log).length; // weights, training times or Done marks
-    // An unreadable log is set aside whole, so none of it can show. This line goes once a new set replaces it.
+    // An unreadable store is set aside whole, so none of it can show. This line goes once a new set replaces it.
     count.textContent = !state.logOk ? "This phone isn't letting the app save. Check that site storage is allowed."
-      : state.logRecovered ? "Your saved weights couldn't be read, so none are shown. A copy was kept on this phone, and new sets save as normal."
+      : state.logRecovered ? unreadableText(state.logRecovered)
         : n ? `${n} training ${n === 1 ? 'day' : 'days'} saved on this phone: weights, training times and Done marks.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
     const at = L.loadMeta(store).lastExportAt;
     const age = at ? Math.floor((Date.now() - Date.parse(at)) / 86400000) : null;

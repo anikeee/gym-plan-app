@@ -152,28 +152,20 @@ export function validateBackup(obj) {
 // ok is false when storage is blocked, and when an unreadable log could not be copied aside.
 // Callers must not write while ok is false, or they would replace the only copy.
 // The log comes from two keys (see BODYWEIGHT_KEY) and is used as one: every other function sees a single log.
+// recovered lists the keys whose value was set aside, so the app can say which weights are missing.
 export function loadLog(storage) {
-  const main = readLog(storage, STORE_KEY, {});
-  const bw = readLog(storage, BODYWEIGHT_KEY, { bodyweight: true });
-  const recovered = main.recovered || bw.recovered;
-  return { log: joinLogs(main.log, bw.log), ok: main.ok && bw.ok, ...(recovered ? { recovered } : {}) };
+  const main = loadStore(storage, STORE_KEY, validateLog, emptyLog);
+  const bw = loadStore(storage, BODYWEIGHT_KEY, (obj) => validateLog(obj, { bodyweight: true }), emptyLog);
+  const recovered = [[STORE_KEY, main], [BODYWEIGHT_KEY, bw]].filter(([, r]) => r.recovered).map(([k]) => k);
+  return { log: joinLogs(main.log, bw.log), ok: main.ok && bw.ok, ...(recovered.length ? { recovered } : {}) };
 }
-function readLog(storage, key, opts) {
-  let raw;
-  try { raw = storage.getItem(key); } catch { return { log: emptyLog(), ok: false }; }
-  if (raw == null) return { log: emptyLog(), ok: true };
-  try {
-    const checked = validateLog(JSON.parse(raw), opts);
-    if (checked.ok) return { log: checked.log, ok: true };
-  } catch { /* fall through */ }
-  // Each unreadable value gets its own key, named by its content, so a later bad value never replaces an earlier copy.
-  const aside = `${key}.unreadable.${hash(raw)}`;
-  try { if (storage.getItem(aside) !== raw) storage.setItem(aside, raw); } catch { return { log: emptyLog(), ok: false, recovered: true }; }
-  return { log: emptyLog(), ok: true, recovered: true };
-}
-// The two stores never share a key: saveLog files every bodyweight key under BODYWEIGHT_KEY.
+// saveLog files every bodyweight key under BODYWEIGHT_KEY, but an older copy of the app lists every version the data
+// file has and saves w > 0 bar sets into the main log. A key in both stores is merged date by date, like a restore,
+// so neither copy is dropped; the next save then files all of it under BODYWEIGHT_KEY.
 function joinLogs(main, bw) {
-  return Object.keys(bw.entries).length ? { v: 1, entries: { ...main.entries, ...bw.entries } } : main;
+  if (!Object.keys(bw.entries).length) return main;
+  if (Object.keys(bw.entries).some((k) => main.entries[k])) return mergeLogs(bw, main).log;
+  return { v: 1, entries: { ...main.entries, ...bw.entries } };
 }
 function splitLog(log) {
   const main = {}; const bw = {};
@@ -522,7 +514,8 @@ export function mergeOrder(current, imported) {
   return { v: 1, order };
 }
 
-// Shared by every store: unreadable data is copied aside (see loadLog) and ok is false when that copy failed.
+// Shared by every store, the log's two keys included. Unreadable data is copied aside under a key named by its
+// content, so a later bad value never replaces an earlier copy, and ok is false when that copy failed.
 function loadStore(storage, key, validate, empty) {
   let raw;
   try { raw = storage.getItem(key); } catch { return { ok: false, value: empty(), [storeName(key)]: empty() }; }
@@ -538,7 +531,7 @@ function loadStore(storage, key, validate, empty) {
 function saveStore(storage, key, value) {
   try { storage.setItem(key, JSON.stringify(value)); return true; } catch { return false; }
 }
-const storeName = (key) => (key === DAYS_KEY ? 'days' : 'order');
+const storeName = (key) => (key === DAYS_KEY ? 'days' : key === ORDER_KEY ? 'order' : 'log');
 export function exportFileName(now = new Date()) {
   return `workout-log-${localDate(now)}.json`;
 }

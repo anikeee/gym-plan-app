@@ -4,6 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as L from '../log.js';
+import * as OLD from './fixtures/log-before-bodyweight.mjs'; // the rule older copies of the app apply to the main key
 
 const data = JSON.parse(await readFile(new URL('../data/exercises.json', import.meta.url), 'utf8'));
 const trainerDays = data.plans[0].days; // the personal trainer's plan, the default
@@ -200,7 +201,7 @@ test('storage: round trip, unreadable data is copied aside, blocked storage is r
   assert.deepEqual(L.loadLog(s).log, log);
   const broken = fakeStorage({ [L.STORE_KEY]: '{not json' });
   const r = L.loadLog(broken);
-  assert.equal(r.recovered, true);
+  assert.deepEqual(r.recovered, [L.STORE_KEY]);
   assert.equal(r.ok, true);
   const asides = () => [...broken.map.keys()].filter((k) => k.startsWith(`${L.STORE_KEY}.unreadable.`));
   assert.equal(asides().length, 1);
@@ -525,7 +526,7 @@ test('bodyweight sets are stored under their own key, so the main log never hold
   assert.equal(L.saveLog(s, log), true);
   const main = JSON.parse(s.map.get(L.STORE_KEY));
   assert.deepEqual(Object.keys(main.entries), [KEY]);
-  assert.equal(L.validateLog(main).ok, true);
+  assert.equal(OLD.validateLog(main).ok, true); // the older copy still reads it
   assert.deepEqual(JSON.parse(s.map.get(L.BODYWEIGHT_KEY)).entries[BAR][0].sets.map((x) => x && [x.w, x.r]), [[0, 8], [2.5, 6], null]);
   const back = L.loadLog(s);
   assert.equal(back.ok, true);
@@ -550,7 +551,7 @@ test('an unreadable bodyweight store is copied aside and the main log still load
   const s = fakeStorage({ [L.STORE_KEY]: JSON.stringify(log), [L.BODYWEIGHT_KEY]: '{"v":1,"entries":{"pull-up.machine":[]}}' });
   const r = L.loadLog(s);
   assert.equal(r.ok, true);
-  assert.equal(r.recovered, true);
+  assert.deepEqual(r.recovered, [L.BODYWEIGHT_KEY]);
   assert.deepEqual(r.log, log);
   assert.equal([...s.map.keys()].filter((k) => k.startsWith(`${L.BODYWEIGHT_KEY}.unreadable.`)).length, 1);
   const full = fakeStorage({ [L.BODYWEIGHT_KEY]: '{not json' });
@@ -564,7 +565,7 @@ test('a backup carries bodyweight sets in their own field, which an older copy o
   const payload = JSON.parse(JSON.stringify(L.exportPayload(log, new Date(2026, 9, 10))));
   assert.deepEqual(Object.keys(payload.entries), [KEY]);
   assert.deepEqual(Object.keys(payload.bodyweight), [BAR]);
-  assert.equal(L.validateLog(payload).ok, true); // what an older copy checks when it restores this file
+  assert.equal(OLD.validateBackup(payload).ok, true); // an older copy restores the rest of this file
   const checked = L.validateBackup(payload);
   assert.equal(checked.ok, true);
   assert.deepEqual(checked.log, log);
@@ -592,4 +593,46 @@ test('advice goes from less assist, to the bar with no assist, to added weight',
   // On the bar: every rep at bodyweight adds one step of weight, a missed rep stays at bodyweight.
   assert.deepEqual(L.guide(three(BAR, [0, 0, 0]), BAR, '2026-10-05', BAR_TG, 2.5).suggestions.map((s) => [s.w, s.up]), [[2.5, true], [2.5, true], [2.5, true]]);
   assert.deepEqual(L.guide(three(BAR, [0, 0, 0], 9), BAR, '2026-10-05', BAR_TG, 2.5).suggestions[0], { w: 0, up: false });
+});
+
+test('a bodyweight key left in the main log by an older copy is merged, never dropped', () => {
+  // An older app.js lists every version in the data file and saves w > 0 bar sets into the main log.
+  const stray = { v: 1, entries: { [BAR]: [session('2026-10-05', [[5, 6]])], [KEY]: [session('2026-10-01', [[40, 12]])] } };
+  const own = { v: 1, entries: { [BAR]: [session('2026-10-02', [[0, 8]]), { date: '2026-10-05', sets: [null, { w: 0, r: 7 }] }] } };
+  const s = fakeStorage({ [L.STORE_KEY]: JSON.stringify(stray), [L.BODYWEIGHT_KEY]: JSON.stringify(own) });
+  const r = L.loadLog(s);
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.log.entries[BAR].map((e) => [e.date, e.sets.map((x) => x && [x.w, x.r])]), [['2026-10-02', [[0, 8]]], ['2026-10-05', [[5, 6], [0, 7]]]]);
+  assert.equal(L.saveLog(s, r.log), true);
+  assert.deepEqual(Object.keys(JSON.parse(s.map.get(L.STORE_KEY)).entries), [KEY]); // the stray copy moved to its own store
+  assert.equal(JSON.parse(s.map.get(L.BODYWEIGHT_KEY)).entries[BAR].length, 2);
+  const payload = { app: L.APP_MARK, v: 1, entries: stray.entries, bodyweight: own.entries }; // the same mix inside one backup
+  assert.deepEqual(L.validateBackup(payload).log.entries[BAR].map((e) => e.date), ['2026-10-02', '2026-10-05']);
+});
+
+test('loadLog names the store it set aside, so the app can say what is missing', () => {
+  const log = L.setSlot(L.emptyLog(), KEY, '2026-10-02', 0, { w: 40, r: 12 }, 4, TARGETS);
+  assert.deepEqual(L.loadLog(fakeStorage({ [L.STORE_KEY]: JSON.stringify(log), [L.BODYWEIGHT_KEY]: '{not json' })).recovered, [L.BODYWEIGHT_KEY]);
+  assert.deepEqual(L.loadLog(fakeStorage({ [L.STORE_KEY]: '{not json' })).recovered, [L.STORE_KEY]);
+  assert.deepEqual(L.loadLog(fakeStorage({ [L.STORE_KEY]: '{not json', [L.BODYWEIGHT_KEY]: '[1' })).recovered, [L.STORE_KEY, L.BODYWEIGHT_KEY]);
+  assert.equal(L.loadLog(fakeStorage({ [L.STORE_KEY]: JSON.stringify(log) })).recovered, undefined);
+});
+
+test('everything saveLog writes to the main key, and every backup, still passes the older copy of the app', () => {
+  let log = L.setSlot(L.emptyLog(), KEY, '2026-10-02', 0, { w: 40, r: 12, t: at(18) }, 4, TARGETS);
+  log = L.setSlot(log, 'pull-up.machine', '2026-10-02', 0, { w: 2.5, r: 12, t: at(18, 5) }, 3, BAR_TG);
+  log = L.setSlot(log, BAR, '2026-10-02', 0, { w: 0, r: 8, t: at(18, 10) }, 3, BAR_TG);
+  log = L.setSlot(log, BAR, '2026-10-02', 1, { w: 2.5, r: 6, t: at(18, 13) }, 3, BAR_TG);
+  const s = fakeStorage();
+  assert.equal(L.saveLog(s, log), true);
+  const old = OLD.loadLog(s);
+  assert.equal(old.ok, true);
+  assert.equal(old.recovered, undefined); // nothing set aside: the older copy reads the main key as it always did
+  assert.deepEqual(Object.keys(old.log.entries).sort(), [KEY, 'pull-up.machine']);
+  assert.equal([...s.map.keys()].some((k) => k.includes('unreadable')), false);
+  const payload = JSON.parse(JSON.stringify(L.exportPayload(log, new Date(2026, 9, 10))));
+  const restored = OLD.validateBackup(payload);
+  assert.equal(restored.ok, true);
+  assert.deepEqual(Object.keys(restored.log.entries).sort(), [KEY, 'pull-up.machine']);
+  assert.equal(OLD.validateLog({ v: 1, entries: { [BAR]: [session('2026-10-02', [[0, 8]])] } }).ok, false); // why the split exists
 });
