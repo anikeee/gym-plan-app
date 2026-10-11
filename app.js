@@ -453,7 +453,9 @@ function renderExercise(view, day, ex, variantKey) {
   setsBlock.classList.toggle('many', cols >= 5);
   const setLog = buildSetLog(ex, key);
   const rest = withIcon(el('p', 'rest'), 'clock', 18, `Rest ${restFor(ex)} between sets`);
-  const scheme = ex.repRange ? el('p', 'scheme', `${schemeText(ex)} reps. Reach ${ex.repRange[1]} on every set, then ${ex.variants[key].assisted ? 'take one step of assist off' : 'add weight'}.`) : null;
+  // On the assisted machine the step is less help, and at the least help the next step is the bar (buildSetLog says when).
+  const progress = ex.variants[key].assisted ? 'take one step of assist off. At the least assist, move to the bar' : 'add weight';
+  const scheme = ex.repRange ? el('p', 'scheme', `${schemeText(ex)} reps. Reach ${ex.repRange[1]} on every set, then ${progress}.`) : null;
   setsBlock.append(...[setLog.lastLine, setLog.list, scheme, rest, buildDoneButton(ex)].filter(Boolean));
 
   // Buttons, not links: switching version replaces the hash so the back button still goes to the day.
@@ -654,7 +656,8 @@ function buildSetLog(ex, variantKey) {
     else {
       const same = last.tg.length === targets.length && last.tg.every((r, k) => r === targets[k]);
       let text;
-      if (!same) text = `Last time, ${L.formatDay(last.date)}: ${written(last.w)} × ${last.r}, on a plan with different reps. Pick ${assisted ? 'the help you need' : bodyweight ? 'the weight to add, or 0' : 'a weight you can lift'} for ${t} reps.`;
+      const pick = assisted ? `Pick the help you need for ${t} reps.` : bodyweight ? `Pick how much weight to add for ${t} reps, or 0 for none.` : `Pick a weight you can lift for ${t} reps.`;
+      if (!same) text = `Last time, ${L.formatDay(last.date)}: ${written(last.w)} × ${last.r}, on a plan with different reps. ${pick}`;
       else {
         text = `Last time, ${L.formatDay(last.date)}: ${written(last.w)} × ${last.r} of ${t}.`;
         if (s?.up) text += ` You hit every rep, so try ${written(s.w)}.`;
@@ -686,7 +689,7 @@ function buildSetLog(ex, variantKey) {
     const w = parse(wInput.value);
     if (w == null) { if (dir > 0) wInput.value = L.formatWeight(step); else wInput.focus(); return; } // + from empty starts at one step
     const next = L.roundWeight(w + dir * step);
-    if ((bodyweight ? next >= 0 : next > 0) && next <= 500) wInput.value = L.formatWeight(next); // on the bar, minus goes down to bodyweight only
+    if (next <= 500 && (next > 0 || bodyweight)) wInput.value = L.formatWeight(Math.max(0, next)); // on the bar, minus always reaches bodyweight only, even from 2 kg
   };
   wMinus.addEventListener('click', () => bump(-1));
   wPlus.addEventListener('click', () => bump(1));
