@@ -1,7 +1,7 @@
-const VERSION = 'gym-v12'; // bump on every data or code change
+const VERSION = 'gym-v13'; // bump on every data or code change
 const MEDIA = 'gym-media-v1'; // offline pictures: a path never changes its picture, so they outlive app updates
 const FONTS = ['./fonts/barlow-400.woff2', './fonts/barlow-600.woff2', './fonts/barlow-condensed-600.woff2', './fonts/barlow-condensed-700.woff2'];
-const SHELL = ['./', './index.html', './styles.css', './app.js', './log.js', './data/exercises.json', './manifest.webmanifest', './icon.svg', ...FONTS];
+const SHELL = ['./', './index.html', './styles.css', './app.js', './log.js', './data/exercises.json', './data/library.json', './manifest.webmanifest', './icon.svg', ...FONTS];
 
 // The offline pictures are listed in the data file, so read it here instead of keeping a second list.
 // Only the default plan's (the personal trainer's) come with the app: every plan's would double the first download.

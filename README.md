@@ -40,6 +40,7 @@ The times are estimates. Every change made to the online plans, and the reason f
 - **Weight log:** type the weight and reps for each set. After a session where you hit every rep, the app suggests one step more weight.
 - **Training days:** tap Start training and Finish. The diary shows each day with its time and every set.
 - **Done marks and your own order:** tick each exercise when it is done, and drag exercises into the order you like.
+- **Replace any exercise:** tap Replace on an exercise page and search. The library has every PureGym push, pull and legs exercise with its own videos, animation and pictures, plus the machines on the Matrix floor. The replacement takes the slot's sets and reps, and Put back restores the plan's own exercise.
 - **Backups:** save your log to a file and restore it. The Android app is also included in your phone's own Android backup.
 
 ## Run it on a computer
