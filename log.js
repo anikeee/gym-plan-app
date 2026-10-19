@@ -12,6 +12,9 @@ export const DAYS_KEY = 'gymplan.days.v1';
 export const BODYWEIGHT_KEY = 'gymplan.bodyweight.v1';
 export const isBodyweightKey = (key) => key.endsWith('.bodyweight');
 export const ORDER_KEY = 'gymplan.order.v1';
+// Replacements: the user's own exercise in a plan's slot. { v: 1, swaps: { trainer: { "push-3": "lib-12" } } } maps the
+// plan's exercise id to the id that takes its place (a library exercise, or an exercise from another plan).
+export const SWAPS_KEY = 'gymplan.swaps.v1';
 export const APP_MARK = 'gym-plan-app';
 // Above what localStorage can hold (about 5 MB), so any backup this app writes can always be restored.
 export const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
@@ -146,7 +149,9 @@ export function validateBackup(obj) {
   if (!days.ok) return days;
   const order = validateOrder({ v: 1, order: obj.order ?? {} });
   if (!order.ok) return order;
-  return { ok: true, log: log.log, days: days.days, order: order.order };
+  const swaps = validateSwaps({ v: 1, swaps: obj.swaps ?? {} });
+  if (!swaps.ok) return swaps;
+  return { ok: true, log: log.log, days: days.days, order: order.order, swaps: swaps.swaps };
 }
 
 // ok is false when storage is blocked, and when an unreadable log could not be copied aside.
@@ -289,10 +294,11 @@ export function mergeLogs(current, imported) {
   return { log, added: countSessions(log) - countSessions(current), filled };
 }
 
-export function exportPayload(log, now = new Date(), days = emptyDays(), order = emptyOrder()) {
+export function exportPayload(log, now = new Date(), days = emptyDays(), order = emptyOrder(), swaps = emptySwaps()) {
   const { main, bw } = splitLog(log);
   const payload = { app: APP_MARK, v: 1, exportedAt: now.toISOString(), entries: main.entries, sessions: days.sessions, done: days.done, order: order.order };
   if (Object.keys(bw.entries).length) payload.bodyweight = bw.entries;
+  if (Object.keys(swaps.swaps).length) payload.swaps = swaps.swaps; // older copies of the app skip this field
   return payload;
 }
 
@@ -514,6 +520,72 @@ export function mergeOrder(current, imported) {
   return { v: 1, order };
 }
 
+// ---- Replacements: which exercise fills a plan's slot. Sets and Done marks are keyed by the exercise that was done,
+// never by the slot, so history stays right after a swap and after putting the plan's own exercise back. ----
+
+export function emptySwaps() { return { v: 1, swaps: {} }; }
+export function validateSwaps(obj) {
+  try {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj) || obj.v !== 1) throw new Error('version');
+    const src = obj.swaps;
+    if (!src || typeof src !== 'object' || Array.isArray(src)) throw new Error('swaps');
+    const swaps = {};
+    for (const [plan, map] of Object.entries(src)) {
+      if (!PLAN_ID_RE.test(plan) || !map || typeof map !== 'object' || Array.isArray(map)) throw new Error('plan');
+      const clean = {};
+      for (const [slot, id] of Object.entries(map)) {
+        if (!ID_RE.test(slot) || typeof id !== 'string' || !ID_RE.test(id) || id === slot) throw new Error('swap');
+        clean[slot] = id;
+      }
+      if (Object.keys(clean).length) swaps[plan] = clean;
+    }
+    return { ok: true, swaps: { v: 1, swaps } };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+export function loadSwaps(storage) { return loadStore(storage, SWAPS_KEY, validateSwaps, emptySwaps); }
+export function saveSwaps(storage, swaps) { return saveStore(storage, SWAPS_KEY, swaps); }
+export function swapFor(swaps, planId, slotId) { return swaps.swaps[planId]?.[slotId] || null; }
+// One slot's replacement. Null, or the slot's own exercise, puts the plan's exercise back.
+export function setSwap(swaps, planId, slotId, exerciseId) {
+  const plan = { ...(swaps.swaps[planId] || {}) };
+  if (exerciseId && exerciseId !== slotId) plan[slotId] = exerciseId; else delete plan[slotId];
+  const all = { ...swaps.swaps };
+  if (Object.keys(plan).length) all[planId] = plan; else delete all[planId];
+  return { ...swaps, swaps: all };
+}
+// The phone's own replacements win; the backup fills only the slots the phone has not touched. added counts those.
+export function mergeSwaps(current, imported) {
+  const swaps = {};
+  let added = 0;
+  for (const plan of new Set([...Object.keys(current.swaps), ...Object.keys(imported.swaps)])) {
+    swaps[plan] = { ...(imported.swaps[plan] || {}), ...(current.swaps[plan] || {}) };
+    for (const slot of Object.keys(imported.swaps[plan] || {})) if (!current.swaps[plan]?.[slot]) added++;
+  }
+  return { swaps: { v: 1, swaps }, added };
+}
+
+// The Replace sheet's search. Every typed word must start a word of the exercise's name, an alias or a version name.
+// Name matches come first, then aliases, then version names, then words spread across them; the slot's own day group
+// before the other days; then the order the exercises are listed in (rank).
+const words = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(' ').filter(Boolean);
+export function searchExercises(items, query, group) {
+  const q = words(query);
+  const hit = (text) => { const w = words(text); return q.every((t) => w.some((x) => x.startsWith(t))); };
+  const scored = [];
+  for (const it of items) {
+    let score;
+    if (!q.length || hit(it.name)) score = 0;
+    else if ((it.aliases || []).some(hit)) score = 1;
+    else if ((it.variantNames || []).some(hit)) score = 2;
+    else if (hit([it.name, ...(it.aliases || []), ...(it.variantNames || [])].join(' '))) score = 3;
+    else continue;
+    scored.push({ it, score: score * 2 + (it.group === group ? 0 : 1) });
+  }
+  return scored.sort((a, b) => a.score - b.score || a.it.rank - b.it.rank).map((s) => s.it);
+}
+
 // Shared by every store, the log's two keys included. Unreadable data is copied aside under a key named by its
 // content, so a later bad value never replaces an earlier copy, and ok is false when that copy failed.
 function loadStore(storage, key, validate, empty) {
@@ -522,7 +594,7 @@ function loadStore(storage, key, validate, empty) {
   if (raw == null) return { ok: true, value: empty(), [storeName(key)]: empty() };
   try {
     const checked = validate(JSON.parse(raw));
-    if (checked.ok) { const value = checked.log ?? checked.days ?? checked.order; return { ok: true, value, [storeName(key)]: value }; }
+    if (checked.ok) { const value = checked.log ?? checked.days ?? checked.order ?? checked.swaps; return { ok: true, value, [storeName(key)]: value }; }
   } catch { /* fall through */ }
   const aside = `${key}.unreadable.${hash(raw)}`;
   try { if (storage.getItem(aside) !== raw) storage.setItem(aside, raw); } catch { return { ok: false, value: empty(), [storeName(key)]: empty(), recovered: true }; }
@@ -531,7 +603,7 @@ function loadStore(storage, key, validate, empty) {
 function saveStore(storage, key, value) {
   try { storage.setItem(key, JSON.stringify(value)); return true; } catch { return false; }
 }
-const storeName = (key) => (key === DAYS_KEY ? 'days' : key === ORDER_KEY ? 'order' : 'log');
+const storeName = (key) => (key === DAYS_KEY ? 'days' : key === ORDER_KEY ? 'order' : key === SWAPS_KEY ? 'swaps' : 'log');
 export function exportFileName(now = new Date()) {
   return `workout-log-${localDate(now)}.json`;
 }

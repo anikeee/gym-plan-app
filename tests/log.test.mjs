@@ -636,3 +636,61 @@ test('everything saveLog writes to the main key, and every backup, still passes 
   assert.deepEqual(Object.keys(restored.log.entries).sort(), [KEY, 'pull-up.machine']);
   assert.equal(OLD.validateLog({ v: 1, entries: { [BAR]: [session('2026-10-02', [[0, 8]])] } }).ok, false); // why the split exists
 });
+
+// ---- Replacements: the user's own exercise in a plan's slot ----
+
+test('a replacement is kept per plan and slot, validated, saved, loaded and put back', () => {
+  let swaps = L.setSwap(L.emptySwaps(), 'trainer', 'push-3', 'lib-12');
+  swaps = L.setSwap(swaps, 'muscle', 'pull-103', 'pull-1');
+  assert.equal(L.swapFor(swaps, 'trainer', 'push-3'), 'lib-12');
+  assert.equal(L.swapFor(swaps, 'muscle', 'push-3'), null);
+  assert.deepEqual(L.setSwap(swaps, 'trainer', 'push-3', null).swaps, { muscle: { 'pull-103': 'pull-1' } }); // put back drops the plan when empty
+  assert.deepEqual(L.setSwap(swaps, 'trainer', 'push-3', 'push-3').swaps, { muscle: { 'pull-103': 'pull-1' } }); // the slot's own exercise is no swap
+  const s = fakeStorage();
+  assert.equal(L.saveSwaps(s, swaps), true);
+  assert.deepEqual(L.loadSwaps(s).swaps, swaps);
+  assert.equal(L.validateSwaps({ v: 1, swaps: { trainer: { 'push-3': 'push-3' } } }).ok, false);
+  assert.equal(L.validateSwaps({ v: 1, swaps: { trainer: { 'push-3': 'LIB 12' } } }).ok, false);
+  assert.equal(L.validateSwaps({ v: 1, swaps: { trainer: ['push-3'] } }).ok, false);
+  assert.equal(L.validateSwaps({ v: 1, swaps: { 'Trainer!': {} } }).ok, false);
+  assert.deepEqual(L.validateSwaps({ v: 1, swaps: { trainer: {} } }).swaps.swaps, {}); // an empty plan is dropped
+  const broken = fakeStorage({ [L.SWAPS_KEY]: '{not json' });
+  assert.equal(L.loadSwaps(broken).recovered, true);
+  assert.deepEqual(L.loadSwaps(broken).swaps, L.emptySwaps());
+});
+
+test('a backup carries replacements, which an older copy of the app skips, and a restore keeps the phone\'s own', () => {
+  const swaps = L.setSwap(L.setSwap(L.emptySwaps(), 'trainer', 'push-3', 'lib-12'), 'trainer', 'pull-1', 'lib-20');
+  const log = L.setSlot(L.emptyLog(), KEY, '2026-10-02', 0, { w: 40, r: 12 }, 4, TARGETS);
+  const payload = JSON.parse(JSON.stringify(L.exportPayload(log, new Date(2026, 9, 19), L.emptyDays(), L.emptyOrder(), swaps)));
+  assert.deepEqual(payload.swaps, { trainer: { 'push-3': 'lib-12', 'pull-1': 'lib-20' } });
+  assert.equal('swaps' in L.exportPayload(log), false);
+  assert.equal(OLD.validateBackup(payload).ok, true);
+  const checked = L.validateBackup(payload);
+  assert.equal(checked.ok, true);
+  assert.deepEqual(checked.swaps, swaps);
+  assert.equal(L.validateBackup({ ...payload, swaps: { trainer: { 'push-3': 'push-3' } } }).ok, false);
+  const phone = L.setSwap(L.setSwap(L.emptySwaps(), 'trainer', 'push-3', 'lib-5'), 'science', 'push-301', 'lib-1');
+  const merged = L.mergeSwaps(phone, checked.swaps);
+  assert.deepEqual(merged.swaps.swaps, { trainer: { 'push-3': 'lib-5', 'pull-1': 'lib-20' }, science: { 'push-301': 'lib-1' } });
+  assert.equal(merged.added, 1);
+});
+
+test('the replace search matches every typed word by prefix and ranks name, alias, version, then the day group', () => {
+  const items = [
+    { id: 'push-4', name: 'Chest Press Machine', group: 'push', aliases: ['converging chest press'], variantNames: ['Seated chest press machine', 'Flat dumbbell bench press'], rank: 1 },
+    { id: 'lib-1', name: 'Pec Fly Machine', group: 'push', aliases: ['pec deck', 'chest fly machine'], variantNames: ['Pec fly machine', 'Incline dumbbell fly'], rank: 2 },
+    { id: 'pull-1', name: 'Lat Pulldown', group: 'pull', aliases: [], variantNames: ['Lat pulldown machine', 'Single arm dumbbell row'], rank: 3 },
+    { id: 'legs-3', name: 'Leg Press', group: 'legs', aliases: ['seated leg press'], variantNames: ['Leg press machine', 'Dumbbell squat'], rank: 4 },
+  ];
+  const ids = (q, g = 'push') => L.searchExercises(items, q, g).map((x) => x.id);
+  assert.deepEqual(ids(''), ['push-4', 'lib-1', 'pull-1', 'legs-3']); // empty: the day's own group first, then plan order
+  assert.deepEqual(ids('', 'legs'), ['legs-3', 'push-4', 'lib-1', 'pull-1']);
+  assert.deepEqual(ids('pec'), ['lib-1']);
+  assert.deepEqual(ids('CONVERGING  chest'), ['push-4']); // alias, any case, extra spaces
+  assert.deepEqual(ids('press'), ['push-4', 'legs-3']); // name matches, own group first
+  assert.deepEqual(ids('dumbbell row'), ['pull-1']); // a version name
+  assert.deepEqual(ids('fly incline'), ['lib-1']); // words spread across the name and a version name
+  assert.deepEqual(ids('pec-deck!'), ['lib-1']);
+  assert.deepEqual(ids('zzz'), []);
+});
