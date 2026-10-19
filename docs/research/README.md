@@ -12,3 +12,5 @@ Collected on 2026-10-07 while writing `docs/gym-exercise-app-plan.md`.
 - `plans.json`: the push pull legs programs read online on 2026-10-09, and the three plans chosen and adapted from them (Muscle Building PPL, Barbell Strength PPL, Science Based PPL), with every swap and the reason.
 
 Nothing in this folder is app code. The app reads only `data/exercises.json`.
+
+- `library-sources.json`: the exercise library behind the Replace button (`data/library.json`), collected on 2026-10-19: for every version, the PureGym page its setup and form text was written from, and the clips checked for it. The oEmbed results for those clips are in `oembed-check.json`.

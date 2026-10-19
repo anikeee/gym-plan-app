@@ -3,10 +3,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const data = JSON.parse(await readFile(new URL('../data/exercises.json', import.meta.url), 'utf8'));
+const library = JSON.parse(await readFile(new URL('../data/library.json', import.meta.url), 'utf8')).exercises;
 const plans = data.plans ?? [];
 const trainer = plans[0];
 const exercisesOf = (plan) => plan.days.flatMap((d) => d.exercises);
 const allExercises = () => plans.flatMap(exercisesOf);
+const everyExercise = () => [...allExercises(), ...library]; // the plans and the library the Replace sheet offers
 
 // The personal trainer's plan, exactly as the PDF gives it (docs/research/anik-workout-plan-1.txt).
 const PDF_NAMES = {
@@ -19,8 +21,37 @@ const EXDB_ID = /^[A-Za-z0-9]{7}$/;
 const FEDB_ID = /^[A-Za-z0-9_()-]+$/;
 const EX_ID = /^[a-z]+-\d+$/; // must keep matching ID_RE in log.js, which older cached copies of the app also use
 // Keyed by exercise name, because the same exercise (with the same data) appears in more than one plan.
-const ALLOWED_NO_ANIMATION = new Set(['Leg Extension.dumbbell']);
-const ALLOWED_NO_FALLBACK = new Set(['Leg Curl.dumbbell', 'Leg Extension.dumbbell']);
+const ALLOWED_NO_ANIMATION = new Set(['Leg Extension.dumbbell', 'Landmine Chest Press.barbell', 'Landmine Shoulder Press.barbell', 'Landmine Squat.barbell']);
+const ALLOWED_NO_FALLBACK = new Set(['Leg Curl.dumbbell', 'Leg Extension.dumbbell', 'Landmine Chest Press.barbell', 'Landmine Shoulder Press.barbell', 'Landmine Squat.barbell', 'Lateral Lunge.dumbbell', 'Single Leg Romanian Deadlift.dumbbell']);
+const VARIANT_KEYS = ['machine', 'dumbbell', 'barbell', 'bodyweight'];
+
+// One version of an exercise, in a plan or the library: every field the app shows must be there and well formed.
+function checkVariant(ex, key, v) {
+  const where = `${ex.id}.${key}`;
+  assert.ok(VARIANT_KEYS.includes(key), where);
+  assert.ok(typeof v.name === 'string' && v.name.trim().length > 3, `${where}.name`); // short names like Rack pull are fine
+  for (const f of ['kit', 'tip']) assert.ok(typeof v[f] === 'string' && v[f].length > 10, `${where}.${f}`);
+  assert.ok(Array.isArray(v.videos) && v.videos.length >= 1, where);
+  const ids = new Set();
+  for (const vid of v.videos) {
+    assert.match(vid.id, YT_ID, where);
+    assert.ok(!ids.has(vid.id), `${where} duplicate video ${vid.id}`); ids.add(vid.id);
+    assert.ok(vid.label && vid.by, where);
+    assert.ok(vid.seconds === null || Number.isInteger(vid.seconds), where);
+  }
+  const a = v.animation;
+  assert.ok(a && 'exercisedb' in a && 'fallback' in a && 'note' in a, where);
+  if (a.exercisedb !== null) assert.match(a.exercisedb, EXDB_ID, where);
+  if (a.fallback !== null) assert.match(a.fallback, FEDB_ID, where);
+  if (a.exercisedb === null && a.fallback === null) assert.ok(ALLOWED_NO_ANIMATION.has(`${ex.name}.${key}`), `${where} has no animation`);
+  if (a.fallback === null) assert.ok(ALLOWED_NO_FALLBACK.has(`${ex.name}.${key}`), `${where} has no fallback`);
+  assert.ok(v.guide === null || v.guide.startsWith('https://www.puregym.com/'), where);
+  if (v.assisted !== undefined) assert.ok(v.assisted === true && key === 'machine' && /assist/i.test(v.name), `${where}: only an assisted machine is marked assisted`);
+}
+function checkAliases(ex) {
+  if (ex.aliases === undefined) return;
+  assert.ok(Array.isArray(ex.aliases) && ex.aliases.every((a) => typeof a === 'string' && a.trim().length > 1), `${ex.id}.aliases`);
+}
 
 test('the trainer plan comes first and is the default', () => {
   assert.ok(plans.length >= 1);
@@ -108,52 +139,55 @@ test('each added plan brings new exercises on every day', () => {
   }
 });
 
-test('every exercise has machine and dumbbell versions with complete fields', () => {
+test('every plan exercise has machine and dumbbell versions with complete fields', () => {
   for (const ex of allExercises()) {
     assert.ok(['compound', 'isolation'].includes(ex.type), ex.id);
     assert.ok(['machine', 'dumbbell', 'barbell', 'other'].includes(ex.asWritten), ex.id);
     assert.ok(ex.variants.machine && ex.variants.dumbbell, ex.id);
-    for (const [key, v] of Object.entries(ex.variants)) {
-      const where = `${ex.id}.${key}`;
-      assert.ok(['machine', 'dumbbell', 'barbell', 'bodyweight'].includes(key), where);
-      for (const f of ['name', 'kit', 'tip']) assert.ok(typeof v[f] === 'string' && v[f].length > 10, `${where}.${f}`);
-      assert.ok(Array.isArray(v.videos) && v.videos.length >= 1, where);
-      const ids = new Set();
-      for (const vid of v.videos) {
-        assert.match(vid.id, YT_ID, where);
-        assert.ok(!ids.has(vid.id), `${where} duplicate video ${vid.id}`); ids.add(vid.id);
-        assert.ok(vid.label && vid.by, where);
-        assert.ok(vid.seconds === null || Number.isInteger(vid.seconds), where);
-      }
-      const a = v.animation;
-      assert.ok(a && 'exercisedb' in a && 'fallback' in a && 'note' in a, where);
-      if (a.exercisedb !== null) assert.match(a.exercisedb, EXDB_ID, where);
-      if (a.fallback !== null) assert.match(a.fallback, FEDB_ID, where);
-      if (a.exercisedb === null && a.fallback === null) assert.ok(ALLOWED_NO_ANIMATION.has(`${ex.name}.${key}`), `${where} has no animation`);
-      if (a.fallback === null) assert.ok(ALLOWED_NO_FALLBACK.has(`${ex.name}.${key}`), `${where} has no fallback`);
-      assert.ok(v.guide === null || v.guide.startsWith('https://www.puregym.com/'), where);
-      if (v.assisted !== undefined) assert.ok(v.assisted === true && key === 'machine' && /assist/i.test(v.name), `${where}: only an assisted machine is marked assisted`);
-    }
+    for (const [key, v] of Object.entries(ex.variants)) checkVariant(ex, key, v);
     if (ex.asWritten !== 'other') assert.ok(ex.variants[ex.asWritten], `${ex.id} asWritten points at a missing variant`);
+    checkAliases(ex);
   }
+});
+
+// The library: the exercises the Replace sheet offers beyond the plans. Each has at least one complete version.
+test('every library exercise has a unique id and name, a day group, and complete versions', () => {
+  assert.ok(library.length >= 40, `only ${library.length} library exercises`);
+  const planNames = new Set(allExercises().map((e) => e.name));
+  const ids = new Set(); const names = new Set();
+  for (const ex of library) {
+    assert.match(ex.id, /^lib-\d+$/, ex.id);
+    assert.ok(!ids.has(ex.id), `duplicate library id ${ex.id}`); ids.add(ex.id);
+    assert.ok(!names.has(ex.name) && !planNames.has(ex.name), `${ex.name} is listed twice`); names.add(ex.name);
+    assert.ok(['push', 'pull', 'legs'].includes(ex.group), `${ex.id}.group`);
+    assert.ok(['compound', 'isolation'].includes(ex.type), ex.id);
+    assert.ok([...VARIANT_KEYS, 'other'].includes(ex.asWritten), ex.id);
+    assert.ok(Object.keys(ex.variants).length >= 1, ex.id);
+    for (const [key, v] of Object.entries(ex.variants)) checkVariant(ex, key, v);
+    if (ex.asWritten !== 'other') assert.ok(ex.variants[ex.asWritten], `${ex.id} asWritten points at a missing variant`);
+    checkAliases(ex);
+    assert.equal(ex.reps, undefined, `${ex.id}: a library exercise takes the slot's sets and reps`);
+  }
+  for (const g of ['push', 'pull', 'legs']) assert.ok(library.filter((e) => e.group === g).length >= 10, `${g} has few library exercises`);
 });
 
 test('every video id is in the research oEmbed check', async () => {
   const checked = JSON.parse(await readFile(new URL('../docs/research/oembed-check.json', import.meta.url), 'utf8'));
-  for (const ex of allExercises()) for (const v of Object.values(ex.variants)) for (const vid of v.videos) {
+  for (const ex of everyExercise()) for (const v of Object.values(ex.variants)) for (const vid of v.videos) {
     assert.ok(checked[vid.id]?.ok, `${vid.id} missing from docs/research/oembed-check.json`);
   }
 });
 
 test('every fallback id has both local images', async () => {
-  for (const ex of allExercises()) for (const v of Object.values(ex.variants)) {
+  for (const ex of everyExercise()) for (const v of Object.values(ex.variants)) {
     const id = v.animation.fallback; if (!id) continue;
     for (const n of [0, 1]) await readFile(new URL(`../media/fallback/${id}/${n}.jpg`, import.meta.url));
   }
 });
 
-test('the assisted pull up machine is marked, so the app takes help off instead of adding it', () => {
+test('the assisted pull up and chin up machines are marked, so the app takes help off instead of adding it', () => {
   for (const ex of allExercises().filter((e) => e.name === 'Pull Up')) assert.equal(ex.variants.machine.assisted, true, ex.id);
+  assert.equal(library.find((e) => e.name === 'Chin Up')?.variants.machine.assisted, true);
 });
 
 // A bodyweight version logs the weight added (0 kg is bodyweight only), so its sets go to their own store in log.js.

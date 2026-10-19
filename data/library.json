@@ -1,0 +1,2516 @@
+{
+ "exercises": [
+  {
+   "id": "lib-1",
+   "name": "Pec Fly Machine",
+   "group": "push",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "pec deck",
+    "chest fly machine",
+    "machine fly",
+    "pec fly"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Pec fly machine",
+     "kit": "Matrix Pec Fly/Rear Delt machine on the pec fly setting. Set the seat so the handles are at chest height. Start the arms level with your shoulders, not further back.",
+     "tip": "Back and head against the pad, palms facing each other, shoulder blades pinned back. Squeeze your chest to bring the handles together in front of you, soft bend in the elbows, then return slowly.",
+     "videos": [
+      {
+       "id": "eGjt4lk6g34",
+       "label": "How to use the chest fly machine",
+       "by": "PureGym",
+       "seconds": 16
+      },
+      {
+       "id": "xWEtTqJxRbk",
+       "label": "Matrix Ultra pec fly/rear delt",
+       "by": "Matrix Fitness",
+       "seconds": 64
+      }
+     ],
+     "animation": {
+      "exercisedb": "v3xmPAR",
+      "fallback": "Butterfly",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/chest/chest-fly/machine-fly/"
+    },
+    "dumbbell": {
+     "name": "Incline dumbbell fly",
+     "kit": "Adjustable bench set to 15 to 30 degrees and two light dumbbells.",
+     "tip": "Start with the dumbbells over your chest, palms facing each other, soft bend in the elbows. Lower them out in a wide arc to chest height, then squeeze your chest to bring them back together.",
+     "videos": [
+      {
+       "id": "JSDpq14vCZ8",
+       "label": "How to do an incline dumbbell fly",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "ESOd5Pl",
+      "fallback": "Incline_Dumbbell_Flyes",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/chest/chest-fly/incline-dumbbell-chest-fly/"
+    }
+   }
+  },
+  {
+   "id": "lib-2",
+   "name": "Seated Cable Fly",
+   "group": "push",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "cable fly bench",
+    "seated fly"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Seated cable fly",
+     "kit": "Cable crossover (the dual adjustable pulley) with a single handle on each side. Put an adjustable bench upright in the middle and set both pulleys just above shoulder height when you are seated.",
+     "tip": "Back against the pad, shoulder blades pinned back, handles together in front of your chest with a soft elbow bend. Open the arms in an arc until the handles are level with your chest, then squeeze them back together.",
+     "videos": [
+      {
+       "id": "VgKCIZgca58",
+       "label": "How to do seated cable flys",
+       "by": "PureGym",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Flat_Bench_Cable_Flyes",
+      "note": "Pictures show the fly lying on a flat bench; sit up on the bench instead."
+     },
+     "guide": "https://www.puregym.com/exercises/chest/chest-fly/seated-cable-fly/"
+    },
+    "dumbbell": {
+     "name": "Dumbbell floor fly",
+     "kit": "Two dumbbells and a mat on the floor in the free weights area. No bench needed.",
+     "tip": "Lie on your back, knees bent, dumbbells over your chest with palms facing each other. Lower them out in an arc until your upper arms touch the floor, then squeeze them back together.",
+     "videos": [
+      {
+       "id": "bgC53-J-6gA",
+       "label": "How to do a dumbbell floor fly",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "yz9nUhF",
+      "fallback": "Dumbbell_Flyes",
+      "note": "Animation and pictures show the fly on a bench; on the floor, stop when your upper arms touch the floor."
+     },
+     "guide": null
+    }
+   }
+  },
+  {
+   "id": "lib-3",
+   "name": "Dips",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "seated dip",
+    "tricep dips",
+    "chest dips",
+    "dip machine",
+    "triceps press",
+    "assisted dip"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Seated dip machine",
+     "kit": "Matrix Ultra Triceps Press, the seated dip machine. Set the seat so the handles are level with your lower chest. Your elbows should start bent at about 90 degrees.",
+     "tip": "Sit tall with your chest up and shoulders down, hands on the handles with elbows bent about 90 degrees. Press the handles down until your arms are straight, elbows close to your sides, then lower slowly.",
+     "videos": [
+      {
+       "id": "A8SreTrrcgU",
+       "label": "Matrix Ultra triceps press",
+       "by": "Matrix Fitness",
+       "seconds": 33
+      }
+     ],
+     "animation": {
+      "exercisedb": "BRImeP8",
+      "fallback": "Dip_Machine",
+      "note": null
+     },
+     "guide": null
+    },
+    "bodyweight": {
+     "name": "Dips on the parallel bars",
+     "kit": "Parallel dip bars on the dip station or the assisted dip machine, with your knees off the pad. Add weight with a dip belt or a dumbbell held between your feet.",
+     "tip": "Arms straight on the bars, knees bent, feet behind you, lean forward about 20 to 30 degrees. Lower until your elbows reach about 90 degrees, pause at the chest stretch, then press back up without locking out.",
+     "videos": [
+      {
+       "id": "2HYAeF6o7Bc",
+       "label": "How to do chest dips",
+       "by": "PureGym",
+       "seconds": 12
+      },
+      {
+       "id": "qrS6aa0aQ9I",
+       "label": "How to do a bodyweight tricep dip",
+       "by": "PureGym",
+       "seconds": 25
+      },
+      {
+       "id": "4LA1kF7yCGo",
+       "label": "Dip",
+       "by": "Renaissance Periodization",
+       "seconds": 11
+      },
+      {
+       "id": "yZ83t4mrPrI",
+       "label": "Assisted dip",
+       "by": "Renaissance Periodization",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": "X6C6i5Y",
+      "fallback": "Parallel_Bar_Dip",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/chest/dips/"
+    }
+   }
+  },
+  {
+   "id": "lib-4",
+   "name": "Close Grip Bench Press",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "narrow grip bench",
+    "triceps bench press"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Close grip barbell bench press",
+     "kit": "Olympic flat bench press station, or a flat bench inside a rack, with a barbell. Hands just outside shoulder width, no closer, so the bar can still reach your chest.",
+     "tip": "Eyes under the bar, shoulder blades pulled back into the bench, feet pressing into the floor. Lower the bar to your mid chest with elbows tucked, then press up in a slight arc towards your chin.",
+     "videos": [
+      {
+       "id": "DzA2xZhDGeo",
+       "label": "How to do a close grip barbell bench press",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "J6Dx1Mu",
+      "fallback": "Close-Grip_Barbell_Bench_Press",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/chest/bench-press/close-grip-bench-press/"
+    },
+    "machine": {
+     "name": "Smith machine close grip bench press",
+     "kit": "Smith machine with a flat bench placed under the bar. Line the bench up so the bar comes down to your lower chest. Set the safety stops just below that point.",
+     "tip": "Grip just outside shoulder width and twist the bar to unrack it, arms straight over your chest. Lower to your lower chest with elbows tucked to your sides, then press straight back up.",
+     "videos": [
+      {
+       "id": "qf_FTh3QyYs",
+       "label": "Smith machine narrow grip bench press",
+       "by": "Renaissance Periodization",
+       "seconds": 13
+      }
+     ],
+     "animation": {
+      "exercisedb": "WcHl7ru",
+      "fallback": "Smith_Machine_Close-Grip_Bench_Press",
+      "note": null
+     },
+     "guide": null
+    },
+    "dumbbell": {
+     "name": "Dumbbell squeeze press",
+     "kit": "Flat bench and two matching dumbbells. Go lighter than your usual press weight, since you squeeze them together the whole set.",
+     "tip": "Lie back with the dumbbells pressed hard against each other over your chest, palms facing in. Lower them together to your chest with the elbows tucked, then press back up while still squeezing them together.",
+     "videos": [
+      {
+       "id": "1iQt5BwSWYg",
+       "label": "How to do a dumbbell squeeze press",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "SpYC0Kp",
+      "fallback": "Dumbbell_Bench_Press",
+      "note": "Animation and pictures show a normal dumbbell press; keep the dumbbells pressed together the whole time."
+     },
+     "guide": null
+    }
+   }
+  },
+  {
+   "id": "lib-5",
+   "name": "Decline Dumbbell Bench Press",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "decline press",
+    "lower chest"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Decline dumbbell bench press",
+     "kit": "Decline bench, or an adjustable bench on its decline setting, and two dumbbells. Hook your legs under the leg roller and sit the dumbbells on your thighs before lying back.",
+     "tip": "Lie back with the dumbbells pressed up over your chest and the shoulder blades pulled into the bench. Lower them to either side of your mid chest with elbows tucked, then press up and together.",
+     "videos": [
+      {
+       "id": "4R_GwRhG0rY",
+       "label": "How to decline dumbbell press",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "DwhEmmE",
+      "fallback": "Decline_Dumbbell_Bench_Press",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/chest/bench-press/decline-dumbbell-bench-press/"
+    }
+   }
+  },
+  {
+   "id": "lib-6",
+   "name": "Landmine Chest Press",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "landmine press"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Landmine chest press",
+     "kit": "Barbell in the landmine sleeve at the base of a rack, plates on the free end. Hold the end of the bar with both hands at chest height, feet hip width apart.",
+     "tip": "Stand tall with the bar end held in both hands against your mid chest, elbows tucked in. Press up and away until the arms are nearly straight, then lower it back to your chest with control.",
+     "videos": [
+      {
+       "id": "6sH6vyWduNU",
+       "label": "How to do a landmine chest press",
+       "by": "PureGym",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": null,
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/chest/bench-press/landmine-chest-press/"
+    }
+   }
+  },
+  {
+   "id": "lib-7",
+   "name": "Push Up",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "press up",
+    "pushup",
+    "press ups"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Push up",
+     "kit": "Any clear floor space. A mat in the stretch area works well. To make it harder, raise your feet on a step or bench.",
+     "tip": "Start in a high plank with hands just wider than shoulder width and a straight line from head to heels. Lower your chest close to the floor with elbows near your sides, then push back up.",
+     "videos": [
+      {
+       "id": "Env8gAr_QnE",
+       "label": "How to do press ups",
+       "by": "PureGym",
+       "seconds": 17
+      },
+      {
+       "id": "X9sGmsGYYE0",
+       "label": "How to press up from knees (from the knees)",
+       "by": "PureGym",
+       "seconds": 21
+      }
+     ],
+     "animation": {
+      "exercisedb": "I4hDWkc",
+      "fallback": "Pushups",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/chest/press-up/push-ups/"
+    }
+   }
+  },
+  {
+   "id": "lib-8",
+   "name": "Arnold Press",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "arnold"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Arnold press",
+     "kit": "Adjustable bench with the back upright or one notch back, and two dumbbells. Sit the dumbbells on your knees and kick them up to shoulder height one at a time.",
+     "tip": "Start with the dumbbells at shoulder height, palms facing you, shoulder blades back and down. Press up and turn your palms to face forward at the top, then lower and turn them back.",
+     "videos": [
+      {
+       "id": "jeJttN2EWCo",
+       "label": "How to do the arnold press",
+       "by": "PureGym",
+       "seconds": 24
+      }
+     ],
+     "animation": {
+      "exercisedb": "eOrFCnx",
+      "fallback": "Arnold_Dumbbell_Press",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/arnold-press/"
+    }
+   }
+  },
+  {
+   "id": "lib-9",
+   "name": "Shoulder Press",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "shoulder press machine",
+    "seated shoulder press",
+    "overhead press machine",
+    "converging shoulder press"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Shoulder press machine",
+     "kit": "Matrix shoulder press machine. Set the seat so the handles start level with your shoulders when your back is flat on the pad.",
+     "tip": "Back flat against the pad, feet planted, hands on the handles at shoulder height. Press straight up until your arms are extended, then lower slowly back to shoulder height.",
+     "videos": [
+      {
+       "id": "GcY6TZxfS0k",
+       "label": "How to use the shoulder press machine (plate-loaded)",
+       "by": "PureGym",
+       "seconds": 11
+      },
+      {
+       "id": "TnhIyp4kmO8",
+       "label": "How to use the shoulder press machine (selectorised)",
+       "by": "PureGym",
+       "seconds": 55
+      },
+      {
+       "id": "zWVEKwAGdTc",
+       "label": "Matrix Ultra converging shoulder press",
+       "by": "Matrix Fitness",
+       "seconds": 40
+      }
+     ],
+     "animation": {
+      "exercisedb": "67n3r98",
+      "fallback": "Machine_Shoulder_Military_Press",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/shoulder-press-machine/"
+    },
+    "dumbbell": {
+     "name": "Seated dumbbell shoulder press",
+     "kit": "Adjustable bench with the back upright or one notch back, and two dumbbells. Start with the dumbbells on your knees and kick them up one at a time.",
+     "tip": "Dumbbells start level with your ears, back pinned to the bench, feet flat. Press up and slightly in until the arms are straight, then lower back to ear height.",
+     "videos": [
+      {
+       "id": "TsduLWuhlFM",
+       "label": "How to do a seated shoulder press",
+       "by": "PureGym",
+       "seconds": 11
+      },
+      {
+       "id": "GLrn1vVHz24",
+       "label": "How to do a shoulder press",
+       "by": "PureGym",
+       "seconds": 26
+      }
+     ],
+     "animation": {
+      "exercisedb": "znQUdHY",
+      "fallback": "Dumbbell_Shoulder_Press",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/seated-shoulder-press/"
+    }
+   }
+  },
+  {
+   "id": "lib-10",
+   "name": "Front Raise",
+   "group": "push",
+   "type": "isolation",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "front delt raise",
+    "plate raise",
+    "front raises"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell front raise",
+     "kit": "Two light dumbbells. Sit on a bench if you catch yourself swinging the weight up.",
+     "tip": "Start with the dumbbells in front of your thighs, palms down, core braced. Sweep them up in an arc to shoulder height with the arms nearly straight, then lower slowly.",
+     "videos": [
+      {
+       "id": "zkP0MsTcIVU",
+       "label": "How to do a dumbbell front raise",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "3eGE2JC",
+      "fallback": "Front_Dumbbell_Raise",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/front-raises/dumbbell-front-raise/"
+    },
+    "machine": {
+     "name": "Cable front raise",
+     "kit": "Cable machine with the pulley at the lowest setting and the straight bar attached. Face away from the stack with the cable running between your legs.",
+     "tip": "Hold the bar in front of your thighs, palms down, a step forward so the cable is tight. Raise it in an arc to shoulder height with arms nearly straight, then lower slowly.",
+     "videos": [
+      {
+       "id": "vtH93qBItdk",
+       "label": "How to do a cable front raise",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "u2X71Np",
+      "fallback": "Front_Cable_Raise",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/front-raises/cable-front-raise/"
+    },
+    "barbell": {
+     "name": "Barbell front raise",
+     "kit": "A light fixed barbell from the barbell rack. Hands shoulder width apart, palms facing down.",
+     "tip": "Bar rests against your thighs, arms straight, core braced so you do not swing. Sweep the bar up in an arc to shoulder height, pause, then lower slowly.",
+     "videos": [
+      {
+       "id": "_od0CCC6DEM",
+       "label": "How to do a barbell front raise",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "b2Uoz54",
+      "fallback": "Standing_Front_Barbell_Raise_Over_Head",
+      "note": "Pictures raise the bar over the head; stop at shoulder height."
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/front-raises/barbell-front-raise/"
+    }
+   }
+  },
+  {
+   "id": "lib-11",
+   "name": "Push Press",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "barbell push press"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Barbell push press",
+     "kit": "Barbell in a squat rack or half rack. Set the J hooks just below shoulder height so you can unrack the bar onto the front of your shoulders.",
+     "tip": "Bar on the front of your shoulders, elbows forward, feet hip width apart. Dip a little at the knees, then drive up through the legs and press the bar straight overhead.",
+     "videos": [
+      {
+       "id": "HKx22sWywxc",
+       "label": "How to do a barbell push press",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Push_Press",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/barbell-push-press/"
+    }
+   }
+  },
+  {
+   "id": "lib-12",
+   "name": "Landmine Shoulder Press",
+   "group": "push",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "landmine press",
+    "single arm landmine press"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Single arm landmine press",
+     "kit": "Barbell in the landmine sleeve at the base of a rack, plates on the free end. Start with just the bar, as it already weighs 20 kg. Stand with the foot opposite the working hand in front.",
+     "tip": "Hold the bar end at the front of your shoulder with the elbow tucked in, opposite foot forward. Press up and forward until the arm is straight, then lower back to the shoulder with the elbow tucked.",
+     "videos": [
+      {
+       "id": "qPxvgth0dQQ",
+       "label": "How to do a single arm landmine press",
+       "by": "PureGym",
+       "seconds": 12
+      },
+      {
+       "id": "TY_zsi0kOyI",
+       "label": "How to do a single arm landmine press",
+       "by": "PureGym",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": null,
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/single-arm-landmine-press/"
+    }
+   }
+  },
+  {
+   "id": "lib-13",
+   "name": "Tricep Extension Machine",
+   "group": "push",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "arm extension",
+    "triceps extension machine",
+    "seated tricep extension",
+    "triceps machine"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Seated tricep extension machine",
+     "kit": "Matrix Triceps Extension machine, where your upper arms rest on the angled pad. Set the seat so your elbows line up with the pivot and your chest rests against the pad. Not the Triceps Press, which is the seated dip machine.",
+     "tip": "Upper arms flat on the pad, elbows bent so the handles start near your shoulders. Push the handles down in an arc until the arms are straight, pause, then let them come back slowly.",
+     "videos": [
+      {
+       "id": "QW3v5sEaQyI",
+       "label": "Matrix Ultra triceps extension",
+       "by": "Matrix Fitness",
+       "seconds": 36
+      },
+      {
+       "id": "Bx8ga1BLHLE",
+       "label": "Machine triceps extension",
+       "by": "Renaissance Periodization",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": "Ser9eQp",
+      "fallback": "Machine_Triceps_Extension",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/tricep-extension/"
+    },
+    "dumbbell": {
+     "name": "Dumbbell tricep kickback",
+     "kit": "One dumbbell and a bench for support.",
+     "tip": "Upper arm parallel to the floor and still. Extend the elbow until the arm is straight, squeeze, lower slowly.",
+     "videos": [
+      {
+       "id": "JPmbMOu4IYw",
+       "label": "How to do a tricep kickback",
+       "by": "PureGym",
+       "seconds": 19
+      }
+     ],
+     "animation": {
+      "exercisedb": "W6PxUkg",
+      "fallback": "Tricep_Dumbbell_Kickback",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/tricep-extension/tricep-kickbacks/"
+    }
+   }
+  },
+  {
+   "id": "lib-14",
+   "name": "Seated Lateral Raise",
+   "group": "push",
+   "type": "isolation",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "seated side raise",
+    "side delts"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Seated dumbbell lateral raise",
+     "kit": "Adjustable bench with the back set upright and two light dumbbells. Sit with your back against the pad and feet flat on the floor.",
+     "tip": "Dumbbells start at your sides with a slight bend in the elbows. Raise them to shoulder height with the elbows leading, slightly in front of your body, then lower slowly.",
+     "videos": [
+      {
+       "id": "xDrYB81QXmY",
+       "label": "How to do a seated lateral raise",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "hrrS0Ed",
+      "fallback": "Side_Lateral_Raise",
+      "note": "Pictures show the standing version."
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/lateral-raises/"
+    }
+   }
+  },
+  {
+   "id": "lib-15",
+   "name": "Diverging Lat Pulldown",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "lat pulldown machine",
+    "matrix lat pulldown",
+    "diverging pulldown"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Diverging lat pulldown machine",
+     "kit": "Matrix Ultra Diverging Lat Pulldown, the machine with two separate handles that move apart as you pull. Set the thigh pads snug on your legs with your feet flat on the floor. If it is taken, use the normal lat pulldown with the wide bar.",
+     "tip": "Sit tall, arms straight, slight lean back. Pull the handles down and out to your sides, elbows down and back, then let them rise slowly.",
+     "videos": [
+      {
+       "id": "uoFjFcLIQec",
+       "label": "Matrix Ultra diverging lat pulldown",
+       "by": "Matrix Fitness",
+       "seconds": 43
+      }
+     ],
+     "animation": {
+      "exercisedb": "7F1DVzn",
+      "fallback": "Wide-Grip_Lat_Pulldown",
+      "note": "Pictures show the cable lat pulldown; the machine moves the same way."
+     },
+     "guide": "https://www.puregym.com/exercises/back/lat-exercises/"
+    },
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "kit": "One dumbbell and a bench.",
+     "tip": "Hand and knee on the bench, flat back. Pull the dumbbell to your hip and lower under control.",
+     "videos": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "label": "How to do single arm dumbbell rows",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "C0MA9bC",
+      "fallback": "One-Arm_Dumbbell_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/"
+    }
+   }
+  },
+  {
+   "id": "lib-16",
+   "name": "Close Grip Lat Pulldown",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "v bar pulldown",
+    "narrow grip pulldown",
+    "close grip pulldown"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Close grip lat pulldown",
+     "kit": "Lat pulldown station with the V handle instead of the wide bar. Set the thigh pads so they sit tight on your legs when you are seated.",
+     "tip": "Arms straight to start, with a slight lean back and your core braced. Pull your elbows down to your hips, handle to just under your chin, then control it back up.",
+     "videos": [
+      {
+       "id": "IjoFCmLX7z0",
+       "label": "How to do a close grip lat pulldown",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "4c9BhzB",
+      "fallback": "V-Bar_Pulldown",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/lat-exercises/close-grip-lat-pulldown/"
+    },
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "kit": "One dumbbell and a bench.",
+     "tip": "Hand and knee on the bench, flat back. Pull the dumbbell to your hip and lower under control.",
+     "videos": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "label": "How to do single arm dumbbell rows",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "C0MA9bC",
+      "fallback": "One-Arm_Dumbbell_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/"
+    }
+   }
+  },
+  {
+   "id": "lib-17",
+   "name": "Wide Grip Lat Pulldown",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "wide pulldown",
+    "wide grip pulldown"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Wide grip lat pulldown",
+     "kit": "Lat pulldown station with the long wide bar. Set the thigh pads so they sit tight on your legs.",
+     "tip": "Overhand grip a bit wider than your shoulders, slight lean back, feet flat. Pull the bar to your upper chest, elbows down and back, then let it rise slowly with no swing.",
+     "videos": [
+      {
+       "id": "7JnP8dFbS14",
+       "label": "How to do a wide grip lat pulldown",
+       "by": "PureGym",
+       "seconds": 16
+      },
+      {
+       "id": "YCKPD4BSD2E",
+       "label": "Wide grip pulldown",
+       "by": "Renaissance Periodization",
+       "seconds": 15
+      }
+     ],
+     "animation": {
+      "exercisedb": "qdRxqCj",
+      "fallback": "Wide-Grip_Lat_Pulldown",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/lat-exercises/wide-grip-lat-pulldown/"
+    },
+    "dumbbell": {
+     "name": "Dumbbell pullover",
+     "kit": "Flat bench and one dumbbell.",
+     "tip": "Lie on the bench holding one dumbbell over your chest with both hands. Lower it behind your head with a slight elbow bend, then pull it back over.",
+     "videos": [
+      {
+       "id": "jQjWlIwG4sI",
+       "label": "Dumbbell pullover",
+       "by": "Renaissance Periodization",
+       "seconds": 15
+      }
+     ],
+     "animation": {
+      "exercisedb": "9XjtHvS",
+      "fallback": "Straight-Arm_Dumbbell_Pullover",
+      "note": null
+     },
+     "guide": null
+    }
+   }
+  },
+  {
+   "id": "lib-18",
+   "name": "Kneeling Lat Pulldown",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "single arm pulldown",
+    "kneeling pulldown",
+    "half kneeling pulldown"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Kneeling single arm lat pulldown",
+     "kit": "Cable machine, high pulley, one D handle. Grab the handle while standing, step back a little, then go down onto your knees facing the machine.",
+     "tip": "Start with your arm straight overhead, core braced and glutes squeezed so your body stays still. Pull your elbow down to your hip, handle to about chin height, then let it rise slowly.",
+     "videos": [
+      {
+       "id": "VIJPZ8m0EDM",
+       "label": "How to do kneeling lat pulldowns",
+       "by": "PureGym",
+       "seconds": 12
+      },
+      {
+       "id": "LPahgWM7eUU",
+       "label": "How to do single lat pulldowns",
+       "by": "PureGym",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "U5INZY6",
+      "fallback": "One_Arm_Lat_Pulldown",
+      "note": "Animation and pictures show it standing or seated; kneel on one knee under the cable instead."
+     },
+     "guide": "https://www.puregym.com/exercises/back/lat-exercises/kneeling-lat-pulldown/"
+    },
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "kit": "One dumbbell and a bench.",
+     "tip": "Hand and knee on the bench, flat back. Pull the dumbbell to your hip and lower under control.",
+     "videos": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "label": "How to do single arm dumbbell rows",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "C0MA9bC",
+      "fallback": "One-Arm_Dumbbell_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/"
+    }
+   }
+  },
+  {
+   "id": "lib-19",
+   "name": "Single Arm Dumbbell Row",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "one arm row",
+    "dumbbell row"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "kit": "One dumbbell and a flat bench. Put one knee and the same side hand on the bench, with your other foot flat on the floor.",
+     "tip": "Flat back, ribs tucked, the free hand pressed firmly into the bench. Row the dumbbell to your waist, elbow back towards your hip, then lower it slowly.",
+     "videos": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "label": "How to do single arm dumbbell rows",
+       "by": "PureGym",
+       "seconds": 11
+      },
+      {
+       "id": "DMo3HJoawrU",
+       "label": "Single arm supported dumbbell row",
+       "by": "Renaissance Periodization",
+       "seconds": 14
+      }
+     ],
+     "animation": {
+      "exercisedb": "C0MA9bC",
+      "fallback": "One-Arm_Dumbbell_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/"
+    }
+   }
+  },
+  {
+   "id": "lib-20",
+   "name": "Dumbbell Bent Over Row",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "two arm dumbbell row",
+    "bent over row"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell bent over row",
+     "kit": "Two dumbbells.",
+     "tip": "Hinge to about 45 degrees with a flat back. Row both dumbbells to your hips.",
+     "videos": [
+      {
+       "id": "6gvmcqr226U",
+       "label": "How to do a dumbbell bent over row",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "BJ0Hz5L",
+      "fallback": "Bent_Over_Two-Dumbbell_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/dumbbell-bent-over-row/"
+    },
+    "machine": {
+     "name": "Smith machine bent over row",
+     "kit": "Smith machine with the bar set just below knee height.",
+     "tip": "Hinge to about 45 degrees with a flat back. Row the bar to your lower ribs and keep the hips still.",
+     "videos": [
+      {
+       "id": "3QcJggd_L24",
+       "label": "Smith machine row",
+       "by": "Renaissance Periodization",
+       "seconds": 16
+      },
+      {
+       "id": "ZFNLCpj8e-o",
+       "label": "How to do a Smith machine bent over row",
+       "by": "Live Lean TV Daily Exercises",
+       "seconds": 72
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Smith_Machine_Bent_Over_Row",
+      "note": null
+     },
+     "guide": null
+    }
+   }
+  },
+  {
+   "id": "lib-21",
+   "name": "Pendlay Row",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "dead stop row",
+    "barbell row"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Pendlay row",
+     "kit": "Olympic barbell on the floor, loaded with full size plates so the bar sits at shin height. Feet hip width, bar over your shoelaces.",
+     "tip": "Hinge until your back is flat and parallel to the floor, overhand grip, shoulder blades pulled back. Row the bar to your stomach, elbows back, then put it down on the floor every rep.",
+     "videos": [
+      {
+       "id": "Wv7f0uIKh8o",
+       "label": "How to do a pendlay row",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "r0z6xzQ",
+      "fallback": "Bent_Over_Barbell_Row",
+      "note": "Pictures show a normal bent over row; in the Pendlay row the bar rests on the floor between reps."
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/pendlay-row/"
+    },
+    "machine": {
+     "name": "Smith machine bent over row",
+     "kit": "Smith machine with the bar set just below knee height.",
+     "tip": "Hinge to about 45 degrees with a flat back. Row the bar to your lower ribs and keep the hips still.",
+     "videos": [
+      {
+       "id": "3QcJggd_L24",
+       "label": "Smith machine row",
+       "by": "Renaissance Periodization",
+       "seconds": 16
+      },
+      {
+       "id": "ZFNLCpj8e-o",
+       "label": "How to do a Smith machine bent over row",
+       "by": "Live Lean TV Daily Exercises",
+       "seconds": 72
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Smith_Machine_Bent_Over_Row",
+      "note": null
+     },
+     "guide": null
+    },
+    "dumbbell": {
+     "name": "Dumbbell bent over row",
+     "kit": "Two dumbbells.",
+     "tip": "Hinge to about 45 degrees with a flat back. Row both dumbbells to your hips.",
+     "videos": [
+      {
+       "id": "6gvmcqr226U",
+       "label": "How to do a dumbbell bent over row",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "BJ0Hz5L",
+      "fallback": "Bent_Over_Two-Dumbbell_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/dumbbell-bent-over-row/"
+    }
+   }
+  },
+  {
+   "id": "lib-22",
+   "name": "Inverted Row",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "bodyweight row",
+    "trx row",
+    "australian pull up"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Inverted row",
+     "kit": "Barbell set in the squat rack at about hip height, or a Smith machine bar at the same height. Lie under it with your chest below the bar. A lower bar or your feet up on a bench makes it harder.",
+     "tip": "Overhand grip just wider than your shoulders, hips up, body in a straight line from heels to head. Pull your chest to the bar, elbows back and down, then lower slowly with your hips kept up.",
+     "videos": [
+      {
+       "id": "0AsxBmXeOIo",
+       "label": "How to do inverted rows",
+       "by": "PureGym",
+       "seconds": 8
+      },
+      {
+       "id": "yCuSGoe1gjY",
+       "label": "How to do TRX rows",
+       "by": "PureGym",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "bZGHsAZ",
+      "fallback": "Inverted_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/rows/inverted-row/"
+    }
+   }
+  },
+  {
+   "id": "lib-23",
+   "name": "Chin Up",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "other",
+   "aliases": [
+    "underhand pull up",
+    "supinated pull up",
+    "chinup",
+    "assisted chin up"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Assisted chin up machine",
+     "kit": "Matrix assisted pull up machine with the kneeling pad and the weight stack. Kneel on the pad and hold the handles with an underhand grip, palms facing you. More weight on the stack means more help, so use less weight to make it harder.",
+     "tip": "Start with your arms straight and your chest up, knees resting on the pad. Pull your elbows down and back until your chin passes your hands, then lower slowly to straight arms.",
+     "videos": [
+      {
+       "id": "L4ChTwrXTjc",
+       "label": "Assisted underhand pullup",
+       "by": "Renaissance Periodization",
+       "seconds": 14
+      },
+      {
+       "id": "wFj808u2HWU",
+       "label": "How to use the assisted pull up machine",
+       "by": "PureGym",
+       "seconds": 72
+      }
+     ],
+     "animation": {
+      "exercisedb": "7OeHptV",
+      "fallback": "Chin-Up",
+      "note": "Pictures show the chin up with no help."
+     },
+     "guide": "https://www.puregym.com/exercises/back/pull-up/",
+     "assisted": true
+    },
+    "bodyweight": {
+     "name": "Chin up on the bar",
+     "kit": "Pull up bar on the rig or on top of a squat rack. Underhand grip, palms facing you, hands about shoulder width. To add weight, hold a dumbbell between your feet or wear a dip belt.",
+     "tip": "Hang with straight arms and your core tight so you do not swing. Drive your elbows down to pull your chin over the bar, then lower slowly to a full hang.",
+     "videos": [
+      {
+       "id": "9JC1EwqezGY",
+       "label": "Underhand pullup",
+       "by": "Renaissance Periodization",
+       "seconds": 10
+      },
+      {
+       "id": "QGSYnup3-u4",
+       "label": "Supinated pull up",
+       "by": "OPEX Fitness",
+       "seconds": 15
+      }
+     ],
+     "animation": {
+      "exercisedb": "T2mxWqc",
+      "fallback": "Chin-Up",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/pull-up/"
+    }
+   }
+  },
+  {
+   "id": "lib-24",
+   "name": "Rear Delt Fly",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "reverse pec deck",
+    "rear delt machine",
+    "rear delt fly machine",
+    "reverse fly",
+    "rear delts"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Rear delt fly machine",
+     "kit": "Matrix Pec Fly/Rear Delt machine on the rear delt setting, arms swung round so the handles sit in front of you. Set the seat so the handles are at shoulder height and sit facing the pad with your chest against it.",
+     "tip": "Start with your arms out in front, slightly bent, and your chest on the pad. Sweep the handles out and back in a wide arc to your sides, then return slowly.",
+     "videos": [
+      {
+       "id": "SPYgfb14hMk",
+       "label": "Wondering how to use the rear delt/pec fly machine? check this out!",
+       "by": "PureGym",
+       "seconds": null
+      },
+      {
+       "id": "xWEtTqJxRbk",
+       "label": "Matrix Ultra pec fly/rear delt",
+       "by": "Matrix Fitness",
+       "seconds": 64
+      }
+     ],
+     "animation": {
+      "exercisedb": "myfUsKf",
+      "fallback": "Reverse_Machine_Flyes",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/rear-delt-exercises/"
+    },
+    "dumbbell": {
+     "name": "Bent over dumbbell rear delt fly",
+     "kit": "Two light dumbbells, standing or seated.",
+     "tip": "Hinge forward with a slight elbow bend. Raise the dumbbells out to the sides level with the shoulders.",
+     "videos": [
+      {
+       "id": "nlkF7_2O_Lw",
+       "label": "How to do a rear delt fly",
+       "by": "PureGym",
+       "seconds": 16
+      },
+      {
+       "id": "34gVHrkaiz0",
+       "label": "Bent lateral raise",
+       "by": "Renaissance Periodization",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "8DiFDVA",
+      "fallback": "Reverse_Flyes",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/rear-delt-exercises/rear-delt-flyes/"
+    }
+   }
+  },
+  {
+   "id": "lib-25",
+   "name": "Shrugs",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "traps",
+    "shoulder shrug",
+    "shrug"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell shrug",
+     "kit": "Two dumbbells, held at your sides with your palms facing in.",
+     "tip": "Stand tall, arms straight, chin slightly tucked and neck relaxed. Lift your shoulders straight up towards your ears, pause at the top, then lower slowly.",
+     "videos": [
+      {
+       "id": "_t3lrPI6Ns4",
+       "label": "Dumbbell shrug",
+       "by": "Renaissance Periodization",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "NJzBsGJ",
+      "fallback": "Dumbbell_Shrug",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/shrugs/"
+    },
+    "barbell": {
+     "name": "Barbell shrug",
+     "kit": "Olympic barbell set in a rack at mid thigh height, or a preloaded barbell. Overhand grip, hands just outside your thighs.",
+     "tip": "Stand tall with the bar against your thighs and your arms straight. Shrug your shoulders straight up, pause, then lower slowly without rolling them.",
+     "videos": [
+      {
+       "id": "larn3Asl6oM",
+       "label": "How to do barbell shrugs",
+       "by": "PureGym",
+       "seconds": 11
+      },
+      {
+       "id": "M_MjF5Nm_h4",
+       "label": "Barbell shrug",
+       "by": "Renaissance Periodization",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "dG7tG5y",
+      "fallback": "Barbell_Shrug",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/shrugs/"
+    },
+    "machine": {
+     "name": "Cable shrug",
+     "kit": "Cable machine, low pulley, straight bar attachment. Stand close to the stack with the bar against your thighs and your arms straight.",
+     "tip": "Chin tucked, neck relaxed, slight bend in the knees. Pull your shoulders straight up to your ears, pause, then lower slowly to a full stretch.",
+     "videos": [
+      {
+       "id": "YykmcX2b-LY",
+       "label": "Cable shrug",
+       "by": "Renaissance Periodization",
+       "seconds": 9
+      }
+     ],
+     "animation": {
+      "exercisedb": "Eg98Ft9",
+      "fallback": "Cable_Shrugs",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/back/shrugs/"
+    }
+   }
+  },
+  {
+   "id": "lib-26",
+   "name": "Arm Curl Machine",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "bicep curl machine",
+    "machine curl",
+    "seated curl machine",
+    "biceps curl machine",
+    "arm curl"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Arm curl machine",
+     "kit": "Matrix Arm Curl machine, the seated biceps curl with an arm pad. Set the seat so the pad sits just under your armpits and your elbows line up with the pivot.",
+     "tip": "Start with your arms nearly straight and your upper arms resting on the pad. Curl the handles up towards your shoulders, squeeze, then lower slowly without lifting your elbows off the pad.",
+     "videos": [
+      {
+       "id": "1RPiZiaDpQU",
+       "label": "Matrix Ultra dependent arm curl",
+       "by": "Matrix Fitness",
+       "seconds": 36
+      },
+      {
+       "id": "vICEtCkJXWU",
+       "label": "Matrix Ultra independent biceps curl",
+       "by": "Matrix Fitness",
+       "seconds": 38
+      }
+     ],
+     "animation": {
+      "exercisedb": "q6y3OhV",
+      "fallback": "Machine_Bicep_Curl",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/"
+    },
+    "dumbbell": {
+     "name": "Incline dumbbell curl",
+     "kit": "Adjustable bench set to 45 to 60 degrees and two dumbbells. Sit back with your upper back and shoulders pressed into the bench.",
+     "tip": "Arms hanging straight down behind your body, palms facing forward. Curl the dumbbells up to shoulder height without moving your upper arms, then lower slowly.",
+     "videos": [
+      {
+       "id": "XVQBeug_9LU",
+       "label": "How to do incline bicep curls",
+       "by": "PureGym",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "ae9UoXQ",
+      "fallback": "Incline_Dumbbell_Curl",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/incline-bicep-curls/"
+    }
+   }
+  },
+  {
+   "id": "lib-27",
+   "name": "Concentration Curl",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "biceps"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Concentration curl",
+     "kit": "One dumbbell and a flat bench. Sit with your knees at 90 degrees and your feet flat on the floor.",
+     "tip": "Rest the working elbow against your inner thigh with your arm straight, the other hand on your other leg. Push the elbow into your thigh and curl to your shoulder, pause, then lower slowly.",
+     "videos": [
+      {
+       "id": "llD6MImgqe8",
+       "label": "How to do concentration curls",
+       "by": "PureGym",
+       "seconds": 22
+      }
+     ],
+     "animation": {
+      "exercisedb": "gvsWLQw",
+      "fallback": "Concentration_Curls",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/concentration-curls/"
+    }
+   }
+  },
+  {
+   "id": "lib-28",
+   "name": "Incline Dumbbell Curl",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "incline curl",
+    "biceps"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Incline dumbbell curl",
+     "kit": "Adjustable bench set to 45 to 60 degrees and two dumbbells. Sit back with your upper back and shoulders pressed into the bench.",
+     "tip": "Arms hanging straight down behind your body, palms facing forward. Curl the dumbbells up to shoulder height without moving your upper arms, then lower slowly.",
+     "videos": [
+      {
+       "id": "XVQBeug_9LU",
+       "label": "How to do incline bicep curls",
+       "by": "PureGym",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "ae9UoXQ",
+      "fallback": "Incline_Dumbbell_Curl",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/incline-bicep-curls/"
+    }
+   }
+  },
+  {
+   "id": "lib-29",
+   "name": "Reverse Curl",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "barbell",
+   "aliases": [
+    "pronated curl",
+    "forearms",
+    "zottman"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "EZ bar reverse curl",
+     "kit": "EZ bar with a light load, or a preloaded EZ bar from the rack. Overhand grip on the angled parts of the bar, your palms facing down.",
+     "tip": "Stand tall with the bar at your thighs, elbows tucked to your sides. Curl the bar up towards your shoulders keeping your elbows still, then lower slowly.",
+     "videos": [
+      {
+       "id": "X5df_LHBVKQ",
+       "label": "How to do reverse curls (pronated bicep curl)",
+       "by": "PureGym",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "Y5X65IB",
+      "fallback": "Reverse_Barbell_Curl",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/pronated-bicep-curls/"
+    },
+    "dumbbell": {
+     "name": "Zottman curl",
+     "kit": "Two dumbbells, lighter than you would use for a normal curl.",
+     "tip": "Stand tall with the dumbbells at your sides and curl them up palms up, elbows pinned to your sides. At the top turn your palms down, lower slowly, then turn them back up for the next rep.",
+     "videos": [
+      {
+       "id": "27l5XYDMNYQ",
+       "label": "How to do a zottman curl",
+       "by": "PureGym",
+       "seconds": 22
+      }
+     ],
+     "animation": {
+      "exercisedb": "kXaIn5A",
+      "fallback": "Zottman_Curl",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/zottman-curls/"
+    }
+   }
+  },
+  {
+   "id": "lib-30",
+   "name": "Spider Curl",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "biceps",
+    "incline bench curl"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Spider curl",
+     "kit": "Adjustable bench set to 45 degrees and two dumbbells. Lie chest down on the bench with your head just above the top and your arms hanging straight down.",
+     "tip": "Arms straight down in front of you, palms facing forward, chest pressed into the bench. Curl the dumbbells up until they are level with your shoulders, then lower slowly to straight arms.",
+     "videos": [
+      {
+       "id": "9Dd8iiEUs_Q",
+       "label": "How to do spider curls",
+       "by": "PureGym",
+       "seconds": 19
+      }
+     ],
+     "animation": {
+      "exercisedb": "2kattbR",
+      "fallback": "Spider_Curl",
+      "note": "Animation and pictures use an EZ bar; the movement is the same with dumbbells."
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/spider-curls/"
+    }
+   }
+  },
+  {
+   "id": "lib-31",
+   "name": "Rack Pull",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "partial deadlift",
+    "block pull"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Rack pull",
+     "kit": "Olympic barbell on the safety bars of a squat rack, set just above or just below knee height. Feet hip width with the bar over your shoelaces.",
+     "tip": "Hips back, chest up, shoulder blades pulled together, overhand grip just outside your legs. Push the floor away and stand tall with the bar close to your legs, then hinge it back down.",
+     "videos": [
+      {
+       "id": "9vYBWV5OeKg",
+       "label": "How to do a rack pull",
+       "by": "PureGym",
+       "seconds": 25
+      }
+     ],
+     "animation": {
+      "exercisedb": "za9Ni4z",
+      "fallback": "Rack_Pulls",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/deadlifts/rack-pulls/"
+    }
+   }
+  },
+  {
+   "id": "lib-32",
+   "name": "Back Extension",
+   "group": "pull",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "hyperextension",
+    "lower back",
+    "45 degree back extension",
+    "back raise",
+    "roman chair"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Back extension machine",
+     "kit": "Matrix Back Extension machine, the seated one with a pad behind your back. Set the seat so the pad sits across your upper back and your feet are flat on the footplate.",
+     "tip": "Start leaning forward from the hips with your chest up and your hands on the handles. Push back against the pad until you sit upright, pause, then come forward slowly.",
+     "videos": [
+      {
+       "id": "2MvGYPIzVZI",
+       "label": "Matrix Ultra back extension",
+       "by": "Matrix Fitness",
+       "seconds": 39
+      }
+     ],
+     "animation": {
+      "exercisedb": "rUXfn3R",
+      "fallback": "Hyperextensions_Back_Extensions",
+      "note": "Pictures show the 45 degree bench version."
+     },
+     "guide": null
+    },
+    "bodyweight": {
+     "name": "45 degree back extension",
+     "kit": "45 degree back extension bench (the hyperextension bench). Set the thigh pad just below your hip bones and lock your heels under the foot pads. To add weight, hold a plate against your chest.",
+     "tip": "Start with your body in a straight line from head to heels, arms across your chest. Hinge down at the hips with a flat back, then lift back up to a straight line and stop there.",
+     "videos": [
+      {
+       "id": "5_ejbGfdAQE",
+       "label": "45 degree back raise",
+       "by": "Renaissance Periodization",
+       "seconds": 12
+      },
+      {
+       "id": "ZaLvgeHC_54",
+       "label": "Roman chair back extension",
+       "by": "OPEX Fitness",
+       "seconds": 14
+      }
+     ],
+     "animation": {
+      "exercisedb": "zkgRrbK",
+      "fallback": "Hyperextensions_Back_Extensions",
+      "note": null
+     },
+     "guide": null
+    }
+   }
+  },
+  {
+   "id": "lib-33",
+   "name": "Barbell Upright Row",
+   "group": "pull",
+   "type": "isolation",
+   "asWritten": "barbell",
+   "aliases": [
+    "upright row",
+    "traps"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Barbell upright row",
+     "kit": "Preloaded barbell from the rack, or an Olympic barbell loaded light. Overhand grip about shoulder width, bar resting on your thighs. An EZ bar works too if the straight bar is uncomfortable on your wrists.",
+     "tip": "Stand tall, shoulders back, core braced, bar close to your body. Pull the bar up to mid chest, elbows leading out and never above your shoulders, then lower slowly.",
+     "videos": [
+      {
+       "id": "8UvsRWUb0YU",
+       "label": "How to do upright rows",
+       "by": "PureGym",
+       "seconds": 16
+      },
+      {
+       "id": "Xpu0C50pD-U",
+       "label": "How to do a barbell wide grip upright row",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "83HoW9X",
+      "fallback": "Upright_Barbell_Row",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/arms-and-shoulders/upright-rows/barbell-upright-row/"
+    },
+    "machine": {
+     "name": "Smith machine upright row",
+     "kit": "Smith machine with the bar set at about thigh height. Stand close with the bar at your thighs, overhand grip about shoulder width, then unhook it.",
+     "tip": "Stand tall with your shoulders back and your core braced. Pull the bar up to mid chest, elbows out and never above your shoulders, then lower slowly.",
+     "videos": [
+      {
+       "id": "QIpa-9dtkgA",
+       "label": "Smith machine upright row",
+       "by": "Renaissance Periodization",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": "1DN3iz4",
+      "fallback": "Smith_Machine_Upright_Row",
+      "note": null
+     },
+     "guide": null
+    }
+   }
+  },
+  {
+   "id": "lib-34",
+   "name": "Hack Squat",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "hack squat machine",
+    "quads"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Hack squat machine",
+     "kit": "Plate loaded hack squat sled with shoulder pads. Feet about shoulder width in the middle of the platform, heels flat.",
+     "tip": "Back flat on the pad, shoulders under the pads. Release the safety handles, lower until your thighs are parallel, then push up through your whole foot without locking your knees.",
+     "videos": [
+      {
+       "id": "scs5XcsZuc8",
+       "label": "Hack squats on the hack squat machine (if no Perfect Squat)",
+       "by": "PureGym",
+       "seconds": 25
+      },
+      {
+       "id": "zZj-ibOLJHs",
+       "label": "How to do smith machine hack squats",
+       "by": "PureGym",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": "Qa55kX1",
+      "fallback": "Hack_Squat",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/hack-squat/"
+    },
+    "dumbbell": {
+     "name": "Goblet squat",
+     "kit": "One dumbbell.",
+     "tip": "Hold the dumbbell against your chest. Elbows inside the knees at the bottom, chest up.",
+     "videos": [
+      {
+       "id": "zBV3ceGyAxw",
+       "label": "How to do a goblet squat",
+       "by": "PureGym",
+       "seconds": 22
+      },
+      {
+       "id": "srZ4D32s4gI",
+       "label": "Goblet squat when the machine is busy (Short)",
+       "by": "PureGym",
+       "seconds": null
+      }
+     ],
+     "animation": {
+      "exercisedb": "yn8yg1r",
+      "fallback": "Goblet_Squat",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/goblet-squat/"
+    }
+   }
+  },
+  {
+   "id": "lib-35",
+   "name": "Single Leg Press",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "machine",
+   "aliases": [
+    "one leg press",
+    "unilateral leg press"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Single leg press",
+     "kit": "45 degree plate loaded leg press, or the seated leg press. Set the back pad so your knee reaches about 90 degrees with your back flat. One foot mid plate, the other on the floor beside the seat, weaker leg first.",
+     "tip": "Back flat and hips square, whole foot on the plate. Press until your leg is nearly straight, pause, then lower slowly until your knee is at about 90 degrees.",
+     "videos": [
+      {
+       "id": "sxF9BcDt-yY",
+       "label": "How to do a single leg press",
+       "by": "PureGym",
+       "seconds": 14
+      }
+     ],
+     "animation": {
+      "exercisedb": "WWD6FzI",
+      "fallback": "Leg_Press",
+      "note": "Pictures show both legs; press with one leg at a time."
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/leg-presses/single-leg-press/"
+    },
+    "dumbbell": {
+     "name": "Dumbbell split squat",
+     "kit": "Two dumbbells held at your sides, or one held at your chest. Any clear patch of floor.",
+     "tip": "One foot forward and one back, hip width apart like train tracks, most of your weight on the front leg. Lower until the back knee just taps the floor, then push up through the whole front foot.",
+     "videos": [
+      {
+       "id": "rlvpaDkc76g",
+       "label": "How to do a split squat",
+       "by": "PureGym",
+       "seconds": 26
+      }
+     ],
+     "animation": {
+      "exercisedb": "qx4fgX7",
+      "fallback": "Split_Squat_with_Dumbbells",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/split-squats/"
+    }
+   }
+  },
+  {
+   "id": "lib-36",
+   "name": "Split Squat",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "static lunge"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell split squat",
+     "kit": "Two dumbbells held at your sides, or one held at your chest. Stand in a clear spot and start with your weaker leg in front.",
+     "tip": "Step one foot back, feet hip width apart as if on train tracks, weight on your front leg. Bend your front knee until your back knee hovers just above the floor, then drive up through your front foot.",
+     "videos": [
+      {
+       "id": "rlvpaDkc76g",
+       "label": "How to do a split squat",
+       "by": "PureGym",
+       "seconds": 26
+      }
+     ],
+     "animation": {
+      "exercisedb": "qx4fgX7",
+      "fallback": "Split_Squat_with_Dumbbells",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/split-squats/"
+    },
+    "machine": {
+     "name": "Smith machine split squat",
+     "kit": "Smith machine with the bar set just below shoulder height and the safety stops a little below your bottom position. Bar across your upper back, front foot a little ahead of the bar and back foot behind.",
+     "tip": "Both feet hip width apart, chest up, weight on your front leg. Lower until your back knee is just off the floor, then push up through your whole front foot.",
+     "videos": [
+      {
+       "id": "j-TJxRRPu64",
+       "label": "Smith machine split squat",
+       "by": "OPEX Fitness",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": "wWFspEi",
+      "fallback": "Smith_Single-Leg_Split_Squat",
+      "note": null
+     },
+     "guide": null
+    }
+   }
+  },
+  {
+   "id": "lib-37",
+   "name": "Walking Lunge",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "lunges"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell walking lunge",
+     "kit": "Two dumbbells held at your sides and a clear strip of floor about ten steps long.",
+     "tip": "Stand tall and step forward so the foot lands in line with your hip, torso upright. Lower until both knees are near 90 degrees, then push off the front foot and step the back leg through.",
+     "videos": [
+      {
+       "id": "mAgbXQdd4LM",
+       "label": "How to do walking lunges",
+       "by": "PureGym",
+       "seconds": 15
+      }
+     ],
+     "animation": {
+      "exercisedb": "RRWFUcw",
+      "fallback": "Dumbbell_Lunges",
+      "note": "Animation and pictures show the lunge on the spot; step forward into the next lunge instead of back."
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/walking-lunges/"
+    }
+   }
+  },
+  {
+   "id": "lib-38",
+   "name": "Forward Lunge",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "front lunge",
+    "lunges"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell forward lunge",
+     "kit": "Two dumbbells held at your sides, feet hip width apart, with room to step forward.",
+     "tip": "Step forward, keeping the feet hip width apart and your torso upright. Lower until both knees are about 90 degrees, then push back through the front foot to standing.",
+     "videos": [
+      {
+       "id": "g8-Ge9S0aUw",
+       "label": "How to do a forward lunge",
+       "by": "PureGym",
+       "seconds": 26
+      }
+     ],
+     "animation": {
+      "exercisedb": "RRWFUcw",
+      "fallback": "Dumbbell_Lunges",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/forward-lunges/"
+    }
+   }
+  },
+  {
+   "id": "lib-39",
+   "name": "Lateral Lunge",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "side lunge",
+    "cossack squat",
+    "lunges"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell lateral lunge",
+     "kit": "One dumbbell held at your chest with both hands, or two dumbbells hanging at your sides. Room to step out sideways.",
+     "tip": "Step wide to the side and sit back into that leg, other leg straight, chest up. Lower until your bent knee is about 90 degrees, then push off that foot back to standing.",
+     "videos": [
+      {
+       "id": "apsp_uuXZTU",
+       "label": "How to do lateral lunges (side lunges)",
+       "by": "PureGym",
+       "seconds": 25
+      },
+      {
+       "id": "51slmzoEVt8",
+       "label": "How to do a cossack squat",
+       "by": "PureGym",
+       "seconds": 42
+      }
+     ],
+     "animation": {
+      "exercisedb": "py1HSzx",
+      "fallback": null,
+      "note": "Animation uses a barbell; hold a dumbbell at your chest instead."
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/lateral-lunges/"
+    }
+   }
+  },
+  {
+   "id": "lib-40",
+   "name": "Curtsy Lunge",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "lunges",
+    "glutes"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell curtsy lunge",
+     "kit": "Two dumbbells held at your sides, or one held at your chest. A clear spot of floor with room behind you.",
+     "tip": "Stand tall and step one foot back and across behind your other leg, like a curtsy, torso upright. Lower until your back knee is just off the floor, then push through your front foot to stand.",
+     "videos": [
+      {
+       "id": "2EyH9MN7hYE",
+       "label": "How to do a curtsy lunge",
+       "by": "PureGym",
+       "seconds": 22
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Crossover_Reverse_Lunge",
+      "note": "Pictures show the crossover reverse lunge, which is the same move."
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/curtsy-lunges/"
+    }
+   }
+  },
+  {
+   "id": "lib-41",
+   "name": "Step Up",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "box step up",
+    "step ups"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell step up",
+     "kit": "A plyo box or step about knee height and two dumbbells held at your sides. Pick a height where the top leg can do all the work.",
+     "tip": "Your whole foot on the box, chest up. Drive through your top foot to stand tall, bring your other foot up, then step down under control.",
+     "videos": [
+      {
+       "id": "DxUNi119Qzs",
+       "label": "How to do a dumbbell step up",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "aXtJhlg",
+      "fallback": "Dumbbell_Step_Ups",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/glutes/step-ups/step-up/"
+    },
+    "barbell": {
+     "name": "Barbell step up",
+     "kit": "Plyo box about knee height and a barbell from the squat rack resting across your upper back. Start light, and keep the box low enough that the top leg does all the work.",
+     "tip": "Bar on your upper back, chest up and core braced, whole foot on the box. Drive up through the top leg only, not the foot on the floor, then step down slowly.",
+     "videos": [
+      {
+       "id": "hbIMKzHuglA",
+       "label": "How to do barbell step ups",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "Kxquu2E",
+      "fallback": "Barbell_Step_Ups",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/glutes/step-ups/barbell-step-ups/"
+    }
+   }
+  },
+  {
+   "id": "lib-42",
+   "name": "Sumo Squat",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "plie squat",
+    "wide stance squat"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Dumbbell sumo squat",
+     "kit": "One dumbbell held with both hands, hanging between your legs or at your chest. Stand with feet wider than shoulder width, toes turned out.",
+     "tip": "Push your hips back and bend your knees together, knees pushed out over your toes. Squat until your thighs are parallel, then drive up through both feet to stand tall.",
+     "videos": [
+      {
+       "id": "qiQAsB0x-7k",
+       "label": "How to do a sumo squat",
+       "by": "PureGym",
+       "seconds": 26
+      },
+      {
+       "id": "4eDJa5MnAmY",
+       "label": "Sumo squat",
+       "by": "Renaissance Periodization",
+       "seconds": 15
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Plie_Dumbbell_Squat",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/sumo-squat/"
+    }
+   }
+  },
+  {
+   "id": "lib-43",
+   "name": "Landmine Squat",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "landmine"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Landmine squat",
+     "kit": "Barbell with one end in the landmine sleeve on the rig, plates on the free end. Hold the bar end at chest height with both hands, feet between hip and shoulder width.",
+     "tip": "Elbows tucked, bar end at chest height the whole time. Push your hips back and squat until your thighs are parallel, knees out, then drive up through both feet.",
+     "videos": [
+      {
+       "id": "YxaXaZxVcDU",
+       "label": "How to do a landmine squat",
+       "by": "PureGym",
+       "seconds": 13
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": null,
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/landmine-squat/"
+    }
+   }
+  },
+  {
+   "id": "lib-44",
+   "name": "Sumo Deadlift",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "wide stance deadlift"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Sumo deadlift",
+     "kit": "Olympic bar on the lifting platform with bumper plates, so the bar sits at full height whatever the weight. Wide stance, shoelaces under the bar, toes turned out, hands gripping inside your knees.",
+     "tip": "Sit the hips down, chest up, shins vertical, shoulder blades pulled back. Push the floor away with hips and knees straightening together, bar close to your legs, and stand tall.",
+     "videos": [
+      {
+       "id": "JbY72Him34Q",
+       "label": "How to correctly perform a sumo deadlift",
+       "by": "PureGym",
+       "seconds": 60
+      },
+      {
+       "id": "9hY5XZUDg7k",
+       "label": "Compound exercises - how to do a sumo deadlift",
+       "by": "PureGym",
+       "seconds": 26
+      },
+      {
+       "id": "pfSMst14EFk",
+       "label": "Sumo deadlift",
+       "by": "Renaissance Periodization",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "KgI0tqW",
+      "fallback": "Sumo_Deadlift",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/deadlifts/sumo-deadlift/"
+    }
+   }
+  },
+  {
+   "id": "lib-45",
+   "name": "Good Morning",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "hamstrings",
+    "hip hinge"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Barbell good morning",
+     "kit": "Barbell in the squat rack, set just below shoulder height, or a light fixed bar lifted onto your upper back. Bar sits across the upper back just below the neck, feet hip width.",
+     "tip": "Soft knees, chest up, core braced. Push your hips back and hinge forward until your hamstrings stretch, then squeeze your glutes to stand up.",
+     "videos": [
+      {
+       "id": "nWyx81AfTos",
+       "label": "How to do a barbell good morning",
+       "by": "PureGym",
+       "seconds": 16
+      },
+      {
+       "id": "odZqvU3KCS8",
+       "label": "How to do a seated good morning",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "XlZ4lAC",
+      "fallback": "Good_Morning",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/good-mornings/barbell-good-mornings/"
+    },
+    "dumbbell": {
+     "name": "Dumbbell good morning",
+     "kit": "Two matching dumbbells rested on your shoulders, one end in front and one end behind each shoulder, held lightly. Feet hip width apart, knees slightly bent.",
+     "tip": "Push the glutes back and hinge at the hips with a flat back, knees soft. Stop when you feel the hamstrings stretch, then push the hips forward to stand tall.",
+     "videos": [
+      {
+       "id": "wUbsMNkkpLk",
+       "label": "How to do a dumbbell good morning",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "XlZ4lAC",
+      "fallback": "Good_Morning",
+      "note": "Animation and pictures show the barbell version; hold a dumbbell against your chest instead."
+     },
+     "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/good-mornings/dumbbell-good-mornings/"
+    }
+   }
+  },
+  {
+   "id": "lib-46",
+   "name": "Single Leg Romanian Deadlift",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "dumbbell",
+   "aliases": [
+    "single leg deadlift",
+    "b stance deadlift",
+    "single leg rdl"
+   ],
+   "variants": {
+    "dumbbell": {
+     "name": "Single leg dumbbell deadlift",
+     "kit": "One dumbbell held in the hand opposite the standing leg, or one in each hand. Stand next to a bench or rack so you can hold on with the free hand for balance.",
+     "tip": "Soft knee, hips back, the other leg lifting straight behind you as the dumbbell slides to mid shin. Keep the hips square and drive them forward to stand.",
+     "videos": [
+      {
+       "id": "hk80eAoQshc",
+       "label": "How to do a single leg deadlift",
+       "by": "PureGym",
+       "seconds": 16
+      },
+      {
+       "id": "mKze3D0crY8",
+       "label": "How to do a b stance deadlift",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "gKozT8X",
+      "fallback": null,
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/deadlifts/single-leg-deadlift/"
+    }
+   }
+  },
+  {
+   "id": "lib-47",
+   "name": "Nordic Curl",
+   "group": "legs",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "nordic hamstring curl",
+    "hamstrings"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Nordic curl",
+     "kit": "Smith machine with the bar on its lowest hooks, loaded with a plate or two so it stays put. Mat under your knees, kneel facing away, ankles hooked under the bar, feet directly behind your knees.",
+     "tip": "Body straight from knees to head, glutes squeezed, chin tucked. Lower slowly by hinging only at the knees, catch yourself with your hands, then pull back up with the hamstrings.",
+     "videos": [
+      {
+       "id": "Wo746janD2E",
+       "label": "How to do nordic curls",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "Vvwjz6N",
+      "fallback": "Natural_Glute_Ham_Raise",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/nordic-curls/"
+    }
+   }
+  },
+  {
+   "id": "lib-48",
+   "name": "Glute Bridge",
+   "group": "legs",
+   "type": "compound",
+   "asWritten": "barbell",
+   "aliases": [
+    "bridge",
+    "glutes"
+   ],
+   "variants": {
+    "barbell": {
+     "name": "Barbell glute bridge",
+     "kit": "Olympic bar with bumper plates and a bar pad, done on the lifting platform or a mat. Sit with legs straight, roll the bar over your hips, then lie back with feet flat near your glutes.",
+     "tip": "Hands on the bar to stop it rolling, pelvis tucked so your lower back stays flat. Drive through your heels until your shoulders, hips and knees make a straight line, pause, then lower slowly.",
+     "videos": [
+      {
+       "id": "DQv1IMQDbE4",
+       "label": "How to do a barbell glute bridge",
+       "by": "PureGym",
+       "seconds": 22
+      }
+     ],
+     "animation": {
+      "exercisedb": "qKBpF7I",
+      "fallback": "Barbell_Glute_Bridge",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/glutes/glute-bridge/barbell-glute-bridges/"
+    },
+    "dumbbell": {
+     "name": "Dumbbell glute bridge",
+     "kit": "One dumbbell and a mat on the floor. Lie on your back with knees bent and feet flat, the dumbbell resting across your hips, held at both ends.",
+     "tip": "Tuck your pelvis so your lower back is flat and press through your heels. Lift your hips until your shoulders, hips and knees are in a straight line, pause, then lower slowly.",
+     "videos": [
+      {
+       "id": "cruqsnAyU6A",
+       "label": "How to do a glute bridge with a dumbbell",
+       "by": "PureGym",
+       "seconds": 23
+      }
+     ],
+     "animation": {
+      "exercisedb": "qKBpF7I",
+      "fallback": "Barbell_Glute_Bridge",
+      "note": "Animation and pictures show a barbell; rest a dumbbell on your hips instead."
+     },
+     "guide": "https://www.puregym.com/exercises/glutes/glute-bridge/dumbbell-glute-bridges/"
+    },
+    "bodyweight": {
+     "name": "Glute bridge",
+     "kit": "A mat in the stretch area. Lie on your back with knees bent and feet flat hip width apart, arms by your sides. To add weight, rest a plate or dumbbell across your hips.",
+     "tip": "Tuck your pelvis so your lower back is flat on the mat. Lift your hips until your shoulders, hips and knees are in a line, hold a second, then lower slowly.",
+     "videos": [
+      {
+       "id": "tqp5XQPpTxY",
+       "label": "How to do a glute bridge",
+       "by": "PureGym",
+       "seconds": 21
+      },
+      {
+       "id": "sVfp4LN9niA",
+       "label": "How to do a single leg glute bridge",
+       "by": "PureGym",
+       "seconds": 20
+      }
+     ],
+     "animation": {
+      "exercisedb": "u0cNiij",
+      "fallback": "Single_Leg_Glute_Bridge",
+      "note": "Pictures show the single leg version; keep both feet down."
+     },
+     "guide": "https://www.puregym.com/exercises/glutes/glute-bridge/glute-bridges/"
+    }
+   }
+  },
+  {
+   "id": "lib-49",
+   "name": "Glute Kickback",
+   "group": "legs",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "cable kickback",
+    "kickback machine",
+    "glute machine",
+    "glutes"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Glute kickback machine",
+     "kit": "Matrix glute kickback machine: stand on the platform, chest on the pad, hands on the handles. Put one foot on the moving footplate with that knee bent at about 90 degrees. If it is busy, use the low cable with an ankle strap and hinge forward about 45 degrees.",
+     "tip": "Core braced, back flat and hips square. Drive your leg back with your glute until your hip is straight, squeeze, then return slowly without swinging.",
+     "videos": [
+      {
+       "id": "zoPt0SflJNg",
+       "label": "Matrix Ultra glute",
+       "by": "Matrix Fitness",
+       "seconds": 39
+      },
+      {
+       "id": "SqO-VUEak2M",
+       "label": "How to do cable kickbacks",
+       "by": "PureGym",
+       "seconds": 5
+      }
+     ],
+     "animation": {
+      "exercisedb": "OPqShYN",
+      "fallback": "One-Legged_Cable_Kickback",
+      "note": "Pictures show the cable version with an ankle strap."
+     },
+     "guide": "https://www.puregym.com/exercises/glutes/glute-kickbacks/cable-kickbacks/"
+    },
+    "bodyweight": {
+     "name": "Donkey kick",
+     "kit": "A mat in the stretch area, on your hands and knees with wrists under shoulders and knees under hips. To make it harder, loop a resistance band around your thighs just above the knees.",
+     "tip": "Back flat and core braced, knee bent at 90 degrees. Lift your foot toward the ceiling until your thigh is parallel to the floor, squeeze, then lower slowly without arching.",
+     "videos": [
+      {
+       "id": "EtSJ8rwm5M8",
+       "label": "How to do donkey kicks",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Glute_Kickback",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/glutes/glute-kickbacks/donkey-kicks/"
+    }
+   }
+  },
+  {
+   "id": "lib-50",
+   "name": "Hip Abduction",
+   "group": "legs",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "outer thigh",
+    "abductor machine",
+    "hip abductor",
+    "glutes"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Seated hip abductor machine",
+     "kit": "Seated hip abductor machine (Matrix) with the pads on the outside of your knees. Sit back against the pad, feet on the rests, and set the range lever so the pads start together. On a combined machine, swing the pads to the outside first.",
+     "tip": "Sit tall with your back on the pad and hands on the handles. Push your knees out as far as is comfortable, pause, then bring them back slowly without letting the weight drop.",
+     "videos": [
+      {
+       "id": "G_8LItOiZ0Q",
+       "label": "How to use the seated hip abductor (outer thigh)",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "CHpahtl",
+      "fallback": "Thigh_Abductor",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/inner-outer-thigh-exercises/"
+    }
+   }
+  },
+  {
+   "id": "lib-51",
+   "name": "Hip Adduction",
+   "group": "legs",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "inner thigh",
+    "adductor machine",
+    "hip adductor"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Seated hip adductor machine",
+     "kit": "Seated hip adductor machine (Matrix), pads on the inside of your knees. On a combined machine, swing the pads to the inside first. Sit back against the pad and set the range lever so the pads start apart at a comfortable stretch.",
+     "tip": "Sit tall, back on the pad, hands on the handles. Squeeze your knees together slowly until the pads touch, pause, then let them open slowly back to the stretch.",
+     "videos": [
+      {
+       "id": "CjAVezAggkI",
+       "label": "How to use the seated thigh adduction (hip adduction) machine",
+       "by": "PureGym",
+       "seconds": 16
+      }
+     ],
+     "animation": {
+      "exercisedb": "oHsrypV",
+      "fallback": "Thigh_Adductor",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/inner-outer-thigh-exercises/"
+    }
+   }
+  },
+  {
+   "id": "lib-52",
+   "name": "Leg Press Calf Raise",
+   "group": "legs",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "calf press",
+    "calves on the leg press",
+    "calves"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Calf press on the leg press",
+     "kit": "45 degree plate loaded leg press. Press the sled up until your legs are nearly straight. Then put only the balls of your feet on the bottom edge of the plate, hip width apart.",
+     "tip": "Knees nearly straight but not locked, hands on the handles. Push up onto your toes, pause, then lower the heels below the plate edge for a stretch.",
+     "videos": [
+      {
+       "id": "KxEYX_cuesM",
+       "label": "Leg press calves",
+       "by": "Renaissance Periodization",
+       "seconds": 13
+      },
+      {
+       "id": "QkvgUYtQT38",
+       "label": "No calf press machine? Grab a step (Short)",
+       "by": "PureGym",
+       "seconds": null
+      }
+     ],
+     "animation": {
+      "exercisedb": "ykHcWme",
+      "fallback": "Calf_Press_On_The_Leg_Press_Machine",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/calf-exercises/"
+    }
+   }
+  }
+ ]
+}

@@ -4,15 +4,19 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const UA = { 'User-Agent': 'gym-plan-app verify script' };
 let failures = 0;
 const row = (ok, what) => { console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}`); if (!ok) failures++; };
+// One dropped connection in 300 requests must not end the run: try once more after a pause.
+const get = async (url, opts) => { try { return await fetch(url, opts); } catch { await sleep(2000); return fetch(url, opts); } };
 
-const variants = data.plans.flatMap((p) => p.days).flatMap((d) => d.exercises.flatMap((e) => Object.entries(e.variants).map(([k, v]) => [`${e.id}.${k}`, v])));
+const library = JSON.parse(await readFile(new URL('../data/library.json', import.meta.url), 'utf8')).exercises;
+const exercises = [...data.plans.flatMap((p) => p.days).flatMap((d) => d.exercises), ...library];
+const variants = exercises.flatMap((e) => Object.entries(e.variants).map(([k, v]) => [`${e.id}.${k}`, v]));
 
 // 1. YouTube: oEmbed answers 200 for public videos.
 const seen = new Set();
 for (const [where, v] of variants) for (const vid of v.videos) {
   if (seen.has(vid.id)) continue; seen.add(vid.id);
   const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${vid.id}`)}&format=json`;
-  const res = await fetch(url, { headers: UA });
+  const res = await get(url, { headers: UA });
   row(res.ok, `youtube ${vid.id} ${res.status} (${where})`);
   await sleep(150);
 }
@@ -20,7 +24,7 @@ for (const [where, v] of variants) for (const vid of v.videos) {
 // 2. ExerciseDB GIFs: HEAD on the static host. Spaced out because the API family rate limits (plan F18).
 for (const [where, v] of variants) {
   const id = v.animation.exercisedb; if (!id) continue;
-  const res = await fetch(`https://static.exercisedb.dev/media/${id}.gif`, { method: 'HEAD', headers: UA });
+  const res = await get(`https://static.exercisedb.dev/media/${id}.gif`, { method: 'HEAD', headers: UA });
   row(res.ok && (res.headers.get('content-type') || '').includes('image/gif'), `exercisedb ${id} ${res.status} (${where})`);
   await sleep(1000);
 }

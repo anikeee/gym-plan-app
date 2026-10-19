@@ -1,0 +1,1434 @@
+{
+ "collected": "2026-10-19",
+ "about": "The exercise library behind the Replace button: every version with the PureGym page its text was written from and the clips checked for it. Matrix, Renaissance Periodization and OPEX clips were found on YouTube on this date; animation ids were matched from the ExerciseDB V1 catalogue and pictures from free-exercise-db, both by name.",
+ "exercises": [
+  {
+   "id": "lib-1",
+   "name": "Pec Fly Machine",
+   "group": "push",
+   "versions": {
+    "machine": {
+     "name": "Pec fly machine",
+     "puregymPage": "https://www.puregym.com/exercises/chest/chest-fly/machine-fly/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "eGjt4lk6g34",
+       "by": "PureGym"
+      },
+      {
+       "id": "xWEtTqJxRbk",
+       "by": "Matrix Fitness"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Incline dumbbell fly",
+     "puregymPage": "https://www.puregym.com/exercises/chest/chest-fly/incline-dumbbell-chest-fly/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "JSDpq14vCZ8",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-2",
+   "name": "Seated Cable Fly",
+   "group": "push",
+   "versions": {
+    "machine": {
+     "name": "Seated cable fly",
+     "puregymPage": "https://www.puregym.com/exercises/chest/chest-fly/seated-cable-fly/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "VgKCIZgca58",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell floor fly",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "bgC53-J-6gA",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-3",
+   "name": "Dips",
+   "group": "push",
+   "versions": {
+    "machine": {
+     "name": "Seated dip machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "A8SreTrrcgU",
+       "by": "Matrix Fitness"
+      }
+     ]
+    },
+    "bodyweight": {
+     "name": "Dips on the parallel bars",
+     "puregymPage": "https://www.puregym.com/exercises/chest/dips/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "2HYAeF6o7Bc",
+       "by": "PureGym"
+      },
+      {
+       "id": "qrS6aa0aQ9I",
+       "by": "PureGym"
+      },
+      {
+       "id": "4LA1kF7yCGo",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "yZ83t4mrPrI",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-4",
+   "name": "Close Grip Bench Press",
+   "group": "push",
+   "versions": {
+    "barbell": {
+     "name": "Close grip barbell bench press",
+     "puregymPage": "https://www.puregym.com/exercises/chest/bench-press/close-grip-bench-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "DzA2xZhDGeo",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "machine": {
+     "name": "Smith machine close grip bench press",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "qf_FTh3QyYs",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell squeeze press",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "1iQt5BwSWYg",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-5",
+   "name": "Decline Dumbbell Bench Press",
+   "group": "push",
+   "versions": {
+    "dumbbell": {
+     "name": "Decline dumbbell bench press",
+     "puregymPage": "https://www.puregym.com/exercises/chest/bench-press/decline-dumbbell-bench-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "4R_GwRhG0rY",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-6",
+   "name": "Landmine Chest Press",
+   "group": "push",
+   "versions": {
+    "barbell": {
+     "name": "Landmine chest press",
+     "puregymPage": "https://www.puregym.com/exercises/chest/bench-press/landmine-chest-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "6sH6vyWduNU",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-7",
+   "name": "Push Up",
+   "group": "push",
+   "versions": {
+    "bodyweight": {
+     "name": "Push up",
+     "puregymPage": "https://www.puregym.com/exercises/chest/press-up/push-ups/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "Env8gAr_QnE",
+       "by": "PureGym"
+      },
+      {
+       "id": "X9sGmsGYYE0",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-8",
+   "name": "Arnold Press",
+   "group": "push",
+   "versions": {
+    "dumbbell": {
+     "name": "Arnold press",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/arnold-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "jeJttN2EWCo",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-9",
+   "name": "Shoulder Press",
+   "group": "push",
+   "versions": {
+    "machine": {
+     "name": "Shoulder press machine",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/shoulder-press-machine/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "GcY6TZxfS0k",
+       "by": "PureGym"
+      },
+      {
+       "id": "TnhIyp4kmO8",
+       "by": "PureGym"
+      },
+      {
+       "id": "zWVEKwAGdTc",
+       "by": "Matrix Fitness"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Seated dumbbell shoulder press",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/seated-shoulder-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "TsduLWuhlFM",
+       "by": "PureGym"
+      },
+      {
+       "id": "GLrn1vVHz24",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-10",
+   "name": "Front Raise",
+   "group": "push",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell front raise",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/front-raises/dumbbell-front-raise/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "zkP0MsTcIVU",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "machine": {
+     "name": "Cable front raise",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/front-raises/cable-front-raise/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "vtH93qBItdk",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "barbell": {
+     "name": "Barbell front raise",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/front-raises/barbell-front-raise/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "_od0CCC6DEM",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-11",
+   "name": "Push Press",
+   "group": "push",
+   "versions": {
+    "barbell": {
+     "name": "Barbell push press",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/barbell-push-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "HKx22sWywxc",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-12",
+   "name": "Landmine Shoulder Press",
+   "group": "push",
+   "versions": {
+    "barbell": {
+     "name": "Single arm landmine press",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/single-arm-landmine-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "qPxvgth0dQQ",
+       "by": "PureGym"
+      },
+      {
+       "id": "TY_zsi0kOyI",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-13",
+   "name": "Tricep Extension Machine",
+   "group": "push",
+   "versions": {
+    "machine": {
+     "name": "Seated tricep extension machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "QW3v5sEaQyI",
+       "by": "Matrix Fitness"
+      },
+      {
+       "id": "Bx8ga1BLHLE",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell tricep kickback",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/tricep-extension/tricep-kickbacks/",
+     "copyOf": "push-6.dumbbell",
+     "clips": [
+      {
+       "id": "JPmbMOu4IYw",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-14",
+   "name": "Seated Lateral Raise",
+   "group": "push",
+   "versions": {
+    "dumbbell": {
+     "name": "Seated dumbbell lateral raise",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "xDrYB81QXmY",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-15",
+   "name": "Diverging Lat Pulldown",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Diverging lat pulldown machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "uoFjFcLIQec",
+       "by": "Matrix Fitness"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/",
+     "copyOf": "pull-1.dumbbell",
+     "clips": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-16",
+   "name": "Close Grip Lat Pulldown",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Close grip lat pulldown",
+     "puregymPage": "https://www.puregym.com/exercises/back/lat-exercises/close-grip-lat-pulldown/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "IjoFCmLX7z0",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/",
+     "copyOf": "pull-1.dumbbell",
+     "clips": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-17",
+   "name": "Wide Grip Lat Pulldown",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Wide grip lat pulldown",
+     "puregymPage": "https://www.puregym.com/exercises/back/lat-exercises/wide-grip-lat-pulldown/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "7JnP8dFbS14",
+       "by": "PureGym"
+      },
+      {
+       "id": "YCKPD4BSD2E",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell pullover",
+     "puregymPage": null,
+     "copyOf": "push-2.dumbbell",
+     "clips": [
+      {
+       "id": "jQjWlIwG4sI",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-18",
+   "name": "Kneeling Lat Pulldown",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Kneeling single arm lat pulldown",
+     "puregymPage": "https://www.puregym.com/exercises/back/lat-exercises/kneeling-lat-pulldown/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "VIJPZ8m0EDM",
+       "by": "PureGym"
+      },
+      {
+       "id": "LPahgWM7eUU",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/",
+     "copyOf": "pull-1.dumbbell",
+     "clips": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-19",
+   "name": "Single Arm Dumbbell Row",
+   "group": "pull",
+   "versions": {
+    "dumbbell": {
+     "name": "Single arm dumbbell row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/single-arm-dumbbell-row/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "ZRSGpBUVcNw",
+       "by": "PureGym"
+      },
+      {
+       "id": "DMo3HJoawrU",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-20",
+   "name": "Dumbbell Bent Over Row",
+   "group": "pull",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell bent over row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/dumbbell-bent-over-row/",
+     "copyOf": "pull-3.dumbbell",
+     "clips": [
+      {
+       "id": "6gvmcqr226U",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "machine": {
+     "name": "Smith machine bent over row",
+     "puregymPage": null,
+     "copyOf": "pull-102.machine",
+     "clips": [
+      {
+       "id": "3QcJggd_L24",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "ZFNLCpj8e-o",
+       "by": "Live Lean TV Daily Exercises"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-21",
+   "name": "Pendlay Row",
+   "group": "pull",
+   "versions": {
+    "barbell": {
+     "name": "Pendlay row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/pendlay-row/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "Wv7f0uIKh8o",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "machine": {
+     "name": "Smith machine bent over row",
+     "puregymPage": null,
+     "copyOf": "pull-102.machine",
+     "clips": [
+      {
+       "id": "3QcJggd_L24",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "ZFNLCpj8e-o",
+       "by": "Live Lean TV Daily Exercises"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell bent over row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/dumbbell-bent-over-row/",
+     "copyOf": "pull-3.dumbbell",
+     "clips": [
+      {
+       "id": "6gvmcqr226U",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-22",
+   "name": "Inverted Row",
+   "group": "pull",
+   "versions": {
+    "bodyweight": {
+     "name": "Inverted row",
+     "puregymPage": "https://www.puregym.com/exercises/back/rows/inverted-row/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "0AsxBmXeOIo",
+       "by": "PureGym"
+      },
+      {
+       "id": "yCuSGoe1gjY",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-23",
+   "name": "Chin Up",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Assisted chin up machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "L4ChTwrXTjc",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "wFj808u2HWU",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "bodyweight": {
+     "name": "Chin up on the bar",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "9JC1EwqezGY",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "QGSYnup3-u4",
+       "by": "OPEX Fitness"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-24",
+   "name": "Rear Delt Fly",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Rear delt fly machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "SPYgfb14hMk",
+       "by": "PureGym"
+      },
+      {
+       "id": "xWEtTqJxRbk",
+       "by": "Matrix Fitness"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Bent over dumbbell rear delt fly",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/rear-delt-exercises/rear-delt-flyes/",
+     "copyOf": "pull-5.dumbbell",
+     "clips": [
+      {
+       "id": "nlkF7_2O_Lw",
+       "by": "PureGym"
+      },
+      {
+       "id": "34gVHrkaiz0",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-25",
+   "name": "Shrugs",
+   "group": "pull",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell shrug",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "_t3lrPI6Ns4",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    },
+    "barbell": {
+     "name": "Barbell shrug",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "larn3Asl6oM",
+       "by": "PureGym"
+      },
+      {
+       "id": "M_MjF5Nm_h4",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    },
+    "machine": {
+     "name": "Cable shrug",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "YykmcX2b-LY",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-26",
+   "name": "Arm Curl Machine",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Arm curl machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "1RPiZiaDpQU",
+       "by": "Matrix Fitness"
+      },
+      {
+       "id": "vICEtCkJXWU",
+       "by": "Matrix Fitness"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Incline dumbbell curl",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/incline-bicep-curls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "XVQBeug_9LU",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-27",
+   "name": "Concentration Curl",
+   "group": "pull",
+   "versions": {
+    "dumbbell": {
+     "name": "Concentration curl",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/concentration-curls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "llD6MImgqe8",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-28",
+   "name": "Incline Dumbbell Curl",
+   "group": "pull",
+   "versions": {
+    "dumbbell": {
+     "name": "Incline dumbbell curl",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/incline-bicep-curls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "XVQBeug_9LU",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-29",
+   "name": "Reverse Curl",
+   "group": "pull",
+   "versions": {
+    "barbell": {
+     "name": "EZ bar reverse curl",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/pronated-bicep-curls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "X5df_LHBVKQ",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Zottman curl",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/zottman-curls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "27l5XYDMNYQ",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-30",
+   "name": "Spider Curl",
+   "group": "pull",
+   "versions": {
+    "dumbbell": {
+     "name": "Spider curl",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/bicep-curl/spider-curls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "9Dd8iiEUs_Q",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-31",
+   "name": "Rack Pull",
+   "group": "pull",
+   "versions": {
+    "barbell": {
+     "name": "Rack pull",
+     "puregymPage": "https://www.puregym.com/exercises/legs/hamstring-exercises/deadlifts/rack-pulls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "9vYBWV5OeKg",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-32",
+   "name": "Back Extension",
+   "group": "pull",
+   "versions": {
+    "machine": {
+     "name": "Back extension machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "2MvGYPIzVZI",
+       "by": "Matrix Fitness"
+      }
+     ]
+    },
+    "bodyweight": {
+     "name": "45 degree back extension",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "5_ejbGfdAQE",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "ZaLvgeHC_54",
+       "by": "OPEX Fitness"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-33",
+   "name": "Barbell Upright Row",
+   "group": "pull",
+   "versions": {
+    "barbell": {
+     "name": "Barbell upright row",
+     "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/upright-rows/barbell-upright-row/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "8UvsRWUb0YU",
+       "by": "PureGym"
+      },
+      {
+       "id": "Xpu0C50pD-U",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "machine": {
+     "name": "Smith machine upright row",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "QIpa-9dtkgA",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-34",
+   "name": "Hack Squat",
+   "group": "legs",
+   "versions": {
+    "machine": {
+     "name": "Hack squat machine",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/squats/hack-squat/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "scs5XcsZuc8",
+       "by": "PureGym"
+      },
+      {
+       "id": "zZj-ibOLJHs",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Goblet squat",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/squats/goblet-squat/",
+     "copyOf": "legs-1.dumbbell",
+     "clips": [
+      {
+       "id": "zBV3ceGyAxw",
+       "by": "PureGym"
+      },
+      {
+       "id": "srZ4D32s4gI",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-35",
+   "name": "Single Leg Press",
+   "group": "legs",
+   "versions": {
+    "machine": {
+     "name": "Single leg press",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/leg-presses/single-leg-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "sxF9BcDt-yY",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell split squat",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/squats/split-squats/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "rlvpaDkc76g",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-36",
+   "name": "Split Squat",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell split squat",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/squats/split-squats/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "rlvpaDkc76g",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "machine": {
+     "name": "Smith machine split squat",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "j-TJxRRPu64",
+       "by": "OPEX Fitness"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-37",
+   "name": "Walking Lunge",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell walking lunge",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/walking-lunges/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "mAgbXQdd4LM",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-38",
+   "name": "Forward Lunge",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell forward lunge",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/forward-lunges/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "g8-Ge9S0aUw",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-39",
+   "name": "Lateral Lunge",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell lateral lunge",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/lateral-lunges/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "apsp_uuXZTU",
+       "by": "PureGym"
+      },
+      {
+       "id": "51slmzoEVt8",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-40",
+   "name": "Curtsy Lunge",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell curtsy lunge",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/curtsy-lunges/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "2EyH9MN7hYE",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-41",
+   "name": "Step Up",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell step up",
+     "puregymPage": "https://www.puregym.com/exercises/glutes/step-ups/step-up/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "DxUNi119Qzs",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "barbell": {
+     "name": "Barbell step up",
+     "puregymPage": "https://www.puregym.com/exercises/glutes/step-ups/barbell-step-ups/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "hbIMKzHuglA",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-42",
+   "name": "Sumo Squat",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Dumbbell sumo squat",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/squats/sumo-squat/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "qiQAsB0x-7k",
+       "by": "PureGym"
+      },
+      {
+       "id": "4eDJa5MnAmY",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-43",
+   "name": "Landmine Squat",
+   "group": "legs",
+   "versions": {
+    "barbell": {
+     "name": "Landmine squat",
+     "puregymPage": "https://www.puregym.com/exercises/legs/quad-exercises/squats/landmine-squat/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "YxaXaZxVcDU",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-44",
+   "name": "Sumo Deadlift",
+   "group": "legs",
+   "versions": {
+    "barbell": {
+     "name": "Sumo deadlift",
+     "puregymPage": "https://www.puregym.com/exercises/legs/hamstring-exercises/deadlifts/sumo-deadlift/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "JbY72Him34Q",
+       "by": "PureGym"
+      },
+      {
+       "id": "9hY5XZUDg7k",
+       "by": "PureGym"
+      },
+      {
+       "id": "pfSMst14EFk",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-45",
+   "name": "Good Morning",
+   "group": "legs",
+   "versions": {
+    "barbell": {
+     "name": "Barbell good morning",
+     "puregymPage": "https://www.puregym.com/exercises/legs/hamstring-exercises/good-mornings/barbell-good-mornings/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "nWyx81AfTos",
+       "by": "PureGym"
+      },
+      {
+       "id": "odZqvU3KCS8",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell good morning",
+     "puregymPage": "https://www.puregym.com/exercises/legs/hamstring-exercises/good-mornings/dumbbell-good-mornings/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "wUbsMNkkpLk",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-46",
+   "name": "Single Leg Romanian Deadlift",
+   "group": "legs",
+   "versions": {
+    "dumbbell": {
+     "name": "Single leg dumbbell deadlift",
+     "puregymPage": "https://www.puregym.com/exercises/legs/hamstring-exercises/deadlifts/single-leg-deadlift/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "hk80eAoQshc",
+       "by": "PureGym"
+      },
+      {
+       "id": "mKze3D0crY8",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-47",
+   "name": "Nordic Curl",
+   "group": "legs",
+   "versions": {
+    "bodyweight": {
+     "name": "Nordic curl",
+     "puregymPage": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/nordic-curls/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "Wo746janD2E",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-48",
+   "name": "Glute Bridge",
+   "group": "legs",
+   "versions": {
+    "barbell": {
+     "name": "Barbell glute bridge",
+     "puregymPage": "https://www.puregym.com/exercises/glutes/glute-bridge/barbell-glute-bridges/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "DQv1IMQDbE4",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "dumbbell": {
+     "name": "Dumbbell glute bridge",
+     "puregymPage": "https://www.puregym.com/exercises/glutes/glute-bridge/dumbbell-glute-bridges/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "cruqsnAyU6A",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "bodyweight": {
+     "name": "Glute bridge",
+     "puregymPage": "https://www.puregym.com/exercises/glutes/glute-bridge/glute-bridges/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "tqp5XQPpTxY",
+       "by": "PureGym"
+      },
+      {
+       "id": "sVfp4LN9niA",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-49",
+   "name": "Glute Kickback",
+   "group": "legs",
+   "versions": {
+    "machine": {
+     "name": "Glute kickback machine",
+     "puregymPage": "https://www.puregym.com/exercises/glutes/glute-kickbacks/cable-kickbacks/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "zoPt0SflJNg",
+       "by": "Matrix Fitness"
+      },
+      {
+       "id": "SqO-VUEak2M",
+       "by": "PureGym"
+      }
+     ]
+    },
+    "bodyweight": {
+     "name": "Donkey kick",
+     "puregymPage": "https://www.puregym.com/exercises/glutes/glute-kickbacks/donkey-kicks/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "EtSJ8rwm5M8",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-50",
+   "name": "Hip Abduction",
+   "group": "legs",
+   "versions": {
+    "machine": {
+     "name": "Seated hip abductor machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "G_8LItOiZ0Q",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-51",
+   "name": "Hip Adduction",
+   "group": "legs",
+   "versions": {
+    "machine": {
+     "name": "Seated hip adductor machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "CjAVezAggkI",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-52",
+   "name": "Leg Press Calf Raise",
+   "group": "legs",
+   "versions": {
+    "machine": {
+     "name": "Calf press on the leg press",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "KxEYX_cuesM",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "QkvgUYtQT38",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

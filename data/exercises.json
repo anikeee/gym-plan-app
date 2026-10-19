@@ -24,6 +24,7 @@
           "name": "Incline Chest Press Machine",
           "type": "compound",
           "asWritten": "machine",
+          "aliases": ["incline press machine", "incline chest press"],
           "variants": {
             "machine": {
               "name": "Incline chest press machine",
@@ -55,6 +56,7 @@
           "name": "Dumbbell Pullover",
           "type": "isolation",
           "asWritten": "dumbbell",
+          "aliases": ["pullover"],
           "variants": {
             "machine": {
               "name": "Cable rope pullover (straight arm pulldown)",
@@ -86,6 +88,7 @@
           "name": "Lateral Raise",
           "type": "isolation",
           "asWritten": "dumbbell",
+          "aliases": ["side raise", "lateral raise machine", "side delts"],
           "variants": {
             "machine": {
               "name": "Lateral raise machine",
@@ -118,6 +121,7 @@
           "name": "Chest Press Machine",
           "type": "compound",
           "asWritten": "machine",
+          "aliases": ["converging chest press", "seated chest press", "chest press"],
           "variants": {
             "machine": {
               "name": "Seated chest press machine",
@@ -149,6 +153,7 @@
           "name": "Cable Chest Fly",
           "type": "isolation",
           "asWritten": "machine",
+          "aliases": ["cable crossover", "chest fly", "cable fly"],
           "variants": {
             "machine": {
               "name": "Cable chest fly (cable crossover)",
@@ -179,6 +184,7 @@
           "name": "Tricep Pushdown",
           "type": "isolation",
           "asWritten": "machine",
+          "aliases": ["cable pushdown", "triceps pushdown", "rope pushdown"],
           "variants": {
             "machine": {
               "name": "Cable tricep pushdown",
@@ -209,6 +215,7 @@
           "name": "Overhead Dumbbell Tricep Extension",
           "type": "isolation",
           "asWritten": "dumbbell",
+          "aliases": ["overhead extension", "triceps extension"],
           "variants": {
             "machine": {
               "name": "Cable rope overhead tricep extension",
@@ -246,6 +253,7 @@
           "name": "Lat Pulldown",
           "type": "compound",
           "asWritten": "machine",
+          "aliases": ["pulldown", "lat pull down", "lats"],
           "variants": {
             "machine": {
               "name": "Lat pulldown machine",
@@ -276,6 +284,7 @@
           "name": "Straight Arm Pulldown",
           "type": "isolation",
           "asWritten": "machine",
+          "aliases": ["rope pullover", "straight arm pushdown", "lats"],
           "variants": {
             "machine": {
               "name": "Straight arm cable pulldown",
@@ -306,6 +315,7 @@
           "name": "Seated Cable Row",
           "type": "compound",
           "asWritten": "machine",
+          "aliases": ["cable row", "low row"],
           "variants": {
             "machine": {
               "name": "Seated cable row",
@@ -336,6 +346,7 @@
           "name": "Diverging Chest Supported Row",
           "type": "compound",
           "asWritten": "machine",
+          "aliases": ["diverging seated row", "matrix row", "seated row machine", "chest supported row"],
           "variants": {
             "machine": {
               "name": "Diverging seated row (chest supported row machine)",
@@ -366,6 +377,7 @@
           "name": "Face Pull",
           "type": "isolation",
           "asWritten": "machine",
+          "aliases": ["rear delts", "rope face pull"],
           "variants": {
             "machine": {
               "name": "Cable face pull",
@@ -397,6 +409,7 @@
           "name": "Barbell Curl",
           "type": "isolation",
           "asWritten": "barbell",
+          "aliases": ["bicep curl", "cable curl", "biceps"],
           "variants": {
             "machine": {
               "name": "Cable bar curl",
@@ -438,6 +451,7 @@
           "name": "Hammer Curl",
           "type": "isolation",
           "asWritten": "dumbbell",
+          "aliases": ["neutral grip curl", "biceps"],
           "variants": {
             "machine": {
               "name": "Cable rope hammer curl",
@@ -476,6 +490,7 @@
           "name": "Perfect Squat",
           "type": "compound",
           "asWritten": "machine",
+          "aliases": ["matrix perfect squat", "squat machine", "squat"],
           "variants": {
             "machine": {
               "name": "Matrix Perfect Squat machine",
@@ -508,6 +523,7 @@
           "name": "Romanian Deadlift",
           "type": "compound",
           "asWritten": "other",
+          "aliases": ["rdl", "stiff leg deadlift", "hamstrings"],
           "variants": {
             "machine": {
               "name": "Smith machine Romanian deadlift",
@@ -539,6 +555,7 @@
           "name": "Leg Press",
           "type": "compound",
           "asWritten": "machine",
+          "aliases": ["seated leg press", "45 degree leg press", "leg press machine"],
           "variants": {
             "machine": {
               "name": "Leg press machine",
@@ -571,6 +588,7 @@
           "name": "Back Lunges",
           "type": "compound",
           "asWritten": "other",
+          "aliases": ["reverse lunge", "lunges"],
           "variants": {
             "machine": {
               "name": "Smith machine reverse lunge",
@@ -602,6 +620,7 @@
           "name": "Leg Curl",
           "type": "isolation",
           "asWritten": "machine",
+          "aliases": ["hamstring curl", "seated leg curl", "lying leg curl", "prone leg curl", "hamstrings"],
           "variants": {
             "machine": {
               "name": "Leg curl machine (lying or seated)",
@@ -632,6 +651,7 @@
           "name": "Leg Extension",
           "type": "isolation",
           "asWritten": "machine",
+          "aliases": ["quad extension", "leg extension machine", "quads"],
           "variants": {
             "machine": {
               "name": "Leg extension machine",
@@ -663,6 +683,7 @@
           "name": "Standing Calf Raise",
           "type": "isolation",
           "asWritten": "machine",
+          "aliases": ["calf raise", "calves"],
           "variants": {
             "machine": {
               "name": "Standing calf raise machine",
@@ -724,6 +745,7 @@
        "name": "Barbell Bench Press",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["bench press", "flat bench", "chest"],
        "reps": [
         12,
         12,
@@ -804,6 +826,7 @@
        "name": "Barbell Overhead Press",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["military press", "ohp", "shoulder press", "overhead press"],
        "reps": [
         12,
         12,
@@ -896,6 +919,7 @@
        "name": "Incline Barbell Bench Press",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["incline bench", "upper chest"],
        "reps": [
         12,
         12,
@@ -988,6 +1012,7 @@
        "name": "Lateral Raise",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["side raise", "lateral raise machine", "side delts"],
        "reps": [
         12,
         12,
@@ -1061,6 +1086,7 @@
        "name": "Overhead Dumbbell Tricep Extension",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["overhead extension", "triceps extension"],
        "reps": [
         12,
         12,
@@ -1129,6 +1155,7 @@
        "name": "Deadlift",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["conventional deadlift"],
        "reps": [
         12,
         12,
@@ -1209,6 +1236,7 @@
        "name": "Barbell Bent Over Row",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["bent over row", "barbell row"],
        "reps": [
         12,
         12,
@@ -1295,6 +1323,7 @@
        "name": "Pull Up",
        "type": "compound",
        "asWritten": "other",
+       "aliases": ["pullup", "assisted pull up", "pull up machine", "lats"],
        "reps": [
         12,
         12,
@@ -1382,6 +1411,7 @@
        "name": "Dumbbell Upright Row",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["upright row", "traps"],
        "reps": [
         12,
         12,
@@ -1449,6 +1479,7 @@
        "name": "Dumbbell Curl",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["bicep curl", "biceps"],
        "reps": [
         12,
         12,
@@ -1517,6 +1548,7 @@
        "name": "Barbell Back Squat",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["squat", "back squat"],
        "reps": [
         12,
         12,
@@ -1609,6 +1641,7 @@
        "name": "Bulgarian Split Squat",
        "type": "compound",
        "asWritten": "dumbbell",
+       "aliases": ["rear foot elevated split squat", "split squat"],
        "reps": [
         12,
         12,
@@ -1676,6 +1709,7 @@
        "name": "Leg Press",
        "type": "compound",
        "asWritten": "machine",
+       "aliases": ["seated leg press", "45 degree leg press", "leg press machine"],
        "reps": [
         12,
         12,
@@ -1749,6 +1783,7 @@
        "name": "Leg Extension",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["quad extension", "leg extension machine", "quads"],
        "reps": [
         12,
         12,
@@ -1816,6 +1851,7 @@
        "name": "Seated Calf Raise",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["calf raise", "calves"],
        "reps": [
         12,
         12,
@@ -1906,6 +1942,7 @@
        "name": "Barbell Bench Press",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["bench press", "flat bench", "chest"],
        "reps": [
         5,
         5,
@@ -1985,6 +2022,7 @@
        "name": "Barbell Overhead Press",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["military press", "ohp", "shoulder press", "overhead press"],
        "reps": [
         12,
         12,
@@ -2077,6 +2115,7 @@
        "name": "Incline Dumbbell Press",
        "type": "compound",
        "asWritten": "dumbbell",
+       "aliases": ["incline press", "upper chest"],
        "reps": [
         12,
         12,
@@ -2144,6 +2183,7 @@
        "name": "Tricep Pushdown",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["cable pushdown", "triceps pushdown", "rope pushdown"],
        "reps": [
         12,
         12,
@@ -2205,6 +2245,7 @@
        "name": "Lateral Raise",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["side raise", "lateral raise machine", "side delts"],
        "reps": [
         20,
         20,
@@ -2281,6 +2322,7 @@
        "name": "Skull Crusher",
        "type": "isolation",
        "asWritten": "barbell",
+       "aliases": ["lying tricep extension", "triceps"],
        "reps": [
         12,
         12,
@@ -2380,6 +2422,7 @@
        "name": "Deadlift",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["conventional deadlift"],
        "reps": [
         5
        ],
@@ -2456,6 +2499,7 @@
        "name": "Pull Up",
        "type": "compound",
        "asWritten": "other",
+       "aliases": ["pullup", "assisted pull up", "pull up machine", "lats"],
        "reps": [
         12,
         12,
@@ -2543,6 +2587,7 @@
        "name": "T Bar Row",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["landmine row", "t-bar row"],
        "reps": [
         12,
         12,
@@ -2623,6 +2668,7 @@
        "name": "Face Pull",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["rear delts", "rope face pull"],
        "reps": [
         20,
         20,
@@ -2692,6 +2738,7 @@
        "name": "Hammer Curl",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["neutral grip curl", "biceps"],
        "reps": [
         12,
         12,
@@ -2760,6 +2807,7 @@
        "name": "Preacher Curl",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["preacher curl machine", "biceps"],
        "reps": [
         12,
         12,
@@ -2848,6 +2896,7 @@
        "name": "Barbell Back Squat",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["squat", "back squat"],
        "reps": [
         5,
         5,
@@ -2937,6 +2986,7 @@
        "name": "Romanian Deadlift",
        "type": "compound",
        "asWritten": "other",
+       "aliases": ["rdl", "stiff leg deadlift", "hamstrings"],
        "reps": [
         12,
         12,
@@ -3004,6 +3054,7 @@
        "name": "Front Squat",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["squat", "quads"],
        "reps": [
         12,
         12,
@@ -3090,6 +3141,7 @@
        "name": "Leg Curl",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["hamstring curl", "seated leg curl", "lying leg curl", "prone leg curl", "hamstrings"],
        "reps": [
         12,
         12,
@@ -3151,6 +3203,7 @@
        "name": "Seated Calf Raise",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["calf raise", "calves"],
        "reps": [
         12,
         12,
@@ -3243,6 +3296,7 @@
        "name": "Incline Barbell Bench Press",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["incline bench", "upper chest"],
        "reps": [
         8,
         8,
@@ -3335,6 +3389,7 @@
        "name": "Standing Dumbbell Shoulder Press",
        "type": "compound",
        "asWritten": "dumbbell",
+       "aliases": ["shoulder press", "shoulder press machine", "overhead press"],
        "reps": [
         15,
         15,
@@ -3402,6 +3457,7 @@
        "name": "Paused Dumbbell Bench Press",
        "type": "compound",
        "asWritten": "dumbbell",
+       "aliases": ["dumbbell bench press", "flat dumbbell press", "chest"],
        "reps": [
         12,
         12,
@@ -3469,6 +3525,7 @@
        "name": "Lateral Raise",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["side raise", "lateral raise machine", "side delts"],
        "reps": [
         15,
         15
@@ -3541,6 +3598,7 @@
        "name": "Cable Chest Fly",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["cable crossover", "chest fly", "cable fly"],
        "reps": [
         15,
         15
@@ -3601,6 +3659,7 @@
        "name": "Skull Crusher",
        "type": "isolation",
        "asWritten": "dumbbell",
+       "aliases": ["lying tricep extension", "triceps"],
        "reps": [
         15,
         15
@@ -3699,6 +3758,7 @@
        "name": "Pull Up",
        "type": "compound",
        "asWritten": "other",
+       "aliases": ["pullup", "assisted pull up", "pull up machine", "lats"],
        "reps": [
         10,
         10,
@@ -3786,6 +3846,7 @@
        "name": "Barbell Bent Over Row",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["bent over row", "barbell row"],
        "reps": [
         15,
         15,
@@ -3872,6 +3933,7 @@
        "name": "Reverse Grip Lat Pulldown",
        "type": "compound",
        "asWritten": "machine",
+       "aliases": ["underhand pulldown", "supinated pulldown", "lats"],
        "reps": [
         12,
         12,
@@ -3933,6 +3995,7 @@
        "name": "Chest Supported Rear Delt Row",
        "type": "compound",
        "asWritten": "dumbbell",
+       "aliases": ["rear delt row", "rear delts"],
        "reps": [
         15,
         15,
@@ -4000,6 +4063,7 @@
        "name": "Preacher Curl",
        "type": "isolation",
        "asWritten": "barbell",
+       "aliases": ["preacher curl machine", "biceps"],
        "reps": [
         12,
         12
@@ -4079,6 +4143,7 @@
        "name": "Face Pull",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["rear delts", "rope face pull"],
        "reps": [
         15,
         15
@@ -4152,6 +4217,7 @@
        "name": "Barbell Back Squat",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["squat", "back squat"],
        "reps": [
         10,
         10,
@@ -4244,6 +4310,7 @@
        "name": "Hip Thrust",
        "type": "compound",
        "asWritten": "barbell",
+       "aliases": ["hip thrust machine", "glutes"],
        "reps": [
         15,
         15,
@@ -4336,6 +4403,7 @@
        "name": "Bulgarian Split Squat",
        "type": "compound",
        "asWritten": "dumbbell",
+       "aliases": ["rear foot elevated split squat", "split squat"],
        "reps": [
         12,
         12,
@@ -4404,6 +4472,7 @@
        "name": "Leg Curl",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["hamstring curl", "seated leg curl", "lying leg curl", "prone leg curl", "hamstrings"],
        "reps": [
         15,
         15,
@@ -4465,6 +4534,7 @@
        "name": "Single Leg Calf Raise",
        "type": "isolation",
        "asWritten": "other",
+       "aliases": ["calf raise", "calves"],
        "reps": [
         10,
         10
@@ -4531,6 +4601,7 @@
        "name": "Seated Calf Raise",
        "type": "isolation",
        "asWritten": "machine",
+       "aliases": ["calf raise", "calves"],
        "reps": [
         15,
         15
