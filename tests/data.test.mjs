@@ -159,7 +159,7 @@ test('every library exercise has a unique id and name, a day group, and complete
     assert.match(ex.id, /^lib-\d+$/, ex.id);
     assert.ok(!ids.has(ex.id), `duplicate library id ${ex.id}`); ids.add(ex.id);
     assert.ok(!names.has(ex.name) && !planNames.has(ex.name), `${ex.name} is listed twice`); names.add(ex.name);
-    assert.ok(['push', 'pull', 'legs'].includes(ex.group), `${ex.id}.group`);
+    assert.ok(['push', 'pull', 'legs', 'core'].includes(ex.group), `${ex.id}.group`); // core: abs, offered on any day
     assert.ok(['compound', 'isolation'].includes(ex.type), ex.id);
     assert.ok([...VARIANT_KEYS, 'other'].includes(ex.asWritten), ex.id);
     assert.ok(Object.keys(ex.variants).length >= 1, ex.id);
@@ -168,7 +168,7 @@ test('every library exercise has a unique id and name, a day group, and complete
     checkAliases(ex);
     assert.equal(ex.reps, undefined, `${ex.id}: a library exercise takes the slot's sets and reps`);
   }
-  for (const g of ['push', 'pull', 'legs']) assert.ok(library.filter((e) => e.group === g).length >= 10, `${g} has few library exercises`);
+  for (const g of ['push', 'pull', 'legs', 'core']) assert.ok(library.filter((e) => e.group === g).length >= 10, `${g} has few library exercises`);
 });
 
 test('every video id is in the research oEmbed check', async () => {

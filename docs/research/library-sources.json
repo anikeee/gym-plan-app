@@ -1,6 +1,6 @@
 {
  "collected": "2026-10-19",
- "about": "The exercise library behind the Replace button: every version with the PureGym page its text was written from and the clips checked for it. Matrix, Renaissance Periodization and OPEX clips were found on YouTube on this date; animation ids were matched from the ExerciseDB V1 catalogue and pictures from free-exercise-db, both by name.",
+ "about": "The exercise library behind the Replace button: every version with the PureGym page its text was written from and the clips checked for it. Matrix, Renaissance Periodization and OPEX clips were found on YouTube on this date; animation ids were matched from the ExerciseDB V1 catalogue and pictures from free-exercise-db, both by name. The core group (abs) was added on 2026-10-19 the same way, from the PureGym abs pages and the Matrix abdominal crunch machine; planks and side planks were left out because the app logs reps and weight, not seconds.",
  "exercises": [
   {
    "id": "lib-1",
@@ -1424,6 +1424,383 @@
       },
       {
        "id": "QkvgUYtQT38",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-53",
+   "name": "Crunch",
+   "group": "core",
+   "versions": {
+    "machine": {
+     "name": "Abdominal crunch machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "MszLVWWU7bc",
+       "by": "Matrix Fitness"
+      },
+      {
+       "id": "-OUSBPnHvsQ",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    },
+    "bodyweight": {
+     "name": "Floor crunch",
+     "puregymPage": "https://www.puregym.com/exercises/abs/crunches/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "NnVhqMQRvmM",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-54",
+   "name": "Cable Crunch",
+   "group": "core",
+   "versions": {
+    "machine": {
+     "name": "Kneeling cable crunch",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "6GMKPQVERzw",
+       "by": "Renaissance Periodization"
+      },
+      {
+       "id": "W_dwbtaLup0",
+       "by": "OPEX Fitness"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-55",
+   "name": "Sit Up",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Sit up",
+     "puregymPage": "https://www.puregym.com/exercises/abs/sit-ups/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "T3XsCC2Td1g",
+       "by": "PureGym"
+      },
+      {
+       "id": "pTZL-Hirhwg",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-56",
+   "name": "Decline Sit Up",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Decline sit up",
+     "puregymPage": "https://www.puregym.com/exercises/abs/decline-sit-ups/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "N7hf1_vcX5w",
+       "by": "PureGym"
+      },
+      {
+       "id": "DAnTf16NcT0",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-57",
+   "name": "Butterfly Sit Up",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Butterfly sit up",
+     "puregymPage": "https://www.puregym.com/exercises/abs/butterfly-sit-ups/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "ZLyOWSPnVrM",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-58",
+   "name": "V Sit Up",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "V sit up",
+     "puregymPage": "https://www.puregym.com/exercises/abs/v-sit-ups/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "cSCyyfBti7U",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-59",
+   "name": "Hanging Leg Raise",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Hanging leg raise",
+     "puregymPage": "https://www.puregym.com/exercises/abs/hanging-leg-raises/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "Yrtvs-nEnk0",
+       "by": "PureGym"
+      },
+      {
+       "id": "7FwGZ8qY5OU",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-60",
+   "name": "Hanging Knee Raise",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Hanging knee raise",
+     "puregymPage": "https://www.puregym.com/exercises/abs/hanging-knee-raises/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "O7iDA3ory-w",
+       "by": "PureGym"
+      },
+      {
+       "id": "RD_A-Z15ER4",
+       "by": "Renaissance Periodization"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-61",
+   "name": "Reverse Crunch",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Reverse crunch",
+     "puregymPage": "https://www.puregym.com/exercises/abs/reverse-crunches/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "XY8KzdDcMFg",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-62",
+   "name": "Bicycle Crunch",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Bicycle crunch",
+     "puregymPage": "https://www.puregym.com/exercises/abs/bicycle-crunches/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "wnuLak2onoA",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-63",
+   "name": "Russian Twist",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Russian twist",
+     "puregymPage": "https://www.puregym.com/exercises/abs/russian-twists/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "99T1EfpMwPA",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-64",
+   "name": "Dead Bug",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Dead bug",
+     "puregymPage": "https://www.puregym.com/exercises/abs/deadbugs/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "9RK9UUgKIQE",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-65",
+   "name": "Ab Wheel Rollout",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Ab wheel rollout",
+     "puregymPage": "https://www.puregym.com/exercises/abs/ab-wheel-rollouts/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "SBO5aFR09D4",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-66",
+   "name": "Pallof Press",
+   "group": "core",
+   "versions": {
+    "machine": {
+     "name": "Cable Pallof press",
+     "puregymPage": "https://www.puregym.com/exercises/abs/pallof-press/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "HXrLaqNIkTs",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-67",
+   "name": "Toe Touch",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Toe touch crunch",
+     "puregymPage": "https://www.puregym.com/exercises/abs/toe-touches/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "9iEI95-eZWk",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-68",
+   "name": "Swiss Ball Crunch",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Swiss ball crunch",
+     "puregymPage": "https://www.puregym.com/exercises/abs/swiss-ball-crunches/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "O4d3kd1ZLyc",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-69",
+   "name": "Swiss Ball Pike",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Swiss ball pike",
+     "puregymPage": "https://www.puregym.com/exercises/abs/swiss-ball-pikes/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "vo3csqN6rpo",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-70",
+   "name": "Plank Knee To Elbow",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Plank knee to elbow",
+     "puregymPage": "https://www.puregym.com/exercises/abs/plank-knee-to-elbow/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "pI7uWJXcfPE",
+       "by": "PureGym"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lib-71",
+   "name": "Superman",
+   "group": "core",
+   "versions": {
+    "bodyweight": {
+     "name": "Superman",
+     "puregymPage": "https://www.puregym.com/exercises/abs/supermans/",
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "kTMBsUwEGPM",
        "by": "PureGym"
       }
      ]

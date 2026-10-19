@@ -2511,6 +2511,679 @@
      "guide": "https://www.puregym.com/exercises/legs/calf-exercises/"
     }
    }
+  },
+  {
+   "id": "lib-53",
+   "name": "Crunch",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "ab crunch",
+    "abdominal crunch machine",
+    "crunch machine",
+    "abs"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Abdominal crunch machine",
+     "kit": "Matrix Ultra Abdominal Crunch, the seated machine with a chest pad and handles. Set the seat so the pad rests on your upper chest, hands on the handles, hips back on the seat.",
+     "tip": "Hips down on the seat, pad on your upper chest, light hold on the handles. Curl your ribs toward your hips slowly, keep your lower back still, then let the pad come back under control.",
+     "videos": [
+      {
+       "id": "MszLVWWU7bc",
+       "label": "Matrix Ultra abdominal crunch",
+       "by": "Matrix Fitness",
+       "seconds": 39
+      },
+      {
+       "id": "-OUSBPnHvsQ",
+       "label": "Machine crunch",
+       "by": "Renaissance Periodization",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "ZnJHhMk",
+      "fallback": "Ab_Crunch_Machine",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/crunches/"
+    },
+    "bodyweight": {
+     "name": "Floor crunch",
+     "kit": "A mat in the stretch area. No kit needed. Hold a plate or dumbbell on your chest to add weight.",
+     "tip": "Lie on your back, knees bent, feet flat, arms crossed over your chest. Curl your shoulders off the mat slowly with your lower back pressed down, pause, then lower slowly.",
+     "videos": [
+      {
+       "id": "NnVhqMQRvmM",
+       "label": "How to do an abdominal crunch",
+       "by": "PureGym",
+       "seconds": 21
+      }
+     ],
+     "animation": {
+      "exercisedb": "TFqbd8t",
+      "fallback": "Crunches",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/crunches/"
+    }
+   }
+  },
+  {
+   "id": "lib-54",
+   "name": "Cable Crunch",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "rope crunch",
+    "kneeling cable crunch",
+    "abs"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Kneeling cable crunch",
+     "kit": "Rope on a high pulley, on the cable crossover (the dual adjustable pulley) or a cable machine. Kneel on a mat facing the stack, a short step back from it.",
+     "tip": "Kneel with your hips up and the rope held either side of your head, elbows pointing down. Curl your ribs toward your hips slowly without pulling with your arms, hips still, then uncurl under control.",
+     "videos": [
+      {
+       "id": "6GMKPQVERzw",
+       "label": "Rope crunch",
+       "by": "Renaissance Periodization",
+       "seconds": 10
+      },
+      {
+       "id": "W_dwbtaLup0",
+       "label": "Cable crunch",
+       "by": "OPEX Fitness",
+       "seconds": 13
+      }
+     ],
+     "animation": {
+      "exercisedb": "WW95auq",
+      "fallback": "Cable_Crunch",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/"
+    }
+   }
+  },
+  {
+   "id": "lib-55",
+   "name": "Sit Up",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "situp",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Sit up",
+     "kit": "A mat in the stretch area. Hold a plate or dumbbell on your chest to add weight.",
+     "tip": "Lie on your back with knees bent, feet flat, lower back pressed into the mat, fingertips behind your ears. Pull your belly button in and curl up toward your knees slowly, then lower slowly, no jerking from the arms.",
+     "videos": [
+      {
+       "id": "T3XsCC2Td1g",
+       "label": "How to do sit ups",
+       "by": "PureGym",
+       "seconds": 24
+      },
+      {
+       "id": "pTZL-Hirhwg",
+       "label": "How to do weighted sit ups",
+       "by": "PureGym",
+       "seconds": 20
+      }
+     ],
+     "animation": {
+      "exercisedb": "Bn6TXyO",
+      "fallback": "Sit-Up",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/sit-ups/"
+    }
+   }
+  },
+  {
+   "id": "lib-56",
+   "name": "Decline Sit Up",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "decline bench sit up",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Decline sit up",
+     "kit": "Decline bench, or an adjustable bench on a decline setting, at 30 to 45 degrees. Hook your feet under the foot rollers. Hold a plate on your chest to add weight.",
+     "tip": "Lie back on the bench with your feet under the rollers and your belly button pulled in. Curl up until you sit upright, pause, then lower slowly without letting your lower back arch at the bottom.",
+     "videos": [
+      {
+       "id": "N7hf1_vcX5w",
+       "label": "How to do decline sit ups",
+       "by": "PureGym",
+       "seconds": 11
+      },
+      {
+       "id": "DAnTf16NcT0",
+       "label": "Slant board situp",
+       "by": "Renaissance Periodization",
+       "seconds": 10
+      }
+     ],
+     "animation": {
+      "exercisedb": "QLL2gdc",
+      "fallback": "Decline_Crunch",
+      "note": "Pictures show the decline crunch; sit all the way up for the sit up."
+     },
+     "guide": "https://www.puregym.com/exercises/abs/decline-sit-ups/"
+    }
+   }
+  },
+  {
+   "id": "lib-57",
+   "name": "Butterfly Sit Up",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Butterfly sit up",
+     "kit": "A mat in the stretch area. Soles of your feet together, knees dropped out to the sides.",
+     "tip": "Lie with your lower back flat on the mat, soles of your feet together, knees out, arms overhead. Curl up slowly, reach toward your feet, then lower slowly until your arms rest on the mat, no arm swing.",
+     "videos": [
+      {
+       "id": "ZLyOWSPnVrM",
+       "label": "How to do a butterfly sit up",
+       "by": "PureGym",
+       "seconds": 22
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Frog_Sit-Ups",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/butterfly-sit-ups/"
+    }
+   }
+  },
+  {
+   "id": "lib-58",
+   "name": "V Sit Up",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "v up",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "V sit up",
+     "kit": "A mat in the stretch area with room to stretch your arms and legs out. No kit needed.",
+     "tip": "Lie flat with arms overhead, legs straight and your lower back pressed into the mat. Squeeze your abs to lift your legs and arms together, reach for your feet, then lower slowly with no swing.",
+     "videos": [
+      {
+       "id": "cSCyyfBti7U",
+       "label": "How to do a v sit up",
+       "by": "PureGym",
+       "seconds": 22
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Jackknife_Sit-Up",
+      "note": "Pictures show the jackknife sit up, which is the same move."
+     },
+     "guide": "https://www.puregym.com/exercises/abs/v-sit-ups/"
+    }
+   }
+  },
+  {
+   "id": "lib-59",
+   "name": "Hanging Leg Raise",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "leg raise",
+    "lower abs",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Hanging leg raise",
+     "kit": "Pull up bar on the rig, overhand grip, hands shoulder width apart. Or the captain's chair, with your forearms on the pads and your back against the rest.",
+     "tip": "Hang with straight arms, shoulders pulled down a little, pelvis tucked so your lower back does not arch. Lift your straight legs together until they are level with the floor, pause, then lower slowly without swinging.",
+     "videos": [
+      {
+       "id": "Yrtvs-nEnk0",
+       "label": "How to do hanging leg raises",
+       "by": "PureGym",
+       "seconds": 11
+      },
+      {
+       "id": "7FwGZ8qY5OU",
+       "label": "Hanging straight leg raise",
+       "by": "Renaissance Periodization",
+       "seconds": 9
+      }
+     ],
+     "animation": {
+      "exercisedb": "I3tsCnC",
+      "fallback": "Hanging_Leg_Raise",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/hanging-leg-raises/"
+    }
+   }
+  },
+  {
+   "id": "lib-60",
+   "name": "Hanging Knee Raise",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "knee raise",
+    "captains chair",
+    "lower abs",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Hanging knee raise",
+     "kit": "Pull up bar on the rig with an overhand grip, hands shoulder width apart. Or the captain's chair, forearms on the pads and your back against the rest.",
+     "tip": "Hang with straight arms, shoulders slightly down, knees at 90 degrees and pelvis tucked, lower back not arched. Breathe out and lift your knees toward your chest, pause, then lower slowly so your legs never swing behind you.",
+     "videos": [
+      {
+       "id": "O7iDA3ory-w",
+       "label": "How to do hanging knee raises",
+       "by": "PureGym",
+       "seconds": 12
+      },
+      {
+       "id": "RD_A-Z15ER4",
+       "label": "Hanging knee raise",
+       "by": "Renaissance Periodization",
+       "seconds": 9
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Knee_Hip_Raise_On_Parallel_Bars",
+      "note": "Pictures show it on the captain's chair; hanging from the bar is the same move."
+     },
+     "guide": "https://www.puregym.com/exercises/abs/hanging-knee-raises/"
+    }
+   }
+  },
+  {
+   "id": "lib-61",
+   "name": "Reverse Crunch",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "lower abs",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Reverse crunch",
+     "kit": "A mat in the stretch area. No kit needed.",
+     "tip": "Lie on your back, arms by your sides, knees bent, feet flat and lower back on the mat. Curl your hips up slowly to bring your knees toward your chest, then lower slowly without kicking.",
+     "videos": [
+      {
+       "id": "XY8KzdDcMFg",
+       "label": "How to do a reverse crunch",
+       "by": "PureGym",
+       "seconds": 21
+      }
+     ],
+     "animation": {
+      "exercisedb": "nCU1Ekp",
+      "fallback": "Reverse_Crunch",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/reverse-crunches/"
+    }
+   }
+  },
+  {
+   "id": "lib-62",
+   "name": "Bicycle Crunch",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "obliques",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Bicycle crunch",
+     "kit": "A mat in the stretch area. No kit needed.",
+     "tip": "Lie on your back, hands behind your ears, legs straight and just off the mat, lower back pressed down. Bring one knee in as you curl the opposite shoulder toward it slowly, then swap, only your torso turning.",
+     "videos": [
+      {
+       "id": "wnuLak2onoA",
+       "label": "How to do a bicycle crunch",
+       "by": "PureGym",
+       "seconds": 21
+      }
+     ],
+     "animation": {
+      "exercisedb": "1ZFqTDN",
+      "fallback": "Air_Bike",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/bicycle-crunches/"
+    }
+   }
+  },
+  {
+   "id": "lib-63",
+   "name": "Russian Twist",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "obliques",
+    "twist",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Russian twist",
+     "kit": "A mat in the stretch area. Hold a plate, dumbbell or medicine ball at your chest to add weight. Rest your heels on the mat if balance is hard.",
+     "tip": "Sit with knees bent, lean back a little with your back straight, shoulders back, feet just off the mat. Turn your chest and hands slowly to one side, hands close to the floor, then slowly to the other.",
+     "videos": [
+      {
+       "id": "99T1EfpMwPA",
+       "label": "How to do a russian twist",
+       "by": "PureGym",
+       "seconds": 20
+      }
+     ],
+     "animation": {
+      "exercisedb": "XVDdcoj",
+      "fallback": "Russian_Twist",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/russian-twists/"
+    }
+   }
+  },
+  {
+   "id": "lib-64",
+   "name": "Dead Bug",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "core",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Dead bug",
+     "kit": "A mat in the stretch area. No kit needed.",
+     "tip": "Lie on your back with arms straight up, knees bent over your hips and lower back pressed into the mat. Slowly lower one arm overhead and the opposite leg toward the floor, pause, bring both back, then swap sides.",
+     "videos": [
+      {
+       "id": "9RK9UUgKIQE",
+       "label": "How to do deadbugs",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "iny3m5y",
+      "fallback": "Dead_Bug",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/deadbugs/"
+    }
+   }
+  },
+  {
+   "id": "lib-65",
+   "name": "Ab Wheel Rollout",
+   "group": "core",
+   "type": "compound",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "ab roller",
+    "rollout",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Ab wheel rollout",
+     "kit": "Ab wheel from the functional area, with a mat under your knees. If there is no wheel, a barbell with a small plate on each end rolls the same way.",
+     "tip": "Kneel with your hands on the wheel under your shoulders, belly button pulled in and your back flat. Roll out slowly as far as you can keep your back from arching, pause, then pull back to the start.",
+     "videos": [
+      {
+       "id": "SBO5aFR09D4",
+       "label": "How to do ab wheel roll outs",
+       "by": "PureGym",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": "NAgVB3t",
+      "fallback": "Barbell_Ab_Rollout_-_On_Knees",
+      "note": "Pictures use a barbell instead of the wheel; the movement is the same."
+     },
+     "guide": "https://www.puregym.com/exercises/abs/ab-wheel-rollouts/"
+    }
+   }
+  },
+  {
+   "id": "lib-66",
+   "name": "Pallof Press",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "anti rotation press",
+    "obliques",
+    "core"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Cable Pallof press",
+     "kit": "Cable crossover (the dual adjustable pulley) with a single handle set at chest height. Stand side on to the stack and step out until the cable is tight.",
+     "tip": "Stand side on with feet shoulder width apart, both hands on the handle at your chest, core braced. Press the handle straight out until your arms are straight, hold, then bring it back slowly without your torso turning.",
+     "videos": [
+      {
+       "id": "HXrLaqNIkTs",
+       "label": "How to do a pallof press",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": "9pa4H5m",
+      "fallback": "Pallof_Press",
+      "note": "Animation uses a band; the cable works the same way."
+     },
+     "guide": "https://www.puregym.com/exercises/abs/pallof-press/"
+    }
+   }
+  },
+  {
+   "id": "lib-67",
+   "name": "Toe Touch",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "toe touch crunch",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Toe touch crunch",
+     "kit": "A mat in the stretch area. Hold a light plate or dumbbell in both hands to add weight.",
+     "tip": "Lie on your back, legs straight up at 90 degrees, arms reaching up, lower back pressed into the mat. Curl your shoulders up slowly and reach for your toes, pause, then lower slowly with your legs still.",
+     "videos": [
+      {
+       "id": "9iEI95-eZWk",
+       "label": "How to do toe touches",
+       "by": "PureGym",
+       "seconds": 21
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Toe_Touchers",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/toe-touches/"
+    }
+   }
+  },
+  {
+   "id": "lib-68",
+   "name": "Swiss Ball Crunch",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "stability ball crunch",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Swiss ball crunch",
+     "kit": "Swiss ball from the stretch area. Sit on it, walk your feet forward until your lower back and shoulders rest on the ball, feet flat. Hold a plate on your chest to add weight.",
+     "tip": "Lie back with your lower back on the ball, knees bent, feet flat and arms crossed over your chest. Curl your ribs toward your hips slowly, lower back staying on the ball, pause at the top, then lower slowly.",
+     "videos": [
+      {
+       "id": "O4d3kd1ZLyc",
+       "label": "How to do swiss ball crunches",
+       "by": "PureGym",
+       "seconds": 12
+      }
+     ],
+     "animation": {
+      "exercisedb": "Gn5FwYT",
+      "fallback": "Exercise_Ball_Crunch",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/swiss-ball-crunches/"
+    }
+   }
+  },
+  {
+   "id": "lib-69",
+   "name": "Swiss Ball Pike",
+   "group": "core",
+   "type": "compound",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "stability ball pike",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Swiss ball pike",
+     "kit": "Swiss ball from the stretch area, on clear floor with space in front of you. Lie with your stomach on the ball and walk your hands out until your shins rest on it.",
+     "tip": "Start in a press up position, hands under your shoulders, shins on the ball, back flat, belly button in. Push into the floor and lift your hips to the ceiling slowly, ball rolling to your toes, then lower slowly.",
+     "videos": [
+      {
+       "id": "vo3csqN6rpo",
+       "label": "How to do swiss ball pikes",
+       "by": "PureGym",
+       "seconds": 21
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Exercise_Ball_Pull-In",
+      "note": "Pictures show the knee tuck on the ball; keep your legs straight to make it the pike."
+     },
+     "guide": "https://www.puregym.com/exercises/abs/swiss-ball-pikes/"
+    }
+   }
+  },
+  {
+   "id": "lib-70",
+   "name": "Plank Knee To Elbow",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "mountain climber",
+    "obliques",
+    "abs"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Plank knee to elbow",
+     "kit": "A mat in the stretch area. No kit needed.",
+     "tip": "High plank with hands under your shoulders, body in a straight line from head to heels, hips level. Slowly bring one knee toward the elbow on the same side without your hips lifting or sagging, return, then swap.",
+     "videos": [
+      {
+       "id": "pI7uWJXcfPE",
+       "label": "How to plank knee to elbow",
+       "by": "PureGym",
+       "seconds": 37
+      }
+     ],
+     "animation": {
+      "exercisedb": "RJgzwny",
+      "fallback": "Mountain_Climbers",
+      "note": "Animation and pictures show the fast mountain climber; do it slowly, knee to elbow."
+     },
+     "guide": "https://www.puregym.com/exercises/abs/plank-knee-to-elbow/"
+    }
+   }
+  },
+  {
+   "id": "lib-71",
+   "name": "Superman",
+   "group": "core",
+   "type": "isolation",
+   "asWritten": "bodyweight",
+   "aliases": [
+    "lower back",
+    "floor back extension",
+    "core"
+   ],
+   "variants": {
+    "bodyweight": {
+     "name": "Superman",
+     "kit": "A mat in the stretch area. No kit needed.",
+     "tip": "Lie face down with legs straight, arms stretched overhead and your eyes on the mat. Squeeze your glutes to lift arms and legs together slowly, hips pressed into the mat, pause, then lower slowly.",
+     "videos": [
+      {
+       "id": "kTMBsUwEGPM",
+       "label": "How to do superman exercises",
+       "by": "PureGym",
+       "seconds": 11
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Superman",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/abs/supermans/"
+    }
+   }
   }
  ]
 }
