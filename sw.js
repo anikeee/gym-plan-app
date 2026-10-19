@@ -1,4 +1,4 @@
-const VERSION = 'gym-v14'; // bump on every data or code change
+const VERSION = 'gym-v15'; // bump on every data or code change
 const MEDIA = 'gym-media-v1'; // offline pictures: a path never changes its picture, so they outlive app updates
 const FONTS = ['./fonts/barlow-400.woff2', './fonts/barlow-600.woff2', './fonts/barlow-condensed-600.woff2', './fonts/barlow-condensed-700.woff2'];
 const SHELL = ['./', './index.html', './styles.css', './app.js', './log.js', './data/exercises.json', './data/library.json', './manifest.webmanifest', './icon.svg', ...FONTS];

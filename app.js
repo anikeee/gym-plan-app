@@ -200,6 +200,7 @@ const ICONS = {
   swap: '<path d="M4 7h13"/><path d="M14 4l3 3-3 3"/><path d="M20 17H7"/><path d="M10 14l-3 3 3 3"/>',
   search: '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
   flag: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>',
 };
 const SPINNER = '<svg class="spinner" width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="18" stroke="#E3E6EA" stroke-width="5"/><path d="M22 4a18 18 0 0 1 18 18" stroke="#0E0F12" stroke-width="5" stroke-linecap="round"/></svg>';
 
@@ -238,6 +239,12 @@ function dayOfExercise(ex) {
 // How many of a plan day's exercises carry a Done mark on a date. The day chip and the training card both use it.
 function doneCount(planDay, date) { const ids = new Set(dayExercises(state.plan, planDay).map((e) => e.id)); return L.doneOn(state.days, date).filter((id) => ids.has(id)).length; }
 function fmtTime(ms) { return new Date(ms).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+// The running clock: 42:13, or 1:02:13 past an hour.
+function fmtClock(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(s / 3600); const m = Math.floor((s % 3600) / 60); const sec = String(s % 60).padStart(2, '0');
+  return h ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`;
+}
 function fmtDuration(ms) {
   const m = Math.max(0, Math.round(ms / 60000));
   return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min`;
@@ -262,18 +269,15 @@ function renderDay(view, day) {
     if (d.id === day.id) a.setAttribute('aria-current', 'page');
     nav.append(a);
   }
-  head.append(row, nav);
+  // One line says what the day works and the plan's sets. The tab above already names the day, so there is no title.
+  const uniform = day.exercises.every((e) => !e.reps);
+  const meta = el('p', 'day-meta');
+  meta.append(el('span', null, focusText(day.focus)), el('span', 'day-scheme', uniform ? `${state.plan.sets} sets: ${state.plan.reps.join(', ')}` : 'Sets and reps per exercise'));
+  head.append(row, nav, meta);
 
   const body = el('section', 'day');
-  const titles = el('div', 'day-titles');
-  titles.append(el('h1', 'title-xl', `${day.name} day`), el('p', 'focus', focusText(day.focus)));
-  const chips = el('div', 'chips');
-  const doneToday = doneCount(day, state.day);
-  const uniform = day.exercises.every((e) => !e.reps);
-  chips.append(el('span', 'chip', `${day.exercises.length} exercises`), el('span', 'chip', uniform ? `${state.plan.sets} sets: ${state.plan.reps.join(', ')}` : 'Sets and reps per exercise'));
-  if (doneToday) chips.append(withIcon(el('span', 'chip is-done'), 'check', 14, `${doneToday} of ${day.exercises.length} done`));
-
   const listHead = el('div', 'list-head');
+  const title = el('h2', 'list-title', 'Exercises'); const count = el('span', 'list-count'); title.append(' ', count);
   const reorder = el('button', 'reorder-btn'); reorder.type = 'button';
   const list = el('ol', 'ex-list'); list.setAttribute('role', 'list'); // Safari drops list semantics when list-style is none
   const moved = el('p', 'sr-only'); moved.setAttribute('role', 'status'); // keyboard moves are announced here
@@ -281,19 +285,24 @@ function renderDay(view, day) {
   const paintList = () => {
     state.drag?.cancel();
     const ordered = orderedExercises(day);
+    const doneToday = doneCount(day, state.day);
+    const running = L.activeSession(state.days, state.day);
+    const next = running && !state.reorder ? ordered.find((e) => !L.isDone(state.days, state.day, e.id)) : null; // the one to do now
+    count.textContent = doneToday ? `· ${doneToday} of ${ordered.length} done` : `· ${ordered.length}`;
+    count.classList.toggle('is-done', doneToday > 0);
     list.classList.toggle('is-reorder', state.reorder);
     list.replaceChildren(...ordered.map((ex, i) => {
       const li = el('li');
-      li.append(state.reorder ? reorderRow(day, ex, i, ordered, list, paintList, moved, listStatus) : exerciseRow(day, ex, i));
+      li.append(state.reorder ? reorderRow(day, ex, i, ordered, list, paintList, moved, listStatus) : exerciseRow(day, ex, i, ex === next));
       return li;
     }));
     reorder.setAttribute('aria-pressed', String(state.reorder));
     reorder.replaceChildren(icon(state.reorder ? 'check' : 'drag', 16), state.reorder ? 'Done reordering' : 'Reorder');
   };
   reorder.addEventListener('click', () => { state.reorder = !state.reorder; paintList(); if (state.reorder) list.querySelector('.handle')?.focus(); });
-  listHead.append(el('h2', 'list-title', 'Exercises'), reorder);
+  listHead.append(title, reorder);
   paintList();
-  body.append(titles, chips, buildTrainingCard(day), listHead, list, listStatus, moved, buildLogCard());
+  body.append(buildTrainingBar(day, paintList), listHead, list, listStatus, moved);
   view.append(head, body);
 }
 
@@ -340,24 +349,50 @@ function openPlanSheet(view, opener) {
   list.querySelector('[aria-checked="true"]')?.focus();
 }
 
-function exerciseRow(day, ex, i) {
+function exerciseRow(day, ex, i, isNext) {
   const done = L.isDone(state.days, state.day, ex.id);
-  const a = link(exerciseHref(day, ex), `ex-card${done ? ' is-done' : ''}`);
-  a.append(exerciseThumb(ex), exerciseText(ex, i, done), icon(done ? 'checkCircle' : 'chevronRight', done ? 24 : 20, done ? 'ex-done' : 'chev'));
+  const a = link(exerciseHref(day, ex), `ex-card${done ? ' is-done' : ''}${isNext ? ' is-next' : ''}`);
+  a.append(exerciseThumb(ex, done), exerciseText(ex, i, done, isNext), icon(done ? 'checkCircle' : 'chevronRight', done ? 22 : 18, done ? 'ex-done' : 'chev'));
   return a;
 }
-function exerciseThumb(ex) {
+// The card picture; a done exercise gets a tick on it.
+function exerciseThumb(ex, done) {
   const src = thumbFor(ex);
-  if (!src) return el('span', 'ex-thumb');
-  const thumb = el('img', 'ex-thumb'); thumb.src = src; thumb.alt = ''; thumb.width = 64; thumb.height = 64;
-  return thumb;
+  const pic = el('span', 'ex-pic');
+  if (src) { const thumb = el('img', 'ex-thumb'); thumb.src = src; thumb.alt = ''; thumb.width = 52; thumb.height = 52; pic.append(thumb); } else pic.append(el('span', 'ex-thumb'));
+  if (done) { const tick = el('span', 'ex-tick'); tick.append(icon('check', 14)); pic.append(tick); }
+  return pic;
 }
-function exerciseText(ex, i, done) {
+// The name and one line of meta: the number, type and rest, or, once logged today, the sets and weights.
+function exerciseText(ex, i, done, isNext) {
   const text = el('span', 'ex-text');
-  text.append(el('span', `tag is-${ex.type}`, `${String(i + 1).padStart(2, '0')} · ${cap(ex.type)}`), el('span', 'ex-name', ex.name),
-    withIcon(el('span', 'ex-rest'), 'clock', 14, ex.reps ? `${schemeText(ex)} · Rest ${restFor(ex)}` : `Rest ${restFor(ex)}`));
+  if (isNext) text.append(el('span', 'ex-next', 'Up next'));
+  text.append(el('span', 'ex-name', ex.name));
+  const meta = el('span', 'ex-meta');
+  const logged = todaySets(ex);
+  if (done || logged.length) {
+    meta.append(done ? 'Done' : `${logged.length} of ${targetsFor(ex).length} sets`);
+    if (logged.length) meta.append(` · ${done ? `${logged.length} ${logged.length === 1 ? 'set' : 'sets'} · ` : ''}${weightsText(logged)}`);
+    else meta.append(' · no weights logged');
+  } else {
+    meta.append(el('span', `ex-kind is-${ex.type}`, `${String(i + 1).padStart(2, '0')} · ${cap(ex.type)}`), ` · ${ex.reps ? `${schemeText(ex)} · ` : ''}Rest ${restFor(ex)}`);
+  }
+  text.append(meta);
   if (done) text.append(el('span', 'sr-only', 'Done today'));
   return text;
+}
+// Today's logged sets of an exercise across its versions, in log order.
+function todaySets(ex) {
+  const out = [];
+  for (const k of Object.keys(ex.variants)) for (const s of (L.todayEntry(state.log, L.entryKey(ex.name, k), state.day)?.sets || [])) if (s) out.push({ k, w: s.w });
+  return out;
+}
+// "30, 32.5, 35 kg", or "30 to 35 kg" when there are many different ones; BW and BW+5 for bodyweight sets.
+function weightsText(sets) {
+  const words = [...new Set(sets.map((s) => weightText(s.k, s.w)))];
+  const plain = words.every((w) => !w.startsWith('BW'));
+  if (words.length > 3 && plain) { const ws = sets.map((s) => s.w); return `${L.formatWeight(Math.min(...ws))} to ${L.formatWeight(Math.max(...ws))} kg`; }
+  return `${words.join(', ')}${plain ? ' kg' : ''}`;
 }
 
 // Reorder mode: each row gets a handle. Drag it with a finger or the mouse, or press the arrow keys on it.
@@ -490,95 +525,88 @@ function renderExercise(view, day, ex, variantKey) {
   const top = el('div', 'topbar');
   const back = link(`#/${day.id}`, 'back'); back.setAttribute('aria-label', `Back to ${day.name} day`);
   back.append(icon('chevronLeft', 20), `${day.name} day`);
-  top.append(back, count);
-
-  const head = el('div', 'ex-head');
-  head.append(el('p', 'eyebrow', cap(ex.type)), el('h1', 'title-lg', ex.name));
+  const right = el('div', 'topbar-right'); right.append(count);
   // Replace: only on the picked plan's own days, where the exercise fills a slot that can hold another one.
   const slotId = ex.slot || ex.id;
   if (dayExercises(state.plan, day).includes(ex)) {
-    const row = el('div', 'swap-row');
-    const replace = el('button', 'swap-btn'); replace.type = 'button'; replace.setAttribute('aria-haspopup', 'dialog');
-    replace.append(icon('swap', 18), 'Replace');
+    const replace = el('button', 'swap-icon'); replace.type = 'button'; replace.setAttribute('aria-haspopup', 'dialog');
+    replace.setAttribute('aria-label', ex.slot ? 'Replace this exercise, or put the plan\'s own back' : 'Replace this exercise');
+    replace.append(icon('swap', 20));
     replace.addEventListener('click', () => openReplaceSheet(view, replace, day, slotId, ex));
-    row.append(replace);
-    if (ex.slot) {
-      const original = state.index.exercises.get(ex.slot)?.ex;
-      const back = el('button', 'swap-btn is-back'); back.type = 'button'; back.append(icon('chevronLeft', 18), `Put back ${original?.name || 'the plan\'s exercise'}`);
-      back.addEventListener('click', () => { if (saveSwap(day, slotId, null)) location.replace(exerciseHref(day, original)); });
-      row.append(back);
-    }
-    head.append(row);
+    right.append(replace);
   }
+  top.append(back, right);
+
+  const head = el('div', 'ex-head');
+  head.append(el('p', 'eyebrow', cap(ex.type)), el('h1', 'title-lg', ex.name));
 
   const setsBlock = el('div', 'sets-block');
   const nSets = targetsFor(ex).length;
   const cols = nSets <= 5 ? nSets : Math.ceil(nSets / 2); // 6 sets: two rows of 3, so every box keeps a readable size
-  setsBlock.style.setProperty('--n', String(cols)); // the boxes and the Last time row share one column count
+  setsBlock.style.setProperty('--n', String(cols));
   setsBlock.classList.toggle('many', cols >= 5);
   const setLog = buildSetLog(ex, key);
-  const rest = withIcon(el('p', 'rest'), 'clock', 18, `Rest ${restFor(ex)} between sets`);
+  // Done and the rest time share one row under the boxes.
+  const actions = el('div', 'set-actions');
+  actions.append(buildDoneButton(ex), withIcon(el('span', 'rest'), 'clock', 16, `Rest ${restFor(ex)}`));
   // On the assisted machine the step is less help, and at the least help the next step is the bar (buildSetLog says when).
   const progress = ex.variants[key].assisted ? 'take one step of assist off. At the least assist, move to the bar' : 'add weight';
   const scheme = ex.repRange ? el('p', 'scheme', `${schemeText(ex)} reps. Reach ${ex.repRange[1]} on every set, then ${progress}.`) : null;
-  setsBlock.append(...[setLog.lastLine, setLog.list, scheme, rest, buildDoneButton(ex)].filter(Boolean));
+  setsBlock.append(...[setLog.lastLine, setLog.list, actions, scheme].filter(Boolean));
 
   // Buttons, not links: switching version replaces the hash so the back button still goes to the day.
-  // "In plan" marks the version a plan wrote; a replacement and a library exercise have none.
+  // "in plan" marks the version a plan wrote; a replacement and a library exercise have none.
   const inPlan = !ex.slot && Boolean(state.index.exercises.get(ex.id)?.plan);
   const seg = el('div', `seg seg-versions${keys.length > 2 ? ' three' : ''}`); seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Version');
   for (const k of keys) {
     const b = el('button', 'seg-btn', VARIANT_LABEL[k] || cap(k)); b.type = 'button'; b.dataset.variant = k;
     b.setAttribute('aria-pressed', String(k === key));
-    if (ex.asWritten === k && inPlan) b.append(el('span', 'pill', 'In plan'));
+    if (ex.asWritten === k && inPlan) b.append(el('span', 'pill-in', 'in plan'));
     b.addEventListener('click', () => { if (k !== key) { state.refocus = k; location.replace(`#/${day.id}/${ex.id}/${k}`); } });
     seg.append(b);
   }
   const segBlock = el('div', 'version-block'); segBlock.append(seg);
 
+  // The animation card: the picture with its chips laid over it, a note under it, and the steps folded inside.
   const animCard = el('section', 'card anim-card'); animCard.setAttribute('aria-label', 'Animation');
-  const box = el('div', 'anim'); const foot = el('div', 'anim-foot');
-  animCard.append(box, foot);
-
+  const box = el('div', 'anim'); const foot = el('div', 'anim-foot'); const note = el('p', 'anim-note'); note.hidden = true;
+  const animWrap = el('div', 'anim-wrap'); animWrap.append(box, foot);
   const toggle = el('button', 'steps-toggle'); toggle.type = 'button';
   toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-controls', 'steps');
   const sub = el('span', 'steps-sub'); const toggleText = el('span', 'steps-text');
   toggleText.append(el('span', 'steps-title', 'Step by step'), sub);
-  toggle.append(toggleText, icon('chevronDown', 20));
+  toggle.append(toggleText, icon('chevronDown', 18));
   const steps = el('ol', 'steps'); steps.id = 'steps'; steps.hidden = true; steps.setAttribute('role', 'list');
   toggle.addEventListener('click', () => { const open = steps.hidden; steps.hidden = !open; toggle.setAttribute('aria-expanded', String(open)); });
+  animCard.append(animWrap, note, toggle, steps);
 
   const setup = el('section', 'card setup'); setup.setAttribute('aria-label', 'Setup');
-  setup.append(el('h2', 'setup-name', v.name), setupRow('pin', 'Find it', v.kit), el('div', 'divider'), setupRow('target', 'Form cue', v.tip));
-  if (v.note) setup.append(el('div', 'divider'), setupRow('info', 'Note', v.note));
-  if (v.guide) {
-    const g = link(v.guide, 'guide', 'PureGym written guide'); g.target = '_blank'; g.rel = 'noopener';
-    g.append(icon('external', 18)); setup.append(g);
-  }
+  const find = setupRow('pin', 'Find it.', v.kit);
+  if (v.guide) { const g = link(v.guide, 'guide', 'PureGym guide'); g.target = '_blank'; g.rel = 'noopener'; g.append(' ', icon('external', 14)); find.querySelector('p').append(' ', g); }
+  setup.append(find, setupRow('target', 'Form cue.', v.tip));
+  if (v.note) setup.append(setupRow('info', 'Note.', v.note));
 
-  // Every version's clips, the version on screen first, so the machine and dumbbell videos are both one scroll away.
+  // Every version's clips in one sideways strip, the version on screen first.
   const watch = el('section', 'watch'); watch.setAttribute('aria-labelledby', 'watch');
+  const clips = [key, ...keys.filter((x) => x !== key)].flatMap((k) => ex.variants[k].videos.map((vid) => [k, vid]));
   const watchHead = el('div', 'watch-head'); const watchTitle = el('h2', null, 'Watch'); watchTitle.id = 'watch'; watchTitle.tabIndex = -1;
+  watchTitle.append(' ', el('span', 'list-count', `· ${clips.length} ${clips.length === 1 ? 'clip' : 'clips'}`));
   watchHead.append(watchTitle, el('span', null, 'Opens in YouTube'));
-  watch.append(watchHead);
-  for (const k of [key, ...keys.filter((x) => x !== key)]) {
-    const clips = ex.variants[k].videos;
-    if (!clips.length) continue;
-    watch.append(el('h3', 'watch-group', `${VARIANT_LABEL[k] || cap(k)}${k === key ? '' : ' version'}`));
-    for (const vid of clips) {
-      const a = link(`https://www.youtube.com/watch?v=${vid.id}`, 'video'); a.target = '_blank'; a.rel = 'noopener';
-      const thumb = el('span', 'video-thumb');
-      const img = el('img'); img.src = `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`; img.alt = ''; img.loading = 'lazy'; img.width = 128; img.height = 72;
-      img.onerror = () => img.remove(); // no signal: keep the plain tile with the play button
-      const play = el('span', 'play'); play.append(icon('play', 16, 'fill'));
-      thumb.append(img, play, el('span', 'dur', duration(vid.seconds)));
-      const text = el('span', 'video-text'); text.append(el('span', 'video-label', vid.label), el('span', 'video-by', vid.by));
-      a.append(thumb, text); watch.append(a);
-    }
+  const strip = el('div', 'watch-strip');
+  for (const [k, vid] of clips) {
+    const a = link(`https://www.youtube.com/watch?v=${vid.id}`, 'clip'); a.target = '_blank'; a.rel = 'noopener';
+    const thumb = el('span', 'clip-thumb');
+    const img = el('img'); img.src = `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`; img.alt = ''; img.loading = 'lazy'; img.width = 132; img.height = 74;
+    img.onerror = () => img.remove(); // no signal: keep the plain tile with the play button
+    const play = el('span', 'play'); play.append(icon('play', 14, 'fill'));
+    thumb.append(img, play, el('span', 'dur', duration(vid.seconds)));
+    a.append(thumb, el('span', 'clip-label', vid.label), el('span', 'clip-by', `${vid.by}${k === key ? '' : ` · ${VARIANT_LABEL[k] || cap(k)} version`}`));
+    strip.append(a);
   }
+  watch.append(watchHead, strip);
 
   const body = el('div', 'variant');
-  body.append(animCard, toggle, steps, setup, watch);
+  body.append(animCard, setup, watch);
   view.append(top, head, segBlock, setsBlock, body, setLog.sheet, nextWrap);
   if (state.refocus) { seg.querySelector(`[data-variant="${state.refocus}"]`)?.focus(); state.refocus = null; }
 
@@ -586,7 +614,7 @@ function renderExercise(view, day, ex, variantKey) {
     watch.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     watchTitle.focus({ preventScroll: true });
   };
-  loadAnimation(v, { box, foot, toggle, sub, steps, toVideos });
+  loadAnimation(v, { box, foot, note, toggle, sub, steps, toVideos });
 }
 
 // Weight log for one exercise version: the "Last time" line, the set boxes, and the sheet that logs a set.
@@ -613,14 +641,11 @@ function buildSetLog(ex, variantKey) {
   function paintLast() {
     g = L.guide(state.log, logKey, today, targets, assisted ? -step : step, legacy);
     lastLine.replaceChildren();
-    lastLine.hidden = !g.last;
-    if (!g.last) return;
-    const head = el('p', 'last-head'); head.append(el('span', null, `Last time · ${L.formatDay(g.last.date)}${g.sameScheme ? '' : ' · other reps'}`), el('span', 'last-unit', assisted ? 'assist kg × reps' : bodyweight ? 'bodyweight × reps' : 'kg × reps'));
-    const cells = el('p', 'last-sets');
-    targets.forEach((t, i) => { const s = g.last.sets[i]; cells.append(el('span', null, s ? `${short(s.w)}×${s.r}` : 'skipped')); });
-    lastLine.append(head, cells);
-    if (g.allHit && g.suggestions.some((x) => x?.up)) lastLine.append(withIcon(el('p', 'last-nudge'), 'up', 16, assisted ? 'You hit every rep. Take one step of assist off today.' : 'You hit every rep. Go up a step today.'));
-    else if (g.toBar) lastLine.append(withIcon(el('p', 'last-nudge'), 'up', 16, `You hit every rep with the least assist. Now ${toBarText} above.`));
+    const nudge = !g.last ? null
+      : g.allHit && g.suggestions.some((x) => x?.up) ? (assisted ? 'You hit every rep last time. Take one step of assist off today.' : 'You hit every rep last time. Go up a step today.')
+        : g.toBar ? `You hit every rep with the least assist. Now ${toBarText} above.` : null;
+    lastLine.hidden = !nudge;
+    if (nudge) lastLine.append(withIcon(el('p', 'last-nudge'), 'up', 16, nudge));
   }
   paintLast();
 
@@ -844,7 +869,7 @@ function openReplaceSheet(view, opener, day, slotId, current) {
   const MAX = 40;
   const paint = () => {
     const found = L.searchExercises(pool, input.value, day.id);
-    list.replaceChildren(...found.slice(0, MAX).map((it) => {
+    const rows = found.slice(0, MAX).map((it) => {
       const b = el('button', 'pick'); b.type = 'button';
       const text = el('span', 'pick-text');
       const versions = Object.keys(it.ex.variants).map((k) => VARIANT_LABEL[k] || cap(k)).join(', ');
@@ -852,7 +877,18 @@ function openReplaceSheet(view, opener, day, slotId, current) {
       b.append(exerciseThumb(it.ex), text, icon('chevronRight', 18, 'chev'));
       b.addEventListener('click', () => pick(it));
       const li = el('li'); li.append(b); return li;
-    }));
+    });
+    // A replaced slot offers the plan's own exercise back, first, until a search narrows the list.
+    const original = current.slot && !input.value.trim() ? state.index.exercises.get(current.slot)?.ex : null;
+    if (original) {
+      const b = el('button', 'pick is-back'); b.type = 'button';
+      const text = el('span', 'pick-text');
+      text.append(el('span', 'pick-name', `Put back ${original.name}`), el('span', 'pick-meta', 'The plan\'s own exercise for this slot'));
+      b.append(exerciseThumb(original), text, icon('chevronLeft', 18, 'chev'));
+      b.addEventListener('click', () => { if (!saveSwap(day, slotId, null)) { say(status, SAVE_FAILED, true); return; } sheet.close(); location.replace(exerciseHref(day, original)); });
+      const li = el('li'); li.append(b); rows.unshift(li);
+    }
+    list.replaceChildren(...rows);
     count.textContent = !found.length ? 'No exercise matches. Try another word, like the muscle or the machine.' : found.length > MAX ? `${found.length} exercises. Showing the first ${MAX}, keep typing to narrow it down.` : `${found.length} ${found.length === 1 ? 'exercise' : 'exercises'}`;
     sheet.dataset.first = found[0]?.id || '';
   };
@@ -1052,34 +1088,35 @@ async function importBackup(f) {
   return { ok: true, message: parts.length ? `Backup restored: ${parts.join(', ')}.` : 'Backup restored. Everything in it was already on this phone.' };
 }
 
-// The training card on the day page: Start records the time, Finish records the end, and the diary keeps every day.
-function buildTrainingCard(day) {
-  const card = el('section', 'card train-card'); card.setAttribute('aria-labelledby', 'train-title');
+// The training bar on the day page: Start and the diary while nothing runs; the clock, the done count and Finish while
+// a training runs. refresh repaints the exercise list, whose "Up next" and ticks follow the training.
+function buildTrainingBar(day, refresh) {
+  const wrap = el('div', 'train');
   const status = el('p', 'train-status'); status.setAttribute('role', 'status');
   const paint = () => {
     if (state.timer) { clearInterval(state.timer); state.timer = null; }
-    card.replaceChildren();
+    wrap.replaceChildren();
     const today = state.day;
-    const all = L.trainingDays(state.days, state.log);
-    const todayEntry = all.find((d) => d.date === today);
     const running = L.activeSession(state.days, today);
-    const h = el('h2', 'train-title'); h.id = 'train-title';
-    const more = link('#/history', 'train-link'); more.append(`${all.length ? `All ${all.length} training ${all.length === 1 ? 'day' : 'days'}` : 'Training days'}`, icon('chevronRight', 18));
+    const bar = el('div', 'train-bar');
     if (running) {
       const runPlan = planById(running.plan);
       const planDay = runPlan.days.find((d) => d.id === running.day) ?? day;
       const total = planDay.exercises.length;
       const doneN = doneCount(planDay, today);
-      h.textContent = `Day ${todayEntry.number} · ${planDay.name}`;
-      if (runPlan !== state.plan) h.append(el('span', 'train-plan', runPlan.name)); // the running plan, when another one is picked
-      const big = el('p', 'train-big');
-      const time = el('p', 'train-time');
-      big.setAttribute('aria-live', 'off'); time.setAttribute('aria-live', 'off'); // the page is a live region; a clock read out every 30 s is noise
-      const tick = () => { big.textContent = fmtDuration(Date.now() - running.start); time.textContent = `Started ${fmtTime(running.start)} · ${doneN} of ${total} exercises done`; };
+      const number = L.trainingDays(state.days, state.log).find((d) => d.date === today)?.number;
+      bar.classList.add('is-running');
+      bar.setAttribute('role', 'status'); bar.setAttribute('aria-live', 'off'); // a clock read out every second is noise
+      const clock = el('span', 'train-clock'); const meta = el('span', 'train-meta');
+      const tick = () => {
+        clock.textContent = fmtClock(Date.now() - running.start);
+        const sets = Object.values(L.setsOn(state.log, today)).reduce((n, s) => n + L.countSets(s), 0);
+        meta.textContent = `${doneN} of ${total} done · ${sets} ${sets === 1 ? 'set' : 'sets'}${runPlan !== state.plan ? ` · ${runPlan.name}` : ''}`;
+      };
       tick();
       state.tick = tick; // called again the moment the page comes back on screen
-      state.timer = setInterval(tick, 30000);
-      const finish = el('button', 'train-btn is-finish'); finish.type = 'button'; finish.append(icon('flag', 20), 'Finish training');
+      state.timer = setInterval(tick, 1000);
+      const finish = el('button', 'train-finish', 'Finish'); finish.type = 'button'; finish.setAttribute('aria-label', 'Finish training');
       finish.addEventListener('click', () => {
         if (syncDay()) { render(); return; } // past 4 am: the training was closed at its last set, the page shows the new day
         const cur = freshDays();
@@ -1087,10 +1124,12 @@ function buildTrainingCard(day) {
         if (!r?.session || !L.saveDays(store, r.days)) { say(status, SAVE_FAILED, true); return; }
         state.days = r.days;
         const sets = Object.values(L.setsOn(state.log, today)).reduce((n, s) => n + L.countSets(s), 0);
-        paint();
-        card.querySelector('.train-btn')?.focus({ preventScroll: true }); // Finish is gone: keep the keyboard on the card
-        say(status, `Day ${todayEntry.number} saved: ${fmtDuration(r.session.end - r.session.start)}, ${doneN} of ${total} exercises done, ${sets} ${sets === 1 ? 'set' : 'sets'} logged.`);
+        paint(); refresh();
+        wrap.querySelector('.train-btn')?.focus({ preventScroll: true }); // Finish is gone: keep the keyboard on the bar
+        say(status, `Day ${number} saved: ${fmtDuration(r.session.end - r.session.start)}, ${doneN} of ${total} exercises done, ${sets} ${sets === 1 ? 'set' : 'sets'} logged.`);
       });
+      const text = el('span', 'train-text'); text.append(clock, meta);
+      bar.append(el('span', 'train-dot'), text, finish);
       const discard = el('button', 'train-discard', 'Started by mistake? Discard'); discard.type = 'button';
       let armed = null;
       discard.addEventListener('click', () => {
@@ -1100,20 +1139,13 @@ function buildTrainingCard(day) {
         const days = cur && L.discardSession(cur, today);
         if (!days || !L.saveDays(store, days)) { say(status, SAVE_FAILED, true); return; }
         state.days = days;
-        paint();
-        card.querySelector('.train-btn')?.focus({ preventScroll: true });
+        paint(); refresh();
+        wrap.querySelector('.train-btn')?.focus({ preventScroll: true });
         say(status, 'Training discarded. Sets and Done marks stay saved.');
       });
-      card.append(h, big, time, finish, discard, status, more);
+      wrap.append(bar, discard, status);
       return;
     }
-    h.textContent = 'Training';
-    const text = el('p', 'train-text');
-    const last = all[all.length - 1];
-    const lastSession = last?.sessions.filter((s) => s.end !== null).pop();
-    if (!last) text.textContent = 'Start a training and the app records when you began, every set you log, which exercises you finish, and when you stop.';
-    else if (last.date === today) text.textContent = `Day ${last.number} today${lastSession ? `: ${fmtTime(lastSession.start)} to ${fmtTime(lastSession.end)}, ${fmtDuration(lastSession.end - lastSession.start)}` : ''}. Start again to add more time.`;
-    else text.textContent = `Last: Day ${last.number}, ${L.formatDay(last.date)}${lastSession ? `, ${fmtDuration(lastSession.end - lastSession.start)}` : ''}. Next up: Day ${all.length + 1}.`;
     const start = el('button', 'train-btn'); start.type = 'button'; start.append(icon('play', 18, 'fill'), `Start ${day.name.toLowerCase()} training`);
     start.addEventListener('click', () => {
       const rolled = syncDay();
@@ -1123,13 +1155,17 @@ function buildTrainingCard(day) {
       state.days = r.days;
       status.textContent = '';
       if (rolled) { render(); return; } // the whole page moves to the new day, with the training running on it
-      paint();
-      card.querySelector('.is-finish')?.focus({ preventScroll: true });
+      paint(); refresh();
+      wrap.querySelector('.train-finish')?.focus({ preventScroll: true });
     });
-    card.append(h, text, start, status, more);
+    const all = L.trainingDays(state.days, state.log).length;
+    const diary = link('#/history', 'train-diary'); diary.setAttribute('aria-label', all ? `Training days (${all}) and backups` : 'Training days and backups');
+    diary.append(icon('calendar', 22));
+    bar.append(start, diary);
+    wrap.append(bar, status);
   };
   paint();
-  return card;
+  return wrap;
 }
 
 function buildDoneButton(ex) {
@@ -1166,6 +1202,7 @@ function renderHistory(view, day) {
   const head = el('div', 'ex-head');
   head.append(el('p', 'eyebrow', 'Your diary'), el('h1', 'title-lg', 'Training days'));
   const wrap = el('div', 'history');
+  wrap.append(buildLogCard()); // backups live here now, not on every day page
   const all = L.trainingDays(state.days, state.log).reverse();
   if (!all.length) wrap.append(el('p', 'history-empty', 'No training days yet. Press Start training on a day, or log a set, and it shows up here.'));
   // Thirty days at a time: after years of training, drawing every day at once froze the page for seconds on a phone.
@@ -1244,17 +1281,18 @@ function dayCard(d, open, sets) {
 
 function setupRow(iconName, label, text) {
   const row = el('div', 'setup-row');
-  const tile = el('span', 'setup-icon'); tile.append(icon(iconName, 18));
-  const t = el('div', 'setup-text'); t.append(el('span', 'label', label), el('p', null, text));
-  row.append(tile, t);
+  const tile = el('span', 'setup-icon'); tile.append(icon(iconName, 16));
+  const p = el('p'); p.append(el('b', 'setup-lead', label), ' ', text);
+  row.append(tile, p);
   return row;
 }
 
 // The animation card has four states (loading, live, offline, none). Each one redraws the box, the row under it and the steps toggle, so nothing from an earlier state survives.
-function setAnim(ui, name, boxKids, footKids) {
+function setAnim(ui, name, boxKids, footKids, note) {
   ui.box.dataset.state = name;
   ui.box.replaceChildren(...boxKids);
   ui.foot.replaceChildren(...footKids);
+  ui.note.textContent = note || ''; ui.note.hidden = !note;
 }
 // list null disables the toggle, sub null hides it.
 function setSteps(ui, list, sub) {
@@ -1268,16 +1306,14 @@ async function loadAnimation(v, ui) {
   if (a.exercisedb) {
     const loading = el('div', 'anim-loading'); loading.innerHTML = SPINNER; loading.append('Loading animation');
     const skel = el('span', 'tchip skel'); skel.setAttribute('aria-hidden', 'true');
-    setAnim(ui, 'loading', [loading], [el('span', 'foot-label', 'Targets'), skel]);
+    setAnim(ui, 'loading', [loading], [skel]);
     setSteps(ui, null, 'Loading with the animation');
     try {
       const live = await fetchLive(a.exercisedb);
       const img = await loadGif(live.gifUrl, live.name);
       const chip = el('span', 'anim-chip'); chip.append(el('span', 'dot'), 'Live');
       const targets = (live.targetMuscles || []).map((m) => el('span', 'tchip', cap(m)));
-      const foot = targets.length ? [el('span', 'foot-label', 'Targets'), ...targets] : [];
-      if (a.note) foot.push(el('p', 'anim-note', a.note));
-      setAnim(ui, 'live', [img, chip], foot);
+      setAnim(ui, 'live', [img, chip], targets, a.note);
       const list = (Array.isArray(live.instructions) ? live.instructions : []).map((s) => String(s).replace(/^Step:\d+\s*/, ''));
       setSteps(ui, list.length ? list : null, list.length ? `${list.length} step${list.length === 1 ? '' : 's'}, loaded live with the animation` : null);
       return;
@@ -1306,9 +1342,7 @@ function renderFallback(a, ui) {
     frames.append(img);
   }
   const chip = el('span', 'anim-chip'); chip.append(icon('wifiOff', 14), 'Offline picture');
-  const foot = [el('span', 'caption', 'Start and end position')];
-  if (a.note) foot.push(el('p', 'anim-note', a.note));
-  setAnim(ui, 'offline', [frames, chip], foot);
+  setAnim(ui, 'offline', [frames, chip], [el('span', 'caption', 'Start and end position')], a.note);
 }
 
 async function fetchLive(id) {

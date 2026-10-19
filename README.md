@@ -38,10 +38,10 @@ The times are estimates. Every change made to the online plans, and the reason f
 - **Machine and dumbbell versions:** every exercise shows the PureGym machine and the dumbbell way to do it, plus a barbell way where the plan uses one. Pull Up also has a bodyweight way on the bar, where you log the weight added and 0 kg means bodyweight only.
 - **Videos and pictures:** short YouTube clips, an animation, and pictures that work offline.
 - **Weight log:** type the weight and reps for each set. After a session where you hit every rep, the app suggests one step more weight.
-- **Training days:** tap Start training and Finish. The diary shows each day with its time and every set.
+- **Training days:** tap Start training and Finish. The bar under the day tabs shows the clock and the done count while a training runs, and the diary shows each day with its time and every set.
 - **Done marks and your own order:** tick each exercise when it is done, and drag exercises into the order you like.
 - **Replace any exercise:** tap Replace on an exercise page and search. The library has every PureGym push, pull, legs and abs exercise with its own videos, animation and pictures, plus the machines on the Matrix floor. The replacement takes the slot's sets and reps, and Put back restores the plan's own exercise.
-- **Backups:** save your log to a file and restore it. The Android app is also included in your phone's own Android backup.
+- **Backups:** on the Training days page, save your log to a file and restore it. The Android app is also included in your phone's own Android backup.
 
 ## Run it on a computer
 
