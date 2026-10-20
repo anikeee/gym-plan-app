@@ -1,4 +1,4 @@
-const VERSION = 'gym-v15'; // bump on every data or code change
+const VERSION = 'gym-v16'; // bump on every data or code change
 const MEDIA = 'gym-media-v1'; // offline pictures: a path never changes its picture, so they outlive app updates
 const FONTS = ['./fonts/barlow-400.woff2', './fonts/barlow-600.woff2', './fonts/barlow-condensed-600.woff2', './fonts/barlow-condensed-700.woff2'];
 const SHELL = ['./', './index.html', './styles.css', './app.js', './log.js', './data/exercises.json', './data/library.json', './manifest.webmanifest', './icon.svg', ...FONTS];
@@ -9,8 +9,15 @@ const SHELL = ['./', './index.html', './styles.css', './app.js', './log.js', './
 async function precache() {
   const res = await fetch(new Request('./data/exercises.json', { cache: 'reload' }));
   const data = await res.json();
+  const library = await (await fetch(new Request('./data/library.json', { cache: 'reload' }))).json();
   // cache: 'reload' skips the browser HTTP cache, so a version bump never stores a stale copy.
-  await (await caches.open(VERSION)).addAll(SHELL.map((u) => new Request(u, { cache: 'reload' })));
+  const shell = await caches.open(VERSION);
+  await shell.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' })));
+  // The drawn animations (scripts/draw-animations.mjs) change with the app, so they sit in the shell cache too. Each one is
+  // cached on its own and a failure is dropped: a drawing missing from the server costs only that drawing (the box then
+  // shows its "No animation" view), never the whole install, which would leave every phone on the old version.
+  const drawn = new Set([...data.plans.flatMap((p) => p.days.flatMap((d) => d.exercises)), ...library.exercises].flatMap((e) => Object.values(e.variants).map((v) => v.animation.drawn).filter(Boolean)));
+  await Promise.all([...drawn].flatMap((d) => [`./media/drawn/${d}.svg`, `./media/drawn/${d}-still.svg`]).map((u) => shell.add(new Request(u, { cache: 'reload' })).catch(() => {})));
   const ids = new Set(data.plans[0].days.flatMap((d) => d.exercises.flatMap((e) => Object.values(e.variants).map((v) => v.animation.fallback).filter(Boolean))));
   const media = await caches.open(MEDIA);
   const urls = [...ids].flatMap((id) => [`./media/fallback/${id}/0.jpg`, `./media/fallback/${id}/1.jpg`]);
@@ -28,12 +35,13 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return; // never touch ExerciseDB, YouTube, GitHub (plan F19)
-  if (url.pathname.includes('/media/fallback/')) { // our own public domain pictures: keep each one the first time it loads
-    e.respondWith(caches.open(MEDIA).then((c) => c.match(e.request).then((hit) => hit || fetch(e.request).then((res) => {
-      if (res.ok) c.put(e.request, res.clone());
-      return res;
-    }))));
-    return;
-  }
+  // Keep a file the first time it loads: cache first, else fetch it and store a copy. The copy is cloned before the
+  // response goes to the page, because the page starts reading the body as soon as it has it.
+  const keep = (name) => e.respondWith(caches.open(name).then((c) => c.match(e.request).then((hit) => hit || fetch(e.request).then((res) => {
+    if (res.ok) c.put(e.request, res.clone());
+    return res;
+  }))));
+  if (url.pathname.includes('/media/fallback/')) { keep(MEDIA); return; } // our own public domain pictures, kept across versions
+  if (url.pathname.includes('/media/drawn/')) { keep(VERSION); return; } // a drawing the install could not fetch, kept on first view
   e.respondWith(caches.match(e.request).then((hit) => hit || fetch(e.request)));
 });
