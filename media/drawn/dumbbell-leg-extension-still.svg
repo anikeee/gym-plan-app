@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Dumbbell leg extension">
+<title>Dumbbell leg extension</title>
+<line x1="24" y1="250" x2="376" y2="250" stroke="#C9CED6" stroke-width="3" stroke-linecap="round"/>
+<polygon points="199,198 209,198 209,250 199,250" fill="#717985"/>
+<polygon points="328,198 338,198 338,250 328,250" fill="#717985"/>
+<polygon points="185,186 352,186 352,198 185,198" fill="#717985"/>
+<path d="M244.6 121.6 L275.2 150.4" stroke="#A1A8B3" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M275.2 150.4 L254 189" stroke="#A1A8B3" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="254" cy="189" r="7" fill="#A1A8B3"></circle>
+<path d="M236 182 L181 182" stroke="#A1A8B3" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M181 182 L129 183.8" stroke="#A1A8B3" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M129.2 188.8 L128.3 163.8" stroke="#A1A8B3" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M232 180 L240.6 118.6" stroke="#2A2E36" stroke-width="26" stroke-linecap="round" fill="none"/>
+<circle cx="245.6" cy="95.1" r="15" fill="#2A2E36"></circle>
+<path d="M232 180 L177 180" stroke="#2A2E36" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M177 180 L125 181.8" stroke="#2A2E36" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M125.2 186.8 L124.3 161.8" stroke="#2A2E36" stroke-width="10" stroke-linecap="round" fill="none"/>
+<circle cx="132.6" cy="168.5" r="16" fill="#2A2E36"></circle>
+<circle cx="132.6" cy="168.5" r="6" fill="#C6F432"></circle>
+<path d="M240.6 118.6 L268.4 150.1" stroke="#2A2E36" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M268.4 150.1 L246 188" stroke="#2A2E36" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="246" cy="188" r="7" fill="#2A2E36"></circle>
+</svg>

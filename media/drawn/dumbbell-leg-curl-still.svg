@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Dumbbell hamstring curl">
+<title>Dumbbell hamstring curl</title>
+<line x1="24" y1="250" x2="376" y2="250" stroke="#C9CED6" stroke-width="3" stroke-linecap="round"/>
+<path d="M129 181 L135.9 222.4" stroke="#A1A8B3" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M135.9 222.4 L96.9 202" stroke="#A1A8B3" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="96.9" cy="202" r="7" fill="#A1A8B3"></circle>
+<polygon points="104.9,208 114.9,208 114.9,250 104.9,250" fill="#717985"/>
+<polygon points="207.9,208 217.9,208 217.9,250 207.9,250" fill="#717985"/>
+<polygon points="94.9,245 124.9,245 124.9,250 94.9,250" fill="#717985"/>
+<polygon points="197.9,245 227.9,245 227.9,250 197.9,250" fill="#717985"/>
+<polygon points="88.9,196 233.9,196 233.9,208 88.9,208" fill="#717985"/>
+<path d="M191 181 L245.9 183.9" stroke="#A1A8B3" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M245.9 183.9 L244.1 131.9" stroke="#A1A8B3" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M237 128.2 L264 127.2" stroke="#A1A8B3" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M251.7 149.5 L250.6 118.5" stroke="#0E0F12" stroke-width="6" stroke-linecap="round" fill="none"/>
+<path d="M245.7 149.7 L257.7 149.3" stroke="#0E0F12" stroke-width="12" stroke-linecap="round" fill="none"/>
+<path d="M245.7 149.7 L257.7 149.3" stroke="#C6F432" stroke-width="4" stroke-linecap="round" fill="none"/>
+<path d="M244.6 118.7 L256.6 118.3" stroke="#0E0F12" stroke-width="12" stroke-linecap="round" fill="none"/>
+<path d="M244.6 118.7 L256.6 118.3" stroke="#C6F432" stroke-width="4" stroke-linecap="round" fill="none"/>
+<path d="M187 183 L125 183" stroke="#2A2E36" stroke-width="26" stroke-linecap="round" fill="none"/>
+<circle cx="101.2" cy="179.7" r="15" fill="#2A2E36"></circle>
+<path d="M187 183 L241.9 185.9" stroke="#2A2E36" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M241.9 185.9 L240.1 133.9" stroke="#2A2E36" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M233 130.2 L260 129.2" stroke="#2A2E36" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M125 183 L131.9 224.4" stroke="#2A2E36" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M131.9 224.4 L92.9 204" stroke="#2A2E36" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="92.9" cy="204" r="7" fill="#2A2E36"></circle>
+</svg>

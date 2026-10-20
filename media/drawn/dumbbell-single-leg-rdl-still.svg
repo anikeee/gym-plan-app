@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Single leg dumbbell deadlift">
+<title>Single leg dumbbell deadlift</title>
+<line x1="24" y1="250" x2="376" y2="250" stroke="#C9CED6" stroke-width="3" stroke-linecap="round"/>
+<path d="M156.6 127.9 L161.2 169.6" stroke="#A1A8B3" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M161.2 169.6 L156.6 213.4" stroke="#A1A8B3" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="156.6" cy="213.4" r="7" fill="#A1A8B3"></circle>
+<path d="M216.4 138.7 L196.7 190.1" stroke="#717985" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M196.7 190.1 L194 242" stroke="#717985" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M201 246 L174 246" stroke="#717985" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M213.4 136.7 L152.6 124.9" stroke="#2A2E36" stroke-width="26" stroke-linecap="round" fill="none"/>
+<circle cx="128.7" cy="122.8" r="15" fill="#2A2E36"></circle>
+<path d="M213.4 136.7 L267.4 147.2" stroke="#2A2E36" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M267.4 147.2 L318.9 154.5" stroke="#2A2E36" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M323.9 148.1 L320.1 174.8" stroke="#2A2E36" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M139.6 210.4 L165.6 210.4" stroke="#0E0F12" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M139.6 203.4 L139.6 217.4" stroke="#0E0F12" stroke-width="11" stroke-linecap="round" fill="none"/>
+<path d="M139.6 205.4 L139.6 215.4" stroke="#C6F432" stroke-width="4" stroke-linecap="round" fill="none"/>
+<path d="M165.6 203.4 L165.6 217.4" stroke="#0E0F12" stroke-width="11" stroke-linecap="round" fill="none"/>
+<path d="M165.6 205.4 L165.6 215.4" stroke="#C6F432" stroke-width="4" stroke-linecap="round" fill="none"/>
+<path d="M152.6 124.9 L157.2 166.6" stroke="#2A2E36" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M157.2 166.6 L152.6 210.4" stroke="#2A2E36" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="152.6" cy="210.4" r="7" fill="#2A2E36"></circle>
+</svg>

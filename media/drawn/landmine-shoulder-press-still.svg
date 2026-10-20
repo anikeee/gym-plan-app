@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Single arm landmine press">
+<title>Single arm landmine press</title>
+<line x1="24" y1="250" x2="376" y2="250" stroke="#C9CED6" stroke-width="3" stroke-linecap="round"/>
+<polygon points="22,250 50,250 43,236 29,236" fill="#2A2E36"/>
+<path d="M300.4 78.5 L334.8 102.6" stroke="#A1A8B3" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M334.8 102.6 L305 135" stroke="#A1A8B3" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="305" cy="135" r="7" fill="#A1A8B3"></circle>
+<path d="M307 139 L287.4 190.4" stroke="#A1A8B3" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M287.4 190.4 L281 242" stroke="#A1A8B3" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M288 246 L261 246" stroke="#A1A8B3" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M304 137 L296.4 75.5" stroke="#2A2E36" stroke-width="26" stroke-linecap="round" fill="none"/>
+<circle cx="288.6" cy="52.8" r="15" fill="#2A2E36"></circle>
+<path d="M34 250 L234.4 17.1" stroke="#0E0F12" stroke-width="6" stroke-linecap="round" fill="none"/>
+<path d="M231.5 54.2 L198.1 25.5" stroke="#0E0F12" stroke-width="9" stroke-linecap="round" fill="none"/>
+<path d="M229.2 52.3 L200.4 27.5" stroke="#C6F432" stroke-width="4" stroke-linecap="round" fill="none"/>
+<path d="M304 137 L305.8 192" stroke="#2A2E36" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M305.8 192 L320 242" stroke="#2A2E36" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M327 246 L300 246" stroke="#2A2E36" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M296.4 75.5 L260.4 53.9" stroke="#2A2E36" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M260.4 53.9 L230.4 21.7" stroke="#2A2E36" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="230.4" cy="21.7" r="7" fill="#2A2E36"></circle>
+</svg>

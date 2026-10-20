@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Landmine chest press">
+<title>Landmine chest press</title>
+<line x1="24" y1="250" x2="376" y2="250" stroke="#C9CED6" stroke-width="3" stroke-linecap="round"/>
+<polygon points="22,250 50,250 43,236 29,236" fill="#2A2E36"/>
+<path d="M301.4 77.6 L262.7 61.2" stroke="#A1A8B3" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M262.7 61.2 L232.1 29.5" stroke="#A1A8B3" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="232.1" cy="29.5" r="7" fill="#A1A8B3"></circle>
+<path d="M309 138 L301.2 192.4" stroke="#A1A8B3" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M301.2 192.4 L308 244" stroke="#A1A8B3" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M315 246 L288 246" stroke="#A1A8B3" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M306 136 L297.4 74.6" stroke="#2A2E36" stroke-width="26" stroke-linecap="round" fill="none"/>
+<circle cx="289.2" cy="52.1" r="15" fill="#2A2E36"></circle>
+<path d="M34 250 L232.1 22" stroke="#0E0F12" stroke-width="6" stroke-linecap="round" fill="none"/>
+<path d="M229 59.1 L195.8 30.2" stroke="#0E0F12" stroke-width="9" stroke-linecap="round" fill="none"/>
+<path d="M226.7 57.1 L198.1 32.2" stroke="#C6F432" stroke-width="4" stroke-linecap="round" fill="none"/>
+<path d="M306 136 L296.3 190.1" stroke="#2A2E36" stroke-width="20" stroke-linecap="round" fill="none"/>
+<path d="M296.3 190.1 L300 242" stroke="#2A2E36" stroke-width="16" stroke-linecap="round" fill="none"/>
+<path d="M307 246 L280 246" stroke="#2A2E36" stroke-width="10" stroke-linecap="round" fill="none"/>
+<path d="M297.4 74.6 L258.7 58.2" stroke="#2A2E36" stroke-width="15" stroke-linecap="round" fill="none"/>
+<path d="M258.7 58.2 L228.1 26.5" stroke="#2A2E36" stroke-width="13" stroke-linecap="round" fill="none"/>
+<circle cx="228.1" cy="26.5" r="7" fill="#2A2E36"></circle>
+</svg>
