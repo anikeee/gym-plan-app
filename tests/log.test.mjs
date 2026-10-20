@@ -694,3 +694,24 @@ test('the replace search matches every typed word by prefix and ranks name, alia
   assert.deepEqual(ids('pec-deck!'), ['lib-1']);
   assert.deepEqual(ids('zzz'), []);
 });
+
+// One rule for what stands in for the live animation: the drawing (it moves) before the offline pictures.
+// The list picture uses the same rule, so it always shows what the exercise page shows.
+test('log.js picks the drawing or the pictures by one rule, for the animation box and the list picture', () => {
+  const both = { exercisedb: 'abcDEF1', fallback: 'Some_Pictures', drawn: 'some-drawing', note: null };
+  assert.equal(L.offlineMedia(both), 'drawn');
+  assert.equal(L.offlineMedia({ exercisedb: null, fallback: 'Some_Pictures', note: null }), 'pictures');
+  assert.equal(L.offlineMedia({ exercisedb: 'abcDEF1', fallback: null, note: null }), null);
+  const ex = { asWritten: 'barbell', variants: { dumbbell: { animation: { exercisedb: null, fallback: 'Other', note: null } }, barbell: { animation: both } } };
+  assert.equal(L.thumbSrc(ex), 'media/drawn/some-drawing-still.svg', 'the as written version comes first');
+  ex.variants.barbell.animation = { exercisedb: 'abcDEF1', fallback: null, note: null };
+  assert.equal(L.thumbSrc(ex), 'media/fallback/Other/0.jpg', 'then the first other version with something to show');
+  ex.variants.dumbbell.animation = { exercisedb: 'abcDEF1', fallback: null, note: null };
+  assert.equal(L.thumbSrc(ex), null);
+});
+
+test('the drawn animation file, or its still frame when the phone asks for reduced motion', () => {
+  const a = { exercisedb: null, fallback: null, drawn: 'landmine-squat', note: null };
+  assert.equal(L.drawnSrc(a, false), 'media/drawn/landmine-squat.svg');
+  assert.equal(L.drawnSrc(a, true), 'media/drawn/landmine-squat-still.svg');
+});

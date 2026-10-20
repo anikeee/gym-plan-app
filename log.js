@@ -607,3 +607,23 @@ const storeName = (key) => (key === DAYS_KEY ? 'days' : key === ORDER_KEY ? 'ord
 export function exportFileName(now = new Date()) {
   return `workout-log-${localDate(now)}.json`;
 }
+
+// What stands in for the live animation: the drawing first (it moves, scripts/draw-animations.mjs), then the offline
+// pictures, else nothing (the box shows its "No animation" view). The animation box and the list picture both use it,
+// so a list picture always shows what the exercise page shows.
+export function offlineMedia(a) {
+  return a.drawn ? 'drawn' : a.fallback ? 'pictures' : null;
+}
+// The drawing's file: the animation, or its still frame when the phone asks for reduced motion.
+export function drawnSrc(a, reducedMotion) {
+  return `media/drawn/${a.drawn}${reducedMotion ? '-still' : ''}.svg`;
+}
+// The list picture: the as written version first, then the first other version with something to show.
+export function thumbSrc(ex) {
+  for (const v of [ex.variants[ex.asWritten], ...Object.values(ex.variants)]) {
+    const media = v && offlineMedia(v.animation);
+    if (media === 'drawn') return `media/drawn/${v.animation.drawn}-still.svg`;
+    if (media === 'pictures') return `media/fallback/${v.animation.fallback}/0.jpg`;
+  }
+  return null;
+}
