@@ -310,7 +310,8 @@
      "animation": {
       "exercisedb": null,
       "fallback": null,
-      "note": null
+      "drawn": "landmine-chest-press",
+      "note": "The bar end rides an arc up and away from the chest, elbows tucked."
      },
      "guide": "https://www.puregym.com/exercises/chest/bench-press/landmine-chest-press/"
     }
@@ -591,7 +592,8 @@
      "animation": {
       "exercisedb": null,
       "fallback": null,
-      "note": null
+      "drawn": "landmine-shoulder-press",
+      "note": "One hand, the other foot forward. The bar end goes up and forward, not straight up."
      },
      "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/single-arm-landmine-press/"
     }
@@ -1942,6 +1944,7 @@
      "animation": {
       "exercisedb": "py1HSzx",
       "fallback": null,
+      "drawn": "dumbbell-lateral-lunge",
       "note": "Animation uses a barbell; hold a dumbbell at your chest instead."
      },
      "guide": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/lateral-lunges/"
@@ -2094,7 +2097,8 @@
      "animation": {
       "exercisedb": null,
       "fallback": null,
-      "note": null
+      "drawn": "landmine-squat",
+      "note": "The bar end stays at the chest the whole way, which lets the torso stay upright."
      },
      "guide": "https://www.puregym.com/exercises/legs/quad-exercises/squats/landmine-squat/"
     }
@@ -2233,6 +2237,7 @@
      "animation": {
       "exercisedb": "gKozT8X",
       "fallback": null,
+      "drawn": "dumbbell-single-leg-rdl",
       "note": null
      },
      "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/deadlifts/single-leg-deadlift/"

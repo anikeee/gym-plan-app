@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 
 const data = JSON.parse(await readFile(new URL('../data/exercises.json', import.meta.url), 'utf8'));
 const library = JSON.parse(await readFile(new URL('../data/library.json', import.meta.url), 'utf8')).exercises;
@@ -20,8 +20,8 @@ const YT_ID = /^[A-Za-z0-9_-]{11}$/;
 const EXDB_ID = /^[A-Za-z0-9]{7}$/;
 const FEDB_ID = /^[A-Za-z0-9_()-]+$/;
 const EX_ID = /^[a-z]+-\d+$/; // must keep matching ID_RE in log.js, which older cached copies of the app also use
+const DRAWN = /^[a-z0-9-]+$/; // a file stem under media/drawn, written by scripts/draw-animations.mjs
 // Keyed by exercise name, because the same exercise (with the same data) appears in more than one plan.
-const ALLOWED_NO_ANIMATION = new Set(['Leg Extension.dumbbell', 'Landmine Chest Press.barbell', 'Landmine Shoulder Press.barbell', 'Landmine Squat.barbell']);
 const ALLOWED_NO_FALLBACK = new Set(['Leg Curl.dumbbell', 'Leg Extension.dumbbell', 'Landmine Chest Press.barbell', 'Landmine Shoulder Press.barbell', 'Landmine Squat.barbell', 'Lateral Lunge.dumbbell', 'Single Leg Romanian Deadlift.dumbbell']);
 const VARIANT_KEYS = ['machine', 'dumbbell', 'barbell', 'bodyweight'];
 
@@ -43,7 +43,10 @@ function checkVariant(ex, key, v) {
   assert.ok(a && 'exercisedb' in a && 'fallback' in a && 'note' in a, where);
   if (a.exercisedb !== null) assert.match(a.exercisedb, EXDB_ID, where);
   if (a.fallback !== null) assert.match(a.fallback, FEDB_ID, where);
-  if (a.exercisedb === null && a.fallback === null) assert.ok(ALLOWED_NO_ANIMATION.has(`${ex.name}.${key}`), `${where} has no animation`);
+  if (a.drawn !== undefined) assert.match(a.drawn, DRAWN, `${where}.drawn`);
+  // A version with no offline pictures gets a drawing, so the box never falls back to "Watch the video below instead",
+  // neither for a version with no animation at all nor when the live animation cannot load (weak signal in the gym).
+  if (a.fallback === null) assert.ok(a.drawn, `${where} has no offline picture: draw one in scripts/draw-animations.mjs`);
   if (a.fallback === null) assert.ok(ALLOWED_NO_FALLBACK.has(`${ex.name}.${key}`), `${where} has no fallback`);
   assert.ok(v.guide === null || v.guide.startsWith('https://www.puregym.com/'), where);
   if (v.assisted !== undefined) assert.ok(v.assisted === true && key === 'machine' && /assist/i.test(v.name), `${where}: only an assisted machine is marked assisted`);
@@ -183,6 +186,22 @@ test('every fallback id has both local images', async () => {
     const id = v.animation.fallback; if (!id) continue;
     for (const n of [0, 1]) await readFile(new URL(`../media/fallback/${id}/${n}.jpg`, import.meta.url));
   }
+});
+
+// The drawings ship with the app: the moving one for the animation box and a still for the list thumbnail, nothing unused.
+test('every drawn animation has its moving file and its still, and every drawn file is used', async () => {
+  const used = new Set();
+  for (const ex of everyExercise()) for (const v of Object.values(ex.variants)) {
+    const d = v.animation.drawn; if (!d) continue; used.add(d);
+    for (const f of [`${d}.svg`, `${d}-still.svg`]) {
+      const svg = await readFile(new URL(`../media/drawn/${f}`, import.meta.url), 'utf8');
+      assert.ok(svg.startsWith('<svg ') && svg.trimEnd().endsWith('</svg>'), f);
+      assert.equal(svg.includes('<animate '), !f.endsWith('-still.svg'), `${f}: the animation moves, the still does not`);
+    }
+  }
+  assert.ok(used.size >= 4, 'the landmine exercises and the dumbbell leg extension are drawn');
+  const files = (await readdir(new URL('../media/drawn/', import.meta.url))).filter((f) => f.endsWith('.svg'));
+  assert.deepEqual([...new Set(files.map((f) => f.replace(/(-still)?\.svg$/, '')))].sort(), [...used].sort());
 });
 
 test('the assisted pull up and chin up machines are marked, so the app takes help off instead of adding it', () => {

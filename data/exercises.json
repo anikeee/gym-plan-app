@@ -640,7 +640,7 @@
               "videos": [
                 { "id": "z6MvXsikOk0", "label": "How to do dumbbell hamstring curls", "by": "PureGym", "seconds": 11 }
               ],
-              "animation": { "exercisedb": "FkBIE6a", "fallback": null, "note": null },
+              "animation": { "exercisedb": "FkBIE6a", "fallback": null, "drawn": "dumbbell-leg-curl", "note": null },
               "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/dumbbell-hamstring-curl/"
             }
           }
@@ -672,7 +672,7 @@
                 { "id": "2NeAh8KhywY", "label": "Dumbbell leg extension", "by": "Testosterone Nation", "seconds": 28 },
                 { "id": "srZ4D32s4gI", "label": "Goblet squat when the leg extension is busy (Short)", "by": "PureGym", "seconds": null }
               ],
-              "animation": { "exercisedb": null, "fallback": null, "note": null },
+              "animation": { "exercisedb": null, "fallback": null, "drawn": "dumbbell-leg-extension", "note": "The dumbbell rests on the tops of the feet, squeezed between them." },
               "guide": null
             }
           }
@@ -1840,7 +1840,8 @@
          "animation": {
           "exercisedb": null,
           "fallback": null,
-          "note": null
+          "drawn": "dumbbell-leg-extension",
+          "note": "The dumbbell rests on the tops of the feet, squeezed between them."
          },
          "guide": null
         }
@@ -3192,6 +3193,7 @@
          "animation": {
           "exercisedb": "FkBIE6a",
           "fallback": null,
+          "drawn": "dumbbell-leg-curl",
           "note": null
          },
          "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/dumbbell-hamstring-curl/"
@@ -4523,6 +4525,7 @@
          "animation": {
           "exercisedb": "FkBIE6a",
           "fallback": null,
+          "drawn": "dumbbell-leg-curl",
           "note": null
          },
          "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/dumbbell-hamstring-curl/"

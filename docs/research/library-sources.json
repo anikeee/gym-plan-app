@@ -177,7 +177,11 @@
        "id": "6sH6vyWduNU",
        "by": "PureGym"
       }
-     ]
+     ],
+     "animation": {
+      "drawn": "landmine-chest-press",
+      "why": "No free animation or picture of this form exists (checked 2026-10-19): ExerciseDB V1 has only landmine lateral raise and landmine 180; free-exercise-db has Landmine 180s, Landmine Linear Jammer and Single-Arm Linear Jammer, which are rotations or push presses with leg drive, not this strict press or squat; wger and Wikimedia Commons have nothing. Drawn for the app by scripts/draw-animations.mjs."
+     }
     }
    }
   },
@@ -338,7 +342,11 @@
        "id": "TY_zsi0kOyI",
        "by": "PureGym"
       }
-     ]
+     ],
+     "animation": {
+      "drawn": "landmine-shoulder-press",
+      "why": "No free animation or picture of this form exists (checked 2026-10-19): ExerciseDB V1 has only landmine lateral raise and landmine 180; free-exercise-db has Landmine 180s, Landmine Linear Jammer and Single-Arm Linear Jammer, which are rotations or push presses with leg drive, not this strict press or squat; wger and Wikimedia Commons have nothing. Drawn for the app by scripts/draw-animations.mjs."
+     }
     }
    }
   },
@@ -1105,7 +1113,11 @@
        "id": "51slmzoEVt8",
        "by": "PureGym"
       }
-     ]
+     ],
+     "animation": {
+      "drawn": "dumbbell-lateral-lunge",
+      "why": "ExerciseDB animates this version (with a barbell, see the note). free-exercise-db only has Barbell_Side_Split_Squat, a different implement held across the back, so the offline view is a drawing of the dumbbell goblet form instead (scripts/draw-animations.mjs, 2026-10-20). The drawing works from the stepped out stance and does not show the step itself."
+     }
     }
    }
   },
@@ -1192,7 +1204,11 @@
        "id": "YxaXaZxVcDU",
        "by": "PureGym"
       }
-     ]
+     ],
+     "animation": {
+      "drawn": "landmine-squat",
+      "why": "No free animation or picture of this form exists (checked 2026-10-19): ExerciseDB V1 has only landmine lateral raise and landmine 180; free-exercise-db has Landmine 180s, Landmine Linear Jammer and Single-Arm Linear Jammer, which are rotations or push presses with leg drive, not this strict press or squat; wger and Wikimedia Commons have nothing. Drawn for the app by scripts/draw-animations.mjs."
+     }
     }
    }
   },
@@ -1273,7 +1289,11 @@
        "id": "mKze3D0crY8",
        "by": "PureGym"
       }
-     ]
+     ],
+     "animation": {
+      "drawn": "dumbbell-single-leg-rdl",
+      "why": "ExerciseDB animates this version. free-exercise-db only has Kettlebell_One-Legged_Deadlift, a different implement, so the offline view is a drawing of the dumbbell form instead (scripts/draw-animations.mjs, 2026-10-20)."
+     }
     }
    }
   },

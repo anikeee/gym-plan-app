@@ -63,4 +63,4 @@ npm run verify
 
 ## Credits
 
-Videos are YouTube clips, many from the PureGym channel. Animations come from ExerciseDB. Offline pictures come from [free-exercise-db](https://github.com/yuhonas/free-exercise-db), which is public domain. The Android app source is in [`android/`](android/).
+Videos are YouTube clips, many from the PureGym channel. Animations come from ExerciseDB. The few exercises with neither an ExerciseDB animation nor a free picture (the landmine presses, the landmine squat and the dumbbell leg extension) are drawn for this app by `scripts/draw-animations.mjs`, which writes the SVG files in `media/drawn/`. Versions with a live animation but no free offline picture of the same form (the dumbbell leg curl, lateral lunge and single leg deadlift) get a drawing too, which shows when the live animation cannot load. Offline pictures come from [free-exercise-db](https://github.com/yuhonas/free-exercise-db), which is public domain. The Android app source is in [`android/`](android/).
