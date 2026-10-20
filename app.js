@@ -184,6 +184,7 @@ const ICONS = {
   chevronDown: '<path d="M6 9l6 6 6-6"/>',
   chevronUp: '<path d="M6 15l6-6 6 6"/>',
   pin: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>',
   external: '<path d="M14 5h5v5"/><path d="M19 5l-8 8"/><path d="M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4"/>',
@@ -248,11 +249,6 @@ function fmtClock(ms) {
 function fmtDuration(ms) {
   const m = Math.max(0, Math.round(ms / 60000));
   return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min`;
-}
-// Card picture: frame 0 of the as written version, or of the first version that has a picture.
-function thumbFor(ex) {
-  const v = [ex.variants[ex.asWritten], ...Object.values(ex.variants)].find((x) => x?.animation.fallback);
-  return v ? `media/fallback/${v.animation.fallback}/0.jpg` : null;
 }
 
 function renderDay(view, day) {
@@ -357,9 +353,13 @@ function exerciseRow(day, ex, i, isNext) {
 }
 // The card picture; a done exercise gets a tick on it.
 function exerciseThumb(ex, done) {
-  const src = thumbFor(ex);
+  const src = L.thumbSrc(ex); // the same rule as the animation box, so the card shows what the page shows
   const pic = el('span', 'ex-pic');
-  if (src) { const thumb = el('img', 'ex-thumb'); thumb.src = src; thumb.alt = ''; thumb.width = 52; thumb.height = 52; pic.append(thumb); } else pic.append(el('span', 'ex-thumb'));
+  if (src) {
+    const thumb = el('img', 'ex-thumb'); thumb.src = src; thumb.alt = ''; thumb.width = 52; thumb.height = 52;
+    thumb.onerror = () => thumb.replaceWith(el('span', 'ex-thumb')); // a picture missing offline shows the grey placeholder
+    pic.append(thumb);
+  } else pic.append(el('span', 'ex-thumb'));
   if (done) { const tick = el('span', 'ex-tick'); tick.append(icon('check', 14)); pic.append(tick); }
   return pic;
 }
@@ -1287,7 +1287,7 @@ function setupRow(iconName, label, text) {
   return row;
 }
 
-// The animation card has four states (loading, live, offline, none). Each one redraws the box, the row under it and the steps toggle, so nothing from an earlier state survives.
+// The animation card has five states (loading, live, drawn, offline, none). Each one redraws the box, the row under it and the steps toggle, so nothing from an earlier state survives.
 function setAnim(ui, name, boxKids, footKids, note) {
   ui.box.dataset.state = name;
   ui.box.replaceChildren(...boxKids);
@@ -1322,7 +1322,8 @@ async function loadAnimation(v, ui) {
   renderFallback(a, ui);
 }
 
-// One place draws the fallback. Called when the API fails and when the GIF fails to load.
+// One place draws everything but the live animation: the drawing, the offline pictures, or neither.
+// Called when there is no ExerciseDB id, when the API fails and when the GIF fails to load.
 function renderFallback(a, ui) {
   setSteps(ui, null, a.exercisedb ? 'Needs the live animation' : null);
   const none = () => {
@@ -1332,17 +1333,30 @@ function renderFallback(a, ui) {
     const title = a.exercisedb ? 'No offline picture for this version' : 'No animation for this version';
     setAnim(ui, 'none', [icon('video', 40), el('span', 'none-title', title), el('span', 'none-sub', 'Watch the video below instead.')], [btn]);
   };
-  if (!a.fallback) { none(); return; }
-  const frames = el('div', 'frames');
-  // A picture that was never stored offline must not show as a broken image: keep the one that loaded, else no picture.
-  let loaded = 2;
-  for (const n of [0, 1]) {
-    const img = el('img'); img.src = `media/fallback/${a.fallback}/${n}.jpg`; img.alt = n ? 'End position' : 'Start position';
-    img.onerror = () => { img.remove(); loaded--; if (loaded === 1) frames.classList.add('single'); else if (ui.box.contains(frames)) none(); };
-    frames.append(img);
+  const pictures = () => {
+    const frames = el('div', 'frames');
+    // A picture that was never stored offline must not show as a broken image: keep the one that loaded, else no picture.
+    let loaded = 2;
+    for (const n of [0, 1]) {
+      const img = el('img'); img.src = `media/fallback/${a.fallback}/${n}.jpg`; img.alt = n ? 'End position' : 'Start position';
+      img.onerror = () => { img.remove(); loaded--; if (loaded === 1) frames.classList.add('single'); else if (ui.box.contains(frames)) none(); };
+      frames.append(img);
+    }
+    const chip = el('span', 'anim-chip'); chip.append(icon('wifiOff', 14), 'Offline picture');
+    setAnim(ui, 'offline', [frames, chip], [el('span', 'caption', 'Start and end position')], a.note);
+  };
+  const media = L.offlineMedia(a);
+  // A version no free source has, or one whose live animation could not load, gets a drawing (scripts/draw-animations.mjs):
+  // a small SVG that ships with the app. With reduced motion on, the box shows the drawing's still frame instead.
+  if (media === 'drawn') {
+    const img = el('img'); img.src = L.drawnSrc(a, matchMedia('(prefers-reduced-motion: reduce)').matches); img.alt = 'Drawn animation of the movement';
+    img.onerror = () => { if (ui.box.contains(img)) (a.fallback ? pictures() : none()); };
+    const chip = el('span', 'anim-chip'); chip.append(icon('pen', 14), 'Drawn');
+    // With an ExerciseDB id the note describes the live animation (for example "Animation uses a barbell"), not the drawing.
+    setAnim(ui, 'drawn', [img, chip], [el('span', 'caption', 'Drawn for this app')], a.exercisedb ? null : a.note);
+    return;
   }
-  const chip = el('span', 'anim-chip'); chip.append(icon('wifiOff', 14), 'Offline picture');
-  setAnim(ui, 'offline', [frames, chip], [el('span', 'caption', 'Start and end position')], a.note);
+  if (media === 'pictures') pictures(); else none();
 }
 
 async function fetchLive(id) {
