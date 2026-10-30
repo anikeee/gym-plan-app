@@ -8,19 +8,24 @@
    "group": "push",
    "versions": {
     "machine": {
-     "name": "Pec fly machine",
+     "name": "Pectoral fly machine (forearm pads)",
      "puregymPage": "https://www.puregym.com/exercises/chest/chest-fly/machine-fly/",
      "copyOf": null,
      "clips": [
       {
-       "id": "eGjt4lk6g34",
-       "by": "PureGym"
+       "id": "b7huNoEDxtg",
+       "by": "Matrix Fitness Russia"
       },
       {
-       "id": "xWEtTqJxRbk",
-       "by": "Matrix Fitness"
+       "id": "22Q3bmNZk0Y",
+       "by": "Ian Stears Personal Trainer"
+      },
+      {
+       "id": "O-OBCfyh9Fw",
+       "by": "Renaissance Periodization"
       }
-     ]
+     ],
+     "placard": "Setup and form text rewritten on 2026-10-30 from the Matrix Pectoral Fly placard photographed at the user's PureGym."
     },
     "dumbbell": {
      "name": "Incline dumbbell fly",
@@ -75,10 +80,15 @@
      "copyOf": null,
      "clips": [
       {
+       "id": "xjpc2tX5aXs",
+       "by": "Matrix Fitness"
+      },
+      {
        "id": "A8SreTrrcgU",
        "by": "Matrix Fitness"
       }
-     ]
+     ],
+     "placard": "Setup and form text rewritten on 2026-10-30 from the Matrix Seated Dip placard photographed at the user's PureGym."
     },
     "bodyweight": {
      "name": "Dips on the parallel bars",
@@ -231,23 +241,24 @@
    "group": "push",
    "versions": {
     "machine": {
-     "name": "Shoulder press machine",
+     "name": "Converging shoulder press machine",
      "puregymPage": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/shoulder-press-machine/",
      "copyOf": null,
      "clips": [
       {
-       "id": "GcY6TZxfS0k",
-       "by": "PureGym"
+       "id": "Xp_msXpoebE",
+       "by": "Matrix Fitness"
       },
       {
        "id": "TnhIyp4kmO8",
        "by": "PureGym"
       },
       {
-       "id": "zWVEKwAGdTc",
-       "by": "Matrix Fitness"
+       "id": "fHMKtAMgJPE",
+       "by": "Iconic Personal Training"
       }
-     ]
+     ],
+     "placard": "Setup and form text rewritten on 2026-10-30 from the Matrix Converging Shoulder Press placard photographed at the user's PureGym."
     },
     "dumbbell": {
      "name": "Seated dumbbell shoulder press",
@@ -412,10 +423,15 @@
      "copyOf": null,
      "clips": [
       {
+       "id": "bkLOC2WYKB0",
+       "by": "Matrix Fitness"
+      },
+      {
        "id": "uoFjFcLIQec",
        "by": "Matrix Fitness"
       }
-     ]
+     ],
+     "placard": "Setup and form text rewritten on 2026-10-30 from the Matrix Diverging Lat Pulldown placard photographed at the user's PureGym."
     },
     "dumbbell": {
      "name": "Single arm dumbbell row",

@@ -121,18 +121,18 @@
           "name": "Chest Press Machine",
           "type": "compound",
           "asWritten": "machine",
-          "aliases": ["converging chest press", "seated chest press", "chest press"],
+          "aliases": ["converging chest press", "seated chest press", "chest press", "matrix chest press"],
           "variants": {
             "machine": {
-              "name": "Seated chest press machine",
-              "kit": "Seated chest press (selectorised, converging arms).",
-              "tip": "Handles level with mid chest, shoulder blades back on the pad. Press without locking the elbows.",
+              "name": "Converging chest press machine",
+              "kit": "Matrix Converging Chest Press, with a pin and weight stack. Set the seat so the handles line up with the middle of your chest. Each handle has a flat grip and an upright grip, so pick the one that feels better.",
+              "tip": "Keep your back and shoulders on the pad, feet flat. Push the handles forward and a little inward until your arms are nearly straight, without locking the elbows. Bring them back slowly, stopping before the weights touch.",
               "videos": [
+                { "id": "IioHb4etulU", "label": "Matrix Aura converging chest press setup", "by": "Matrix Fitness", "seconds": 61 },
                 { "id": "CIykDiF4sfg", "label": "How to do a seated chest press", "by": "PureGym", "seconds": 16 },
-                { "id": "sqNwDkUU_Ps", "label": "How to use the chest press machine", "by": "PureGym", "seconds": 61 },
-                { "id": "WHjKUg5-LUY", "label": "Ultra Series converging chest press", "by": "Matrix Fitness", "seconds": 38 }
+                { "id": "sqNwDkUU_Ps", "label": "How to use the chest press machine", "by": "PureGym", "seconds": 61 }
               ],
-              "animation": { "exercisedb": "DOoWcnA", "fallback": "Machine_Bench_Press", "note": null },
+              "animation": { "exercisedb": "wDN97Ca", "fallback": "Machine_Bench_Press", "note": null },
               "guide": "https://www.puregym.com/exercises/chest/bench-press/seated-chest-press/"
             },
             "dumbbell": {
@@ -346,17 +346,17 @@
           "name": "Diverging Chest Supported Row",
           "type": "compound",
           "asWritten": "machine",
-          "aliases": ["diverging seated row", "matrix row", "seated row machine", "chest supported row"],
+          "aliases": ["diverging seated row", "matrix row", "seated row machine", "chest supported row", "upper back", "lats", "chest pad row"],
           "variants": {
             "machine": {
-              "name": "Diverging seated row (chest supported row machine)",
-              "kit": "Matrix Diverging Seated Row: chest pad and two independent arms. Any chest supported row machine works.",
-              "tip": "Chest on the pad, seat set so the handles sit at the bottom of the ribcage. Pull the elbows back and wide.",
+              "name": "Diverging seated row machine",
+              "kit": "Matrix Diverging Seated Row, the pin loaded machine with a chest pad and two separate arms. Set the seat so the flat top grips sit level with the top of your shoulders. Move the chest pad so you can just reach both handles with straight arms.",
+              "tip": "Chest on the pad. Hold the vertical grips with palms facing in, or the flat top grips with palms down. Row the handles back to your sides and squeeze your shoulder blades, then straighten your arms slowly.",
               "videos": [
-                { "id": "O90lC5WcIGE", "label": "Ultra Series diverging seated row", "by": "Matrix Fitness", "seconds": 36 },
-                { "id": "0UBRfiO4zDs", "label": "Chest supported row", "by": "Renaissance Periodization", "seconds": 17 }
+                { "id": "k6FGLVCqE6g", "label": "Matrix Aura diverging seated row setup", "by": "Matrix Fitness", "seconds": 74 },
+                { "id": "O90lC5WcIGE", "label": "Matrix Ultra diverging seated row, newer model", "by": "Matrix Fitness", "seconds": 36 }
               ],
-              "animation": { "exercisedb": "7I6LNUG", "fallback": "Leverage_Iso_Row", "note": null },
+              "animation": { "exercisedb": "7I6LNUG", "fallback": "Leverage_Iso_Row", "note": "Offline pictures show a plate loaded row machine. Yours has a weight stack, but you pull the same way." },
               "guide": null
             },
             "dumbbell": {
@@ -758,7 +758,7 @@
        "variants": {
         "machine": {
          "name": "Smith machine bench press",
-         "kit": "Smith machine with a flat bench centred under the bar, so the bar comes down to your lower chest. If it is busy: the seated chest press machine.",
+         "kit": "Smith machine with a flat bench centred under the bar, so the bar comes down to your lower chest. If it is busy: the converging chest press machine.",
          "tip": "Set the safety stops just below where the bar touches your chest. Lower to the lower chest with the elbows about 45 degrees out, then press straight up.",
          "videos": [
           {
@@ -1955,7 +1955,7 @@
        "variants": {
         "machine": {
          "name": "Smith machine bench press",
-         "kit": "Smith machine with a flat bench centred under the bar, so the bar comes down to your lower chest. If it is busy: the seated chest press machine.",
+         "kit": "Smith machine with a flat bench centred under the bar, so the bar comes down to your lower chest. If it is busy: the converging chest press machine.",
          "tip": "Set the safety stops just below where the bar touches your chest. Lower to the lower chest with the elbows about 45 degrees out, then press straight up.",
          "videos": [
           {
@@ -3403,27 +3403,27 @@
        ],
        "variants": {
         "machine": {
-         "name": "Shoulder press machine",
-         "kit": "Selectorised shoulder press (Matrix style) or the plate-loaded shoulder press. If both are busy: Smith machine seated shoulder press.",
-         "tip": "Set the seat so the handles start level with your shoulders, back flat on the pad. Press up without snapping the elbows straight and lower slowly.",
+         "name": "Converging shoulder press machine",
+         "kit": "Matrix Converging Shoulder Press. Set the seat so the handles start a little above your shoulders. If it is busy: Smith machine seated shoulder press.",
+         "tip": "Back straight and both shoulders on the pad, feet flat. Press the handles up and a little inward until they are overhead, stopping just before your elbows lock. Lower slowly to just above your shoulders.",
          "videos": [
           {
-           "id": "GcY6TZxfS0k",
-           "label": "How to use the shoulder press machine (plate-loaded)",
-           "by": "PureGym",
-           "seconds": 11
+           "id": "Xp_msXpoebE",
+           "label": "Matrix Aura converging shoulder press setup",
+           "by": "Matrix Fitness",
+           "seconds": 51
           },
           {
            "id": "TnhIyp4kmO8",
-           "label": "How to use the shoulder press machine (selectorised)",
+           "label": "How to use the shoulder press machine",
            "by": "PureGym",
            "seconds": 55
           }
          ],
          "animation": {
-          "exercisedb": "67n3r98",
+          "exercisedb": "dNFYIU1",
           "fallback": "Machine_Shoulder_Military_Press",
-          "note": null
+          "note": "The animation shows a plate loaded machine. Yours has a weight stack and the handles come a little inward, but the press is the same."
          },
          "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/shoulder-press-machine/"
         },
@@ -3471,10 +3471,16 @@
        ],
        "variants": {
         "machine": {
-         "name": "Paused seated chest press machine",
-         "kit": "Seated chest press machine (selectorised, converging arms). Go a little lighter than for normal reps.",
+         "name": "Paused converging chest press machine",
+         "kit": "Matrix Converging Chest Press. Set the seat so the handles line up with the middle of your chest, and go a little lighter than for normal reps.",
          "tip": "Let the handles come back until you feel the chest stretch and hold for one second without resting the weight on the stack. Then press without locking the elbows.",
          "videos": [
+          {
+           "id": "IioHb4etulU",
+           "label": "Matrix Aura converging chest press setup",
+           "by": "Matrix Fitness",
+           "seconds": 61
+          },
           {
            "id": "CIykDiF4sfg",
            "label": "How to do a seated chest press",
@@ -3489,7 +3495,7 @@
           }
          ],
          "animation": {
-          "exercisedb": "DOoWcnA",
+          "exercisedb": "wDN97Ca",
           "fallback": "Machine_Bench_Press",
           "note": "The animation and pictures show the press without the pause."
          },

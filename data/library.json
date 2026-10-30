@@ -10,31 +10,39 @@
     "pec deck",
     "chest fly machine",
     "machine fly",
-    "pec fly"
+    "pec fly",
+    "pectoral fly",
+    "butterfly machine"
    ],
    "variants": {
     "machine": {
-     "name": "Pec fly machine",
-     "kit": "Matrix Pec Fly/Rear Delt machine on the pec fly setting. Set the seat so the handles are at chest height. Start the arms level with your shoulders, not further back.",
-     "tip": "Back and head against the pad, palms facing each other, shoulder blades pinned back. Squeeze your chest to bring the handles together in front of you, soft bend in the elbows, then return slowly.",
+     "name": "Pectoral fly machine (forearm pads)",
+     "kit": "Matrix Pectoral Fly, where your forearms push two upright pads. Set the seat so your forearms rest on the pads with your elbows a little below shoulder height. Pull the pin at the foot of each arm to pick a start point you can reach.",
+     "tip": "Back flat on the pad, upper arms out to the sides and forearms upright on the pads. Squeeze your chest to bring the pads together in front of your face, pushing with your forearms, not your hands. Let them open slowly.",
      "videos": [
       {
-       "id": "eGjt4lk6g34",
-       "label": "How to use the chest fly machine",
-       "by": "PureGym",
-       "seconds": 16
+       "id": "b7huNoEDxtg",
+       "label": "Matrix Ultra pectoral fly with arm pads",
+       "by": "Matrix Fitness Russia",
+       "seconds": 52
       },
       {
-       "id": "xWEtTqJxRbk",
-       "label": "Matrix Ultra pec fly/rear delt",
-       "by": "Matrix Fitness",
-       "seconds": 64
+       "id": "22Q3bmNZk0Y",
+       "label": "How to use the pec deck",
+       "by": "Ian Stears Personal Trainer",
+       "seconds": 98
+      },
+      {
+       "id": "O-OBCfyh9Fw",
+       "label": "Pec deck fly",
+       "by": "Renaissance Periodization",
+       "seconds": 13
       }
      ],
      "animation": {
       "exercisedb": "v3xmPAR",
       "fallback": "Butterfly",
-      "note": null
+      "note": "The animation and pictures show a fly machine with handles. On this one your forearms rest on upright pads and do the pushing."
      },
      "guide": "https://www.puregym.com/exercises/chest/chest-fly/machine-fly/"
     },
@@ -122,17 +130,24 @@
     "chest dips",
     "dip machine",
     "triceps press",
-    "assisted dip"
+    "assisted dip",
+    "seated triceps press"
    ],
    "variants": {
     "machine": {
      "name": "Seated dip machine",
-     "kit": "Matrix Ultra Triceps Press, the seated dip machine. Set the seat so the handles are level with your lower chest. Your elbows should start bent at about 90 degrees.",
-     "tip": "Sit tall with your chest up and shoulders down, hands on the handles with elbows bent about 90 degrees. Press the handles down until your arms are straight, elbows close to your sides, then lower slowly.",
+     "kit": "Matrix Seated Dip, where you press two handles down by your hips. Set the seat so the handles sit just under your elbows. Turn the handles in for a narrower grip or out for a wider one, to suit your build.",
+     "tip": "Sit with your back on the pad, chest up and shoulders down, elbows bent and hands by your sides. Press the handles down until your arms are straight, keeping your elbows close in. Let them come back up slowly.",
      "videos": [
       {
+       "id": "xjpc2tX5aXs",
+       "label": "Matrix Aura seated triceps press setup",
+       "by": "Matrix Fitness",
+       "seconds": 65
+      },
+      {
        "id": "A8SreTrrcgU",
-       "label": "Matrix Ultra triceps press",
+       "label": "Matrix Ultra triceps press, newer model",
        "by": "Matrix Fitness",
        "seconds": 33
       }
@@ -397,37 +412,39 @@
     "shoulder press machine",
     "seated shoulder press",
     "overhead press machine",
-    "converging shoulder press"
+    "converging shoulder press",
+    "matrix shoulder press",
+    "machine military press"
    ],
    "variants": {
     "machine": {
-     "name": "Shoulder press machine",
-     "kit": "Matrix shoulder press machine. Set the seat so the handles start level with your shoulders when your back is flat on the pad.",
-     "tip": "Back flat against the pad, feet planted, hands on the handles at shoulder height. Press straight up until your arms are extended, then lower slowly back to shoulder height.",
+     "name": "Converging shoulder press machine",
+     "kit": "Matrix Converging Shoulder Press, with a weight stack and two pressing arms that move on their own. Set the seat so the handles start a little above your shoulders. Each arm has a palms forward grip and a palms in grip, so use either.",
+     "tip": "Back straight and both shoulders on the pad, feet flat. Press the handles up and a little inward until they are overhead, stopping just before your elbows lock. Lower slowly to just above your shoulders.",
      "videos": [
       {
-       "id": "GcY6TZxfS0k",
-       "label": "How to use the shoulder press machine (plate-loaded)",
-       "by": "PureGym",
-       "seconds": 11
+       "id": "Xp_msXpoebE",
+       "label": "Matrix Aura converging shoulder press setup",
+       "by": "Matrix Fitness",
+       "seconds": 51
       },
       {
        "id": "TnhIyp4kmO8",
-       "label": "How to use the shoulder press machine (selectorised)",
+       "label": "How to use the shoulder press machine",
        "by": "PureGym",
        "seconds": 55
       },
       {
-       "id": "zWVEKwAGdTc",
-       "label": "Matrix Ultra converging shoulder press",
-       "by": "Matrix Fitness",
-       "seconds": 40
+       "id": "fHMKtAMgJPE",
+       "label": "How to use the Matrix converging shoulder press",
+       "by": "Iconic Personal Training",
+       "seconds": 33
       }
      ],
      "animation": {
-      "exercisedb": "67n3r98",
+      "exercisedb": "dNFYIU1",
       "fallback": "Machine_Shoulder_Military_Press",
-      "note": null
+      "note": "The animation shows a plate loaded machine. Yours has a weight stack and the handles come a little inward, but the press is the same."
      },
      "guide": "https://www.puregym.com/exercises/arms-and-shoulders/shoulder-press/shoulder-press-machine/"
     },
@@ -614,7 +631,7 @@
    "variants": {
     "machine": {
      "name": "Seated tricep extension machine",
-     "kit": "Matrix Triceps Extension machine, where your upper arms rest on the angled pad. Set the seat so your elbows line up with the pivot and your chest rests against the pad. Not the Triceps Press, which is the seated dip machine.",
+     "kit": "Matrix Triceps Extension machine, where your upper arms rest on the angled pad. Set the seat so your elbows line up with the pivot and your chest rests against the pad. Not the Seated Dip, where you press two handles down by your hips.",
      "tip": "Upper arms flat on the pad, elbows bent so the handles start near your shoulders. Push the handles down in an arc until the arms are straight, pause, then let them come back slowly.",
      "videos": [
       {
@@ -699,17 +716,26 @@
    "aliases": [
     "lat pulldown machine",
     "matrix lat pulldown",
-    "diverging pulldown"
+    "diverging pulldown",
+    "two handle pulldown",
+    "iso lateral pulldown",
+    "lats"
    ],
    "variants": {
     "machine": {
      "name": "Diverging lat pulldown machine",
-     "kit": "Matrix Ultra Diverging Lat Pulldown, the machine with two separate handles that move apart as you pull. Set the thigh pads snug on your legs with your feet flat on the floor. If it is taken, use the normal lat pulldown with the wide bar.",
-     "tip": "Sit tall, arms straight, slight lean back. Pull the handles down and out to your sides, elbows down and back, then let them rise slowly.",
+     "kit": "Matrix Diverging Lat Pulldown, with two separate handles that move apart as you pull. Pull the yellow knob to set the thigh pads so your thighs sit snug under them and cannot lift. If it is taken, use the lat pulldown with the wide bar.",
+     "tip": "Stand, take the handles in the grip you like, then sit with your thighs under the pads. Lean a little forward and pull the handles down to your shoulders, elbows going down and back. Let them rise slowly.",
      "videos": [
       {
+       "id": "bkLOC2WYKB0",
+       "label": "Matrix Aura diverging lat pulldown setup",
+       "by": "Matrix Fitness",
+       "seconds": 60
+      },
+      {
        "id": "uoFjFcLIQec",
-       "label": "Matrix Ultra diverging lat pulldown",
+       "label": "Matrix Ultra diverging lat pulldown, newer model",
        "by": "Matrix Fitness",
        "seconds": 43
       }
@@ -717,7 +743,7 @@
      "animation": {
       "exercisedb": "7F1DVzn",
       "fallback": "Wide-Grip_Lat_Pulldown",
-      "note": "Pictures show the cable lat pulldown; the machine moves the same way."
+      "note": "Pictures show the cable pulldown with one long bar and a lean back. Here each hand has its own handle and you lean a little forward."
      },
      "guide": "https://www.puregym.com/exercises/back/lat-exercises/"
     },
