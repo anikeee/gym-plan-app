@@ -24,6 +24,8 @@ Open **https://anikeee.github.io/gym-plan-app/** on any phone or computer. Your 
 
 Tap the plan name at the top of the day page to switch plans. Your log is kept for every plan.
 
+Or make your own: tap **Create your own plan** at the bottom of that list. Start empty or from a copy of any plan, name it, add up to 7 days, and pick each day's exercises from every exercise in the app with their own sets and reps. Your weight history follows each exercise into your plan. Edit or delete it any time from the Edit button on its day page.
+
 | Plan | Based on | Sets and reps | Time |
 |---|---|---|---|
 | **Workout Plan #1** (default) | The plan a personal trainer wrote for the owner of this app | Machines first, 4 sets of 12, 10, 10 and 8 | About 45 min |
@@ -41,7 +43,7 @@ The times are estimates. Every change made to the online plans, and the reason f
 - **Training days:** tap Start training and Finish. The bar under the day tabs shows the clock and the done count while a training runs, and the diary shows each day with its time and every set.
 - **Done marks and your own order:** tick each exercise when it is done, and drag exercises into the order you like.
 - **Replace any exercise:** tap Replace on an exercise page and search. The library has every PureGym push, pull, legs and abs exercise with its own videos, animation and pictures, plus the machines on the Matrix floor. The replacement takes the slot's sets and reps, and Put back restores the plan's own exercise.
-- **Backups:** on the Training days page, save your log to a file and restore it. The Android app is also included in your phone's own Android backup.
+- **Backups:** on the Training days page, save your log, and your own plans, to a file and restore it. The Android app is also included in your phone's own Android backup.
 
 ## Run it on a computer
 

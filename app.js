@@ -3,7 +3,7 @@ import * as L from './log.js';
 const API = 'https://oss.exercisedb.dev/api/v1/exercises/';
 const GIF_TIMEOUT_MS = 6000;
 const PLAN_KEY = 'gymplan.plan'; // the plan picked in the day page header; the personal trainer's plan when unset
-const state = { data: null, plan: null, index: null, search: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: null, day: null, days: null, order: null, swaps: null, effective: new Map(), timer: null, reorder: false }; // live: exerciseId -> API response for this page load only
+const state = { data: null, plan: null, index: null, search: null, live: new Map(), shown: null, refocus: null, log: null, logOk: true, logRecovered: null, day: null, days: null, order: null, swaps: null, effective: new Map(), timer: null, reorder: false, planStore: null, plansRecovered: false, userPlans: [], editor: null, editorPushed: false, afterEditor: false }; // live: exerciseId -> API response for this page load only
 const LATEST_APK = 'https://github.com/anikeee/gym-plan-app/releases/latest/download/workout-plan.apk';
 const SAVE_FAILED = "Couldn't save on this phone. Storage may be full or blocked.";
 // Reading the localStorage global itself throws when site data is blocked, so read it once here. The log
@@ -15,7 +15,7 @@ async function main() {
   state.data = await res.json();
   // The library: every exercise the Replace sheet can offer beyond the plans. An older cached copy has no such file.
   state.data.library = lib?.ok ? (await lib.json()).exercises : [];
-  state.index = buildIndex(state.data.plans, state.data.library);
+  state.planStore = L.emptyPlans(); freshPlans(); rebuildPlans();
   state.search = buildSearch();
   state.plan = pickedPlan();
   state.log = L.emptyLog(); state.days = L.emptyDays(); state.order = L.emptyOrder(); state.swaps = L.emptySwaps();
@@ -31,7 +31,9 @@ async function main() {
   // Another tab changed something (key null means storage was cleared): show it here too.
   window.addEventListener('storage', (e) => {
     const all = e.key === null;
-    if (all || e.key === PLAN_KEY) state.plan = pickedPlan();
+    if (all || e.key === L.PLANS_KEY) { freshPlans(); rebuildPlans(); }
+    if (all || e.key === PLAN_KEY || e.key === L.PLANS_KEY) state.plan = pickedPlan();
+    if (e.key === L.PLANS_KEY) { if (!route().editor) redraw(); return; } // an open editor keeps its unsaved changes
     if (e.key === PLAN_KEY) { if (!route().exercise) redraw(); return; }
     if (e.key === L.SWAPS_KEY) { freshSwaps(); redraw(); return; } // the exercise page may now show another exercise
     const logChanged = all || e.key === L.STORE_KEY || e.key === L.BODYWEIGHT_KEY;
@@ -73,20 +75,60 @@ async function warmPictures(plan) {
   next(); next(); // two at a time, and it stops if another plan is picked meanwhile
 }
 
-// Every exercise of every plan and of the library by id, every plan by id, and every weight log key, built once.
-function buildIndex(plans, library) {
-  const exercises = new Map(); const keys = new Map(); const planById = new Map();
+// Every exercise of every plan and of the library by id, every plan and day by id, and every weight log key. Your own
+// plans come last, after the library: their exercises copy built in names, so a log key always finds the built in one.
+function buildIndex(plans, library, userPlans = []) {
+  const exercises = new Map(); const keys = new Map(); const planById = new Map(); const dayById = new Map();
   const addKeys = (ex, rank) => { for (const k of Object.keys(ex.variants)) { const key = L.entryKey(ex.name, k); if (!keys.has(key)) keys.set(key, { ex, variant: k, rank }); } };
   plans.forEach((plan, planRank) => {
     planById.set(plan.id, plan);
+    plan.days.forEach((day) => dayById.set(day.id, day));
     plan.days.forEach((day) => day.exercises.forEach((ex, i) => {
       exercises.set(ex.id, { plan, day, ex, rank: planRank * 1000 + plan.days.indexOf(day) * 100 + i });
       addKeys(ex, exercises.get(ex.id).rank);
     }));
   });
   library.forEach((ex, i) => { exercises.set(ex.id, { plan: null, day: null, ex, rank: 9000 + i }); addKeys(ex, 9000 + i); });
-  return { exercises, keys, planById };
+  userPlans.forEach((plan, planRank) => {
+    planById.set(plan.id, plan);
+    plan.days.forEach((day, d) => {
+      dayById.set(day.id, day);
+      day.exercises.forEach((ex, i) => { const rank = 20000 + planRank * 1000 + d * 100 + i; exercises.set(ex.id, { plan, day, ex, rank }); addKeys(ex, rank); });
+    });
+    for (const [id, name] of Object.entries(plan.gone || {})) dayById.set(id, { id, name, exercises: [] }); // a removed day, for the diary
+  });
+  return { exercises, keys, planById, dayById };
 }
+// Your own plans, read fresh before every write like the other stores. Null when storage is blocked.
+function freshPlans() {
+  const r = L.loadPlans(store);
+  if (!r.ok) return null;
+  state.planStore = r.plans; state.plansRecovered = Boolean(r.recovered);
+  return state.planStore;
+}
+// Turns the stored plans into the same shape as the built in plans: each slot becomes the exercise it names, with the
+// slot's own id (its Done marks, order and replacements) and its own sets and reps. The weight log follows the name.
+function rebuildPlans() {
+  const base = buildIndex(state.data.plans, state.data.library);
+  const trainer = state.data.plans[0];
+  state.userPlans = state.planStore.plans.map((p) => {
+    const days = p.days.map((d) => ({ id: d.id, name: d.name, focus: '', exercises: d.exercises.map((x) => {
+      const src = base.exercises.get(x.ref)?.ex;
+      if (!src) return null; // an exercise the data files no longer have
+      const ex = { id: x.id, ref: x.ref, planId: p.id, name: src.name, type: src.type, asWritten: src.asWritten, aliases: src.aliases, variants: src.variants, reps: x.reps };
+      if (src.step !== undefined) ex.step = src.step;
+      return ex;
+    }).filter(Boolean) }));
+    const sets = Math.max(...days.map((d) => d.exercises.reduce((n, e) => n + e.reps.length, 0)));
+    return { id: p.id, name: p.name, by: 'You', tagline: 'Your own plan.', progression: trainer.progression, minutes: Math.max(10, Math.round((sets * 2.25) / 5) * 5), sets: 3, reps: [10, 10, 10], rest: trainer.rest, days, gone: p.gone || {}, user: true, deleted: Boolean(p.deleted) };
+  });
+  state.index = buildIndex(state.data.plans, state.data.library, state.userPlans);
+  // Only your own plans' merged slots are rebuilt: a built in plan's replacement keeps its object, so an open exercise
+  // page still finds itself in its day.
+  for (const k of [...state.effective.keys()]) if (/^u[a-z]{4}\//.test(k)) state.effective.delete(k);
+}
+// Every plan you can pick: the built in ones, then yours.
+function allPlans() { return [...state.data.plans, ...state.userPlans.filter((p) => !p.deleted)]; }
 // What the Replace sheet searches: one entry per exercise name (the same lift in two plans is one entry), then the library.
 function buildSearch() {
   const items = []; const seen = new Set();
@@ -122,7 +164,8 @@ function planById(id) { return state.index.planById.get(id) || state.data.plans[
 function pickedPlan() {
   let id = null;
   try { id = store.getItem(PLAN_KEY); } catch { /* blocked storage: the default plan */ }
-  return planById(id);
+  const plan = planById(id);
+  return plan.deleted ? state.data.plans[0] : plan;
 }
 function planOf(ex) { return (ex.planId && planById(ex.planId)) || state.index.exercises.get(ex.id)?.plan || state.data.plans[0]; }
 // The rep target of every set: the exercise's own, else the plan's (the trainer plan: 12, 10, 10, 8).
@@ -146,9 +189,11 @@ function route() {
   let saved = null;
   try { saved = store.getItem('day'); } catch { /* blocked storage: start on push */ }
   const history = parts[0] === 'history'; // #/history: the training days diary. Its back link goes to the last day shown.
-  let day = !history && dayIds.includes(parts[0]) ? parts[0] : (saved || 'push');
-  if (!dayIds.includes(day)) day = 'push';
-  return { history, day, exercise: history ? null : parts[1] || null, variant: history ? null : parts[2] || null };
+  const editor = parts[0] === 'plan' ? parts[1] || 'new' : null; // #/plan/new and #/plan/<id>: make or edit your own plan
+  let day = !history && dayIds.includes(parts[0]) ? parts[0] : saved;
+  if (!dayIds.includes(day)) day = dayIds[0]; // your own plans have no push day
+  const page = !history && !editor;
+  return { history, editor, day, exercise: page ? parts[1] || null : null, variant: page ? parts[2] || null : null };
 }
 
 function render() {
@@ -163,6 +208,13 @@ function render() {
   const day = found ? found.day : state.plan.days.find((d) => d.id === r.day);
   const ex = found ? found.ex : null;
   const view = document.getElementById('view');
+  if (r.editor) {
+    const opened = state.shown !== `plan/${r.editor}`;
+    state.shown = `plan/${r.editor}`; state.reorder = false;
+    view.replaceChildren(); renderEditor(view, r.editor);
+    if (opened) { window.scrollTo(0, 0); view.querySelector('.editor h1')?.focus({ preventScroll: true }); }
+    return;
+  }
   // A version switch keeps the scroll position. A new day or exercise starts at the top, and leaves Reorder mode.
   const shown = r.history ? 'history' : `${day.id}/${ex ? ex.id : ''}`;
   if (shown !== state.shown) state.reorder = false;
@@ -195,6 +247,7 @@ const ICONS = {
   down: '<path d="M12 5v14"/><path d="M6 13l6 6 6-6"/>',
   check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
   minus: '<path d="M5 12h14"/>',
+  x: '<path d="M6 6l12 12"/><path d="M18 6L6 18"/>',
   plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
   checkCircle: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
   drag: '<path d="M5 8h14"/><path d="M5 12h14"/><path d="M5 16h14"/>',
@@ -217,6 +270,7 @@ function icon(name, size, cls) {
 function restFor(ex) { return (ex.rest || planOf(ex).rest[ex.type]).replace(/ sec$/, ' s'); }
 // "Chest / Shoulders / Triceps" reads as "Chest, shoulders and triceps".
 function focusText(focus) {
+  if (!focus) return '';
   const p = focus.split(' / ').map((w, i) => (i ? w.toLowerCase() : w));
   return p.length < 2 ? p[0] : `${p.slice(0, -1).join(', ')} and ${p[p.length - 1]}`;
 }
@@ -231,14 +285,17 @@ function orderedExercises(day, plan = state.plan) {
   const bySlot = new Map(list.map((ex) => [ex.slot || ex.id, ex.id]));
   return L.applyOrder(list, (state.order.order[day.id] || []).map((id) => bySlot.get(id) || id));
 }
-function dayName(id) { return state.plan.days.find((d) => d.id === id)?.name || cap(id); }
+function dayName(id) { return state.plan.days.find((d) => d.id === id)?.name || state.index.dayById.get(id)?.name || cap(id); }
 // The day an exercise belongs to: the slot it fills in the picked plan, else its own plan day, else its library group.
 function dayOfExercise(ex) {
-  const slot = state.plan.days.find((day) => dayExercises(state.plan, day).some((e) => e.id === ex.id));
+  const slot = state.plan.days.find((day) => dayExercises(state.plan, day).some((e) => e.id === ex.id || e.ref === ex.id));
   return slot?.id || state.index.exercises.get(ex.id)?.day?.id || ex.group || null;
 }
 // How many of a plan day's exercises carry a Done mark on a date. The day chip and the training card both use it.
-function doneCount(planDay, date) { const ids = new Set(dayExercises(state.plan, planDay).map((e) => e.id)); return L.doneOn(state.days, date).filter((id) => ids.has(id)).length; }
+// A Done mark names the exercise that was done, never the slot (log.js): one of your own plan's slots marks the
+// exercise it names, so editing the plan never moves a mark onto another exercise.
+const doneId = (ex) => ex.ref || ex.id;
+function doneCount(planDay, date) { const ids = new Set(dayExercises(state.plan, planDay).map(doneId)); return L.doneOn(state.days, date).filter((id) => ids.has(id)).length; }
 function fmtTime(ms) { return new Date(ms).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
 // The running clock: 42:13, or 1:02:13 past an hour.
 function fmtClock(ms) {
@@ -258,8 +315,15 @@ function renderDay(view, day) {
   picker.setAttribute('aria-haspopup', 'dialog'); picker.setAttribute('aria-label', `Plan: ${state.plan.name}. Change plan`);
   picker.append(el('span', 'plan-btn-name', state.plan.name), icon('chevronDown', 16));
   picker.addEventListener('click', () => openPlanSheet(view, picker));
-  row.append(picker, withIcon(el('p', 'duration'), 'clock', 15, `${state.plan.minutes} min`));
-  const nav = el('nav', 'seg'); nav.setAttribute('aria-label', 'Training day');
+  const right = el('div', 'dayhead-right');
+  if (state.plan.user) {
+    const edit = link(`#/plan/${state.plan.id}`, 'plan-edit'); edit.setAttribute('aria-label', `Edit ${state.plan.name}`); edit.append(icon('pen', 16), 'Edit');
+    edit.addEventListener('click', () => { state.editorPushed = true; }); // a new history entry: back returns to this day
+    right.append(edit);
+  }
+  right.append(withIcon(el('p', 'duration'), 'clock', 15, `${state.plan.minutes} min`));
+  row.append(picker, right);
+  const nav = el('nav', `seg${state.plan.days.length > 3 ? ' many' : ''}`); nav.setAttribute('aria-label', 'Training day');
   for (const d of state.plan.days) {
     const a = link(`#/${d.id}`, 'seg-btn', d.name);
     if (d.id === day.id) a.setAttribute('aria-current', 'page');
@@ -268,8 +332,11 @@ function renderDay(view, day) {
   // One line says what the day works and the plan's sets. The tab above already names the day, so there is no title.
   const uniform = day.exercises.every((e) => !e.reps);
   const meta = el('p', 'day-meta');
-  meta.append(el('span', null, focusText(day.focus)), el('span', 'day-scheme', uniform ? `${state.plan.sets} sets: ${state.plan.reps.join(', ')}` : 'Sets and reps per exercise'));
+  meta.append(el('span', null, day.focus ? focusText(day.focus) : `${day.exercises.length} ${day.exercises.length === 1 ? 'exercise' : 'exercises'}`), el('span', 'day-scheme', state.plan.user ? 'Your own sets and reps' : uniform ? `${state.plan.sets} sets: ${state.plan.reps.join(', ')}` : 'Sets and reps per exercise'));
   head.append(row, nav, meta);
+  // The day shown is scrolled to the middle of the strip, without moving the page.
+  if (nav.classList.contains('many')) requestAnimationFrame(() => { const c = nav.querySelector('[aria-current]'); if (!c) return; const n = nav.getBoundingClientRect(), r = c.getBoundingClientRect(); nav.scrollLeft += r.left - n.left - (n.width - r.width) / 2; });
+  if (state.afterEditor) { state.afterEditor = false; requestAnimationFrame(() => document.querySelector('.plan-btn')?.focus({ preventScroll: true })); }
 
   const body = el('section', 'day');
   const listHead = el('div', 'list-head');
@@ -283,7 +350,7 @@ function renderDay(view, day) {
     const ordered = orderedExercises(day);
     const doneToday = doneCount(day, state.day);
     const running = L.activeSession(state.days, state.day);
-    const next = running && !state.reorder ? ordered.find((e) => !L.isDone(state.days, state.day, e.id)) : null; // the one to do now
+    const next = running && !state.reorder ? ordered.find((e) => !L.isDone(state.days, state.day, doneId(e))) : null; // the one to do now
     count.textContent = doneToday ? `· ${doneToday} of ${ordered.length} done` : `· ${ordered.length}`;
     count.classList.toggle('is-done', doneToday > 0);
     list.classList.toggle('is-reorder', state.reorder);
@@ -292,6 +359,11 @@ function renderDay(view, day) {
       li.append(state.reorder ? reorderRow(day, ex, i, ordered, list, paintList, moved, listStatus) : exerciseRow(day, ex, i, ex === next));
       return li;
     }));
+    if (!ordered.length) { // only your own plans can have a day like this, when the data no longer has its exercises
+      const li = el('li', 'empty-day'); li.append(el('p', null, 'No exercises on this day yet.'));
+      if (state.plan.user) { const edit = link(`#/plan/${state.plan.id}`, 'empty-edit', 'Edit the plan'); edit.addEventListener('click', () => { state.editorPushed = true; }); li.append(edit); }
+      list.append(li);
+    }
     reorder.setAttribute('aria-pressed', String(state.reorder));
     reorder.replaceChildren(icon(state.reorder ? 'check' : 'drag', 16), state.reorder ? 'Done reordering' : 'Reorder');
   };
@@ -310,7 +382,11 @@ function openPlanSheet(view, opener) {
   const close = el('button', 'sheet-clear', 'Close'); close.type = 'button';
   head.append(title, close);
   const list = el('div', 'plan-list'); list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-labelledby', 'plan-title');
-  for (const plan of state.data.plans) {
+  const mine = state.userPlans.filter((p) => !p.deleted);
+  const mineHead = el('h3', 'plan-group', 'Your plans'); mineHead.id = 'plan-mine';
+  const mineList = el('div', 'plan-list plan-list-mine'); mineList.setAttribute('role', 'radiogroup'); mineList.setAttribute('aria-labelledby', 'plan-mine');
+  for (const plan of allPlans()) {
+    const group = plan.user ? mineList : list;
     const on = plan === state.plan;
     const item = el('div', 'plan-item');
     const opt = el('button', `plan-opt${on ? ' is-on' : ''}`); opt.type = 'button';
@@ -330,9 +406,19 @@ function openPlanSheet(view, opener) {
     });
     item.append(opt);
     if (plan.sourceUrl) { const src = link(plan.sourceUrl, 'plan-source', 'Read the source'); src.target = '_blank'; src.rel = 'noopener'; item.append(src); }
-    list.append(item);
+    if (plan.user) {
+      const edit = el('button', 'plan-source', 'Edit this plan'); edit.type = 'button';
+      edit.addEventListener('click', () => { sheet.close(); location.replace(`#/plan/${plan.id}`); });
+      item.append(edit);
+    }
+    group.append(item);
   }
+  const create = el('button', 'plan-create'); create.type = 'button';
+  create.append(icon('plus', 18), 'Create your own plan');
+  create.addEventListener('click', () => { sheet.close(); location.replace('#/plan/new'); });
   sheet.append(head, list);
+  if (mine.length) sheet.append(mineHead, mineList);
+  sheet.append(create);
   close.addEventListener('click', () => sheet.close());
   sheet.addEventListener('close', () => {
     if (history.state?.sheet) history.back(); // the phone's back button closes the sheet (popstate in main)
@@ -342,11 +428,11 @@ function openPlanSheet(view, opener) {
   view.append(sheet);
   sheet.showModal();
   history.pushState({ sheet: 1 }, '');
-  list.querySelector('[aria-checked="true"]')?.focus();
+  sheet.querySelector('[aria-checked="true"]')?.focus();
 }
 
 function exerciseRow(day, ex, i, isNext) {
-  const done = L.isDone(state.days, state.day, ex.id);
+  const done = L.isDone(state.days, state.day, doneId(ex));
   const a = link(exerciseHref(day, ex), `ex-card${done ? ' is-done' : ''}${isNext ? ' is-next' : ''}`);
   a.append(exerciseThumb(ex, done), exerciseText(ex, i, done, isNext), icon(done ? 'checkCircle' : 'chevronRight', done ? 22 : 18, done ? 'ex-done' : 'chev'));
   return a;
@@ -849,14 +935,16 @@ function warmExercise(ex) {
   for (const v of Object.values(ex.variants)) for (const n of [0, 1]) if (v.animation.fallback) fetch(`media/fallback/${v.animation.fallback}/${n}.jpg`).catch(() => {});
 }
 
-// The Replace sheet: a search over every exercise in every plan and the library. Typing filters as you go, and tapping
-// one puts it in this slot. Exercises already on this day are left out, so a day never lists the same lift twice.
-function openReplaceSheet(view, opener, day, slotId, current) {
-  const sheet = el('dialog', 'sheet replace-sheet'); sheet.setAttribute('aria-labelledby', 'replace-title');
+// The search sheet: a search over every exercise in every plan and the library. Typing filters as you go, and tapping
+// one picks it. Replace uses it to fill a slot, and the plan editor to add an exercise to a day.
+// extraRows(query, ctx) can put rows above the results; onPick(item, ctx) does the work. ctx closes the sheet or says why
+// something failed.
+function openSearchSheet(view, opener, { title: titleText, subtitle, pool, group, extraRows, onPick }) {
+  const sheet = el('dialog', 'sheet replace-sheet'); sheet.setAttribute('aria-labelledby', 'search-title');
   const head = el('div', 'sheet-head');
-  const title = el('h2', 'sheet-title', 'Replace'); title.id = 'replace-title';
+  const title = el('h2', 'sheet-title', titleText); title.id = 'search-title';
   const close = el('button', 'sheet-clear', 'Close'); close.type = 'button';
-  const headText = el('div', 'sheet-head-text'); headText.append(title, el('p', 'sheet-version', current.name));
+  const headText = el('div', 'sheet-head-text'); headText.append(title, el('p', 'sheet-version', subtitle));
   head.append(headText, close);
   const field = el('label', 'search-field'); field.append(icon('search', 20));
   const input = el('input', 'search-input'); input.type = 'search'; input.placeholder = 'Search exercises'; input.autocomplete = 'off'; input.spellcheck = false; input.setAttribute('aria-label', 'Search exercises');
@@ -864,42 +952,26 @@ function openReplaceSheet(view, opener, day, slotId, current) {
   const status = el('p', 'sheet-status'); status.setAttribute('role', 'alert');
   const count = el('p', 'pick-count'); count.setAttribute('role', 'status');
   const list = el('ul', 'pick-list'); list.setAttribute('role', 'list');
-  const onDay = new Set(dayExercises(state.plan, day).map((e) => e.name));
-  const pool = state.search.filter((it) => !onDay.has(it.name));
+  const ctx = { close: () => sheet.close(), fail: (message) => say(status, message, true) };
   const MAX = 40;
   const paint = () => {
-    const found = L.searchExercises(pool, input.value, day.id);
+    const found = L.searchExercises(pool, input.value, group);
     const rows = found.slice(0, MAX).map((it) => {
       const b = el('button', 'pick'); b.type = 'button';
       const text = el('span', 'pick-text');
       const versions = Object.keys(it.ex.variants).map((k) => VARIANT_LABEL[k] || cap(k)).join(', ');
       text.append(el('span', 'pick-name', it.name), el('span', 'pick-meta', `${dayName(it.group)} · ${cap(it.type)} · ${versions}`));
       b.append(exerciseThumb(it.ex), text, icon('chevronRight', 18, 'chev'));
-      b.addEventListener('click', () => pick(it));
+      b.addEventListener('click', () => onPick(it, ctx));
       const li = el('li'); li.append(b); return li;
     });
-    // A replaced slot offers the plan's own exercise back, first, until a search narrows the list.
-    const original = current.slot && !input.value.trim() ? state.index.exercises.get(current.slot)?.ex : null;
-    if (original) {
-      const b = el('button', 'pick is-back'); b.type = 'button';
-      const text = el('span', 'pick-text');
-      text.append(el('span', 'pick-name', `Put back ${original.name}`), el('span', 'pick-meta', 'The plan\'s own exercise for this slot'));
-      b.append(exerciseThumb(original), text, icon('chevronLeft', 18, 'chev'));
-      b.addEventListener('click', () => { if (!saveSwap(day, slotId, null)) { say(status, SAVE_FAILED, true); return; } sheet.close(); location.replace(exerciseHref(day, original)); });
-      const li = el('li'); li.append(b); rows.unshift(li);
-    }
+    if (extraRows) rows.unshift(...extraRows(input.value, ctx));
     list.replaceChildren(...rows);
     count.textContent = !found.length ? 'No exercise matches. Try another word, like the muscle or the machine.' : found.length > MAX ? `${found.length} exercises. Showing the first ${MAX}, keep typing to narrow it down.` : `${found.length} ${found.length === 1 ? 'exercise' : 'exercises'}`;
     sheet.dataset.first = found[0]?.id || '';
   };
-  const pick = (it) => {
-    if (!saveSwap(day, slotId, it.id)) { say(status, SAVE_FAILED, true); return; }
-    sheet.close();
-    warmExercise(it.ex);
-    location.replace(exerciseHref(day, it.ex)); // the new exercise's page, with this slot's sets and reps
-  };
   input.addEventListener('input', paint);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const first = pool.find((it) => it.id === sheet.dataset.first); if (first) pick(first); } });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const first = pool.find((it) => it.id === sheet.dataset.first); if (first) onPick(first, ctx); } });
   close.addEventListener('click', () => sheet.close());
   sheet.addEventListener('close', () => {
     if (history.state?.sheet) history.back(); // the phone's back button closes the sheet (popstate in main)
@@ -912,6 +984,257 @@ function openReplaceSheet(view, opener, day, slotId, current) {
   sheet.showModal();
   history.pushState({ sheet: 1 }, '');
   input.focus();
+}
+
+// Replace fills a slot of the picked plan. Exercises already on this day are left out, so a day never lists the same
+// lift twice, and a replaced slot offers the plan's own exercise back, first, until a search narrows the list.
+function openReplaceSheet(view, opener, day, slotId, current) {
+  const onDay = new Set(dayExercises(state.plan, day).map((e) => e.name));
+  openSearchSheet(view, opener, {
+    title: 'Replace', subtitle: current.name, pool: state.search.filter((it) => !onDay.has(it.name)), group: day.id,
+    extraRows: (query, ctx) => {
+      const original = current.slot && !query.trim() ? state.index.exercises.get(current.slot)?.ex : null;
+      if (!original) return [];
+      const b = el('button', 'pick is-back'); b.type = 'button';
+      const text = el('span', 'pick-text');
+      text.append(el('span', 'pick-name', `Put back ${original.name}`), el('span', 'pick-meta', 'The plan\'s own exercise for this slot'));
+      b.append(exerciseThumb(original), text, icon('chevronLeft', 18, 'chev'));
+      b.addEventListener('click', () => { if (!saveSwap(day, slotId, null)) { ctx.fail(SAVE_FAILED); return; } ctx.close(); location.replace(exerciseHref(day, original)); });
+      const li = el('li'); li.append(b);
+      return [li];
+    },
+    onPick: (it, ctx) => {
+      if (!saveSwap(day, slotId, it.id)) { ctx.fail(SAVE_FAILED); return; }
+      ctx.close();
+      warmExercise(it.ex);
+      location.replace(exerciseHref(day, it.ex)); // the new exercise's page, with this slot's sets and reps
+    },
+  });
+}
+
+// ---- Your own plan: the editor at #/plan/new and #/plan/<id>. The draft lives in state.editor until Save, so the
+// add exercise sheet, a redraw or a back press do not lose it. Cancel throws it away.
+const PL = L.PLAN_LIMITS;
+const clampReps = (t) => t.slice(0, PL.sets).map((r) => Math.min(PL.reps, Math.max(1, r)));
+const emptyDraft = () => ({ name: '', days: [{ name: 'Day 1', exercises: [] }] });
+// A plan as an editable draft. Editing your own plan keeps its ids and takes in any replacement made with Replace;
+// starting from another plan copies what you see in it (replacements included) with its sets and reps, and no ids.
+function draftFrom(plan, keepIds) {
+  return {
+    id: keepIds ? plan.id : undefined,
+    name: keepIds ? plan.name : `My ${plan.name}`.slice(0, PL.name),
+    days: plan.days.map((d) => ({
+      id: keepIds ? d.id : undefined, name: d.name,
+      exercises: dayExercises(plan, d).map((ex) => ({ id: keepIds ? ex.slot || ex.id : undefined, ref: ex.slot ? ex.id : ex.ref || ex.id, reps: clampReps(targetsFor(ex)) })),
+    })),
+  };
+}
+const draftExercise = (x) => state.index.exercises.get(x.ref)?.ex;
+const repsText = (reps) => (reps.every((r) => r === reps[0]) ? `${reps.length} × ${reps[0]}` : `${reps.length} × ${reps.join(', ')}`);
+
+// The draft is also kept in this tab's session storage, so a reload, or Android bringing the app back, keeps your edits.
+const DRAFT_KEY = 'gymplan.plandraft';
+function keepDraft() { try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify(state.editor)); } catch { /* blocked storage: the draft lives until the page reloads */ } }
+function dropDraft() { state.editor = null; try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* nothing kept */ } }
+function keptDraft(key) {
+  try { const ed = JSON.parse(sessionStorage.getItem(DRAFT_KEY)); return ed && ed.key === key && ed.dirty && ed.draft && Array.isArray(ed.draft.days) ? ed : null; } catch { return null; }
+}
+// Leaves the editor: back to the day page it was opened over, else (from the plan picker, or after a reload) to a day.
+function leaveEditor(hash) {
+  const pushed = state.editorPushed; state.editorPushed = false; state.afterEditor = true;
+  if (pushed && !hash) history.back(); else location.replace(hash);
+}
+
+function renderEditor(view, key) {
+  const own = key === 'new' ? null : state.userPlans.find((p) => p.id === key && !p.deleted) || null;
+  const backDay = state.plan.days.find((d) => d.id === route().day) || state.plan.days[0];
+  const top = el('div', 'topbar');
+  const cancel = link(`#/${backDay.id}`, 'back'); cancel.append(icon('chevronLeft', 20), 'Cancel');
+  top.append(cancel);
+  const wrap = el('section', 'editor');
+  if (key !== 'new' && !own) {
+    cancel.addEventListener('click', (e) => { e.preventDefault(); dropDraft(); leaveEditor(state.editorPushed ? null : cancel.hash); });
+    wrap.append(el('h1', 'title-lg', 'Plan not found'), el('p', 'ed-note', 'This plan was deleted, or it was made on another phone.'));
+    wrap.querySelector('h1').tabIndex = -1;
+    view.append(top, wrap);
+    return;
+  }
+  // A draft with no edits is built again, so it always shows the plan as it is now (a Replace made meanwhile included).
+  if (!state.editor || state.editor.key !== key || (!state.editor.dirty && !state.editor.start)) {
+    state.editor = keptDraft(key) || { key, draft: own ? draftFrom(own, true) : emptyDraft(), dirty: false, start: '', confirmDelete: false, confirmCancel: false };
+  }
+  const ed = state.editor;
+  const head = el('div', 'ed-head');
+  const h1 = el('h1', 'title-lg', own ? 'Edit plan' : 'New plan'); h1.tabIndex = -1;
+  head.append(el('p', 'eyebrow', 'Your own plan'), h1);
+  const body = el('div', 'ed-body');
+  const status = el('p', 'ed-status'); status.setAttribute('role', 'alert');
+  // Cancel throws a changed draft away only on a second tap.
+  cancel.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (ed.dirty && !ed.confirmCancel) { ed.confirmCancel = true; cancel.replaceChildren(icon('chevronLeft', 20), 'Tap again to discard'); return; }
+    dropDraft(); leaveEditor(state.editorPushed ? null : cancel.hash);
+  });
+  const changed = (focusKey) => { ed.dirty = true; ed.confirmDelete = false; ed.confirmCancel = false; keepDraft(); paint(focusKey); };
+  const small = (name, label, k, onClick, disabled) => {
+    const b = el('button', 'ed-icon'); b.type = 'button'; b.dataset.k = k; b.setAttribute('aria-label', label);
+    b.append(icon(name, 18)); b.disabled = Boolean(disabled); b.addEventListener('click', onClick);
+    return b;
+  };
+  const move = (list, i, by) => { const [x] = list.splice(i, 1); list.splice(i + by, 0, x); };
+  const paint = (focusKey) => {
+    body.replaceChildren();
+    // Start from: only while nothing is changed yet, so a choice never throws away your own edits.
+    if (!own && !ed.dirty) {
+      const startField = el('label', 'ed-field');
+      startField.append(el('span', 'label', 'Start from'));
+      const sel = el('select', 'ed-input'); sel.dataset.k = 'start';
+      sel.append(new Option('An empty plan', ''));
+      for (const plan of allPlans()) sel.append(new Option(`A copy of ${plan.name}`, plan.id));
+      sel.value = ed.start;
+      sel.addEventListener('change', () => {
+        const typed = ed.draft.name.trim();
+        ed.start = sel.value; ed.draft = sel.value ? draftFrom(planById(sel.value), false) : emptyDraft();
+        if (typed && ed.dirty) ed.draft.name = typed;
+        ed.dirty = false; paint('start');
+      });
+      startField.append(sel);
+      body.append(startField);
+    }
+    const nameField = el('label', 'ed-field');
+    const name = el('input', 'ed-input ed-name'); name.type = 'text'; name.maxLength = PL.name; name.value = ed.draft.name; name.placeholder = 'For example: My 4 day split'; name.dataset.k = 'name';
+    name.addEventListener('input', () => { ed.draft.name = name.value; ed.dirty = true; ed.confirmCancel = false; keepDraft(); });
+    nameField.append(el('span', 'label', 'Plan name'), name);
+    body.append(nameField);
+    const days = ed.draft.days;
+    days.forEach((day, di) => {
+      const card = el('div', 'card ed-day');
+      const dayHead = el('div', 'ed-day-head');
+      const dayInput = el('input', 'ed-input ed-day-name'); dayInput.type = 'text'; dayInput.maxLength = PL.dayName; dayInput.value = day.name; dayInput.placeholder = `Day ${di + 1}`; dayInput.dataset.k = `day${di}`;
+      dayInput.setAttribute('aria-label', `Name of day ${di + 1}`);
+      dayInput.addEventListener('input', () => { day.name = dayInput.value; ed.dirty = true; ed.confirmCancel = false; keepDraft(); });
+      const tools = el('div', 'ed-tools');
+      tools.append(
+        small('up', `Move ${day.name || `day ${di + 1}`} up`, `dup${di}`, () => { move(days, di, -1); changed(`dup${di - 1}`); }, di === 0),
+        small('down', `Move ${day.name || `day ${di + 1}`} down`, `ddown${di}`, () => { move(days, di, 1); changed(`ddown${di + 1}`); }, di === days.length - 1),
+        small('x', `Remove ${day.name || `day ${di + 1}`}`, `drm${di}`, () => { days.splice(di, 1); changed('addday'); }, days.length === 1),
+      );
+      dayHead.append(dayInput, tools);
+      const list = el('ol', 'ed-list'); list.setAttribute('role', 'list');
+      day.exercises.forEach((x, xi) => {
+        const ex = draftExercise(x);
+        const row = el('li', 'ed-row');
+        const text = el('div', 'ed-row-text');
+        text.append(el('span', 'ex-name', ex ? ex.name : 'Missing exercise'), el('span', 'ex-meta', repsText(x.reps)));
+        const rowTools = el('div', 'ed-tools');
+        const label = ex ? ex.name : 'this exercise';
+        rowTools.append(
+          small('up', `Move ${label} up`, `up${di}.${xi}`, () => { move(day.exercises, xi, -1); changed(`up${di}.${xi - 1}`); }, xi === 0),
+          small('down', `Move ${label} down`, `down${di}.${xi}`, () => { move(day.exercises, xi, 1); changed(`down${di}.${xi + 1}`); }, xi === day.exercises.length - 1),
+          small('x', `Remove ${label}`, `rm${di}.${xi}`, () => { day.exercises.splice(xi, 1); changed(`add${di}`); }),
+        );
+        const steps = el('div', 'ed-steps');
+        const stepper = (what, value, lo, hi, set, low = value) => {
+          const g = el('div', 'ed-step'); g.setAttribute('role', 'group'); g.setAttribute('aria-label', `${what} for ${label}`);
+          g.append(
+            small('minus', `Fewer ${what.toLowerCase()}`, `${what}-${di}.${xi}`, () => { set(value - 1); changed(`${what}-${di}.${xi}`); }, value <= lo),
+            (() => { const v = el('span', 'ed-step-value'); v.append(el('span', 'ed-step-num', String(value)), el('span', 'ed-step-unit', what.toLowerCase())); return v; })(),
+            small('plus', `More ${what.toLowerCase()}`, `${what}+${di}.${xi}`, () => { set(value + 1); changed(`${what}+${di}.${xi}`); }, low >= hi),
+          );
+          return g;
+        };
+        // Sets add or drop the last set; reps move every set up or down by one, so a pyramid keeps its shape.
+        steps.append(
+          stepper('Sets', x.reps.length, 1, PL.sets, (n) => { x.reps = n > x.reps.length ? [...x.reps, x.reps[x.reps.length - 1]] : x.reps.slice(0, n); }),
+          stepper('Reps', Math.max(...x.reps), 1, PL.reps, (n) => { const by = n - Math.max(...x.reps); x.reps = x.reps.map((r) => Math.min(PL.reps, Math.max(1, r + by))); }, Math.min(...x.reps)),
+        );
+        row.append(ex ? exerciseThumb(ex) : el('span', 'ex-pic'), text, rowTools, steps);
+        list.append(row);
+      });
+      const add = el('button', 'ed-add'); add.type = 'button'; add.dataset.k = `add${di}`;
+      add.append(icon('plus', 18), 'Add exercise');
+      add.disabled = day.exercises.length >= PL.exercises;
+      add.addEventListener('click', () => {
+        const onDay = new Set(day.exercises.map((x) => draftExercise(x)?.name));
+        openSearchSheet(view, add, {
+          title: 'Add exercise', subtitle: day.name || `Day ${di + 1}`, pool: state.search.filter((it) => !onDay.has(it.name)), group: null,
+          onPick: (it, ctx) => {
+            day.exercises.push({ ref: it.id, reps: it.ex.type === 'isolation' ? [12, 12, 12] : [10, 10, 10] });
+            ctx.close();
+            warmExercise(it.ex);
+            changed(`add${di}`);
+          },
+        });
+      });
+      card.append(dayHead, list, add);
+      body.append(card);
+    });
+    const addDay = el('button', 'ed-add ed-add-day'); addDay.type = 'button'; addDay.dataset.k = 'addday';
+    addDay.append(icon('plus', 18), 'Add a day');
+    addDay.disabled = days.length >= PL.days;
+    addDay.addEventListener('click', () => { days.push({ name: `Day ${days.length + 1}`, exercises: [] }); changed(`day${days.length - 1}`); });
+    body.append(addDay);
+    if (focusKey) {
+      const t = body.querySelector(`[data-k="${CSS.escape(focusKey)}"]`);
+      (t && !t.disabled ? t : t?.parentElement?.querySelector('button:not(:disabled), input') || h1).focus({ preventScroll: false });
+    }
+  };
+
+  const foot = el('div', 'next-wrap ed-foot');
+  const save = el('button', 'next ed-save'); save.type = 'button';
+  save.append(el('span', null, own ? 'Save changes' : 'Save plan'), icon('check', 22));
+  save.addEventListener('click', () => {
+    const draft = ed.draft;
+    if (!draft.name.trim()) { say(status, 'Give your plan a name.', true); body.querySelector('.ed-name')?.focus(); return; }
+    const empty = draft.days.findIndex((x) => !x.exercises.length);
+    if (empty >= 0) { say(status, `Add at least one exercise to ${draft.days[empty].name.trim() || `Day ${empty + 1}`}.`, true); return; }
+    const cur = freshPlans();
+    if (!cur) { say(status, SAVE_FAILED, true); return; }
+    const r = L.commitPlan(cur, draft);
+    if (!r.ok) { say(status, r.error === 'too many' ? 'You have as many plans as this app can keep. Delete one first.' : "Couldn't save this plan. Check the names and numbers, then try again.", true); return; }
+    if (!L.savePlans(store, r.plans)) { say(status, SAVE_FAILED, true); return; }
+    // A replacement the draft took in is now part of the plan itself, and a removed slot needs none. Any other
+    // replacement, made after this draft was built, stays.
+    const sw = own && freshSwaps();
+    if (sw && sw.swaps[own.id]) {
+      const refs = new Map(r.plan.days.flatMap((x) => x.exercises.map((e) => [e.id, e.ref])));
+      let next = sw;
+      for (const [slot, id] of Object.entries(sw.swaps[own.id])) if (!refs.has(slot) || refs.get(slot) === id) next = L.setSwap(next, own.id, slot, null);
+      if (next !== sw && L.saveSwaps(store, next)) state.swaps = next;
+    }
+    state.planStore = r.plans; rebuildPlans();
+    const day = r.plan.days.find((x) => x.id === backDay.id) || r.plan.days[0];
+    try { store.setItem(PLAN_KEY, r.plan.id); store.setItem('day', day.id); } catch { /* blocked storage: the plan shows until the page reloads */ }
+    state.plan = planById(r.plan.id); dropDraft();
+    warmPictures(state.plan);
+    leaveEditor(`#/${day.id}`);
+  });
+  foot.append(status, save);
+  if (own) {
+    const del = el('button', 'ed-delete'); del.type = 'button';
+    del.textContent = ed.confirmDelete ? 'Tap again to delete this plan' : 'Delete this plan';
+    del.addEventListener('click', () => {
+      if (!ed.confirmDelete) { ed.confirmDelete = true; del.textContent = 'Tap again to delete this plan'; return; }
+      const cur = freshPlans();
+      const next = cur && L.deletePlan(cur, own.id);
+      if (!next || !L.savePlans(store, next)) { say(status, SAVE_FAILED, true); return; }
+      // Its sessions and Done marks stay in the diary. Its replacements and its day orders go.
+      const sw = freshSwaps();
+      if (sw && sw.swaps[own.id]) { const n = L.dropPlanSwaps(sw, own.id); if (L.saveSwaps(store, n)) state.swaps = n; }
+      const ord = freshOrder();
+      if (ord) { const n = L.dropOrderDays(ord, own.days.map((x) => x.id)); if (L.saveOrder(store, n)) state.order = n; }
+      state.planStore = next; rebuildPlans(); dropDraft();
+      if (state.plan.id === own.id) {
+        state.plan = state.data.plans[0];
+        try { store.setItem(PLAN_KEY, state.plan.id); store.setItem('day', state.plan.days[0].id); } catch { /* blocked storage */ }
+      }
+      leaveEditor(`#/${(state.plan.days.find((x) => x.id === backDay.id) || state.plan.days[0]).id}`);
+    });
+    foot.append(del);
+  }
+  wrap.append(head, body);
+  paint();
+  view.append(top, wrap, foot);
 }
 // state.day is the session day the page was drawn for. The clock can pass 4 am while the page stays visible (a 24 hour
 // gym), so every page draw and every write checks again. A running training keeps its day (L.currentDay).
@@ -961,6 +1284,7 @@ function buildLogCard() {
     count.textContent = !state.logOk ? "This phone isn't letting the app save. Check that site storage is allowed."
       : state.logRecovered ? unreadableText(state.logRecovered)
         : n ? `${n} training ${n === 1 ? 'day' : 'days'} saved on this phone: weights, training times and Done marks.` : 'Nothing logged yet. Tap a set on any exercise to log its weight.';
+    if (state.plansRecovered) count.textContent += ' Your own plans could not be read, so a copy was kept aside on this phone.';
     const at = L.loadMeta(store).lastExportAt;
     const age = at ? Math.floor((Date.now() - Date.parse(at)) / 86400000) : null;
     backup.textContent = at ? `Last backup: ${L.formatDay(L.localDate(new Date(at)))}` : 'Last backup: never';
@@ -995,7 +1319,7 @@ async function exportBackup(status) {
   const log = freshLog();
   if (!log) { say(status, "Couldn't read the log on this phone, so nothing was exported.", true); return; }
   const now = new Date();
-  const text = JSON.stringify(L.exportPayload(log, now, freshDays() ?? state.days, freshOrder() ?? state.order, freshSwaps() ?? state.swaps)); // compact: about the size of the stored log, far below the import cap
+  const text = JSON.stringify(L.exportPayload(log, now, freshDays() ?? state.days, freshOrder() ?? state.order, freshSwaps() ?? state.swaps, freshPlans() ?? state.planStore)); // compact: about the size of the stored log, far below the import cap
   const name = L.exportFileName(now);
   const bridge = window.WorkoutPlanApp;
   if (bridge && typeof bridge.saveFile === 'function') {
@@ -1064,19 +1388,21 @@ async function importBackup(f) {
   try { obj = JSON.parse(await f.text()); } catch { return fail("That file isn't a workout log backup."); }
   const checked = L.validateBackup(obj);
   if (!checked.ok) return fail("That file isn't a workout log backup from this app, so nothing changed.");
-  const cur = freshLog(); const curDays = freshDays(); const curOrder = freshOrder(); const curSwaps = freshSwaps();
-  if (!cur || !curDays || !curOrder || !curSwaps) return fail(SAVE_FAILED);
+  const cur = freshLog(); const curDays = freshDays(); const curOrder = freshOrder(); const curSwaps = freshSwaps(); const curPlans = freshPlans();
+  if (!cur || !curDays || !curOrder || !curSwaps || !curPlans) return fail(SAVE_FAILED);
   const { log, added, filled } = L.mergeLogs(cur, checked.log);
   const days = L.mergeDays(curDays, checked.days);
   const order = L.mergeOrder(curOrder, checked.order);
   const swaps = L.mergeSwaps(curSwaps, checked.swaps);
+  const plans = L.mergePlans(curPlans, checked.plans);
   const newOrderDays = Object.keys(order.order).length - Object.keys(curOrder.order).length;
-  const before = [L.STORE_KEY, L.BODYWEIGHT_KEY, L.DAYS_KEY, L.ORDER_KEY, L.SWAPS_KEY].map((k) => [k, store.getItem(k)]);
-  if (!L.saveLog(store, log) || !L.saveDays(store, days.days) || !L.saveOrder(store, order) || !L.saveSwaps(store, swaps.swaps)) {
+  const before = [L.STORE_KEY, L.BODYWEIGHT_KEY, L.DAYS_KEY, L.ORDER_KEY, L.SWAPS_KEY, L.PLANS_KEY].map((k) => [k, store.getItem(k)]);
+  if (!L.saveLog(store, log) || !L.saveDays(store, days.days) || !L.saveOrder(store, order) || !L.saveSwaps(store, swaps.swaps) || !L.savePlans(store, plans.plans)) {
     for (const [k, v] of before) { try { if (v === null) store.removeItem(k); else store.setItem(k, v); } catch { /* the old value was smaller, so this only fails if storage is gone */ } }
     return fail(SAVE_FAILED);
   }
-  state.log = log; state.days = days.days; state.order = order; state.swaps = swaps.swaps; state.effective.clear();
+  state.log = log; state.days = days.days; state.order = order; state.swaps = swaps.swaps;
+  state.planStore = plans.plans; rebuildPlans(); state.plan = pickedPlan(); // rebuildPlans clears the merged slots too
   closeStaleSessions(); // a backup can carry a training that was never finished on the other phone
   const parts = [];
   if (added) parts.push(`${added} new ${added === 1 ? 'day' : 'days'} of weights`);
@@ -1085,6 +1411,7 @@ async function importBackup(f) {
   if (days.marks) parts.push(`${days.marks} Done ${days.marks === 1 ? 'mark' : 'marks'}`);
   if (newOrderDays > 0) parts.push('your exercise order');
   if (swaps.added) parts.push(`${swaps.added} replaced ${swaps.added === 1 ? 'exercise' : 'exercises'}`);
+  if (plans.added) parts.push(`${plans.added} of your own ${plans.added === 1 ? 'plan' : 'plans'}`);
   return { ok: true, message: parts.length ? `Backup restored: ${parts.join(', ')}.` : 'Backup restored. Everything in it was already on this phone.' };
 }
 
@@ -1173,7 +1500,7 @@ function buildDoneButton(ex) {
   const btn = el('button', 'done-btn'); btn.type = 'button';
   const status = el('p', 'done-status'); status.setAttribute('role', 'status');
   const paint = () => {
-    const done = L.isDone(state.days, state.day, ex.id);
+    const done = L.isDone(state.days, state.day, doneId(ex));
     btn.setAttribute('aria-pressed', String(done));
     btn.classList.toggle('is-done', done);
     btn.replaceChildren(icon(done ? 'checkCircle' : 'check', 20), done ? 'Done' : 'Mark as done');
@@ -1181,7 +1508,7 @@ function buildDoneButton(ex) {
   btn.addEventListener('click', () => {
     if (syncDay()) { render(); return; } // past 4 am: a fresh page for the new day, tap again to mark it
     const cur = freshDays();
-    const days = cur && L.toggleDone(cur, state.day, ex.id);
+    const days = cur && L.toggleDone(cur, state.day, doneId(ex));
     if (!days || !L.saveDays(store, days)) { say(status, SAVE_FAILED, true); return; }
     state.days = days;
     status.textContent = '';
@@ -1228,7 +1555,7 @@ function dayCard(d, open, sets) {
   const sum = el('summary', 'day-sum');
   const setCount = Object.values(sets).reduce((n, s) => n + L.countSets(s), 0);
   // Which plan days were trained: from the sessions, else from the exercises that have sets or a Done mark.
-  const names = new Set(d.sessions.map((s) => `${dayName(s.day)}${s.plan && s.plan !== state.data.plans[0].id ? ` (${planById(s.plan).name})` : ''}`));
+  const names = new Set(d.sessions.map((s) => `${dayName(s.day)}${s.plan && s.plan !== state.data.plans[0].id ? ` (${state.index.planById.get(s.plan)?.name || 'a removed plan'})` : ''}`));
   const byName = new Map(); // one row per exercise name: the same lift in two plans is one history
   const rowFor = (ex, rank) => {
     let row = byName.get(ex.name);

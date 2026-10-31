@@ -326,3 +326,63 @@ dialog.replace-sheet[open] { display: flex; flex-direction: column; gap: 12px; m
   .next:hover, .watch-btn:hover { filter: brightness(1.08); }
   .swap-icon:hover, .pick:hover, .train-diary:hover, .train-finish:hover { border-color: var(--accent); }
 }
+
+/* Your own plans: the Edit link in the day header, more than three day tabs, the picker's group and Create button */
+.dayhead-right { display: flex; align-items: center; gap: 12px; flex: none; }
+.plan-edit { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); font: 600 15px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+.plan-edit .i { color: var(--accent); }
+.seg.many { grid-auto-columns: max-content; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+.seg.many::-webkit-scrollbar { display: none; }
+.seg.many .seg-btn { min-width: 76px; padding: 2px 14px; font-size: 16px; letter-spacing: .05em; white-space: nowrap; }
+.plan-group { margin: 20px 0 0; font: 600 13px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.plan-create { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; margin-top: 4px; border: 1px dashed var(--accent); border-radius: 16px; background: transparent; color: var(--accent); font: 700 18px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.empty-day { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 16px; border: 1px dashed var(--line-hi); border-radius: 16px; color: var(--muted); }
+.empty-day p { margin: 0; }
+
+/* The plan editor */
+.editor { display: flex; flex-direction: column; gap: 16px; padding: 16px 16px 24px; }
+.ed-head { display: flex; flex-direction: column; gap: 6px; }
+.ed-note { margin: 0; color: var(--soft); }
+.ed-body { display: flex; flex-direction: column; gap: 14px; }
+.ed-field { display: flex; flex-direction: column; gap: 8px; }
+.ed-input { width: 100%; min-width: 0; height: 48px; padding: 0 14px; border: 1px solid var(--line-hi); border-radius: 14px; background: var(--bg); color: var(--text); font: 500 17px/1 var(--body); }
+.ed-input:focus { border-color: var(--accent); outline: none; }
+select.ed-input { -webkit-appearance: none; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 20px) 21px, calc(100% - 15px) 21px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 40px; }
+.ed-day { display: flex; flex-direction: column; gap: 10px; padding: 12px; }
+.ed-day-head { display: flex; align-items: center; gap: 8px; }
+.ed-day-name { flex: 1; font: 700 20px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.ed-tools { display: flex; gap: 6px; flex: none; }
+.ed-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); color: var(--text); cursor: pointer; }
+.ed-icon:disabled { opacity: .35; cursor: default; }
+.ed-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ed-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-areas: "pic text tools" "steps steps steps"; gap: 10px 12px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }
+.ed-row > .ex-pic, .ed-row > .ex-thumb { grid-area: pic; }
+.ed-row-text { grid-area: text; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ed-row-text .ex-name { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ed-row > .ed-tools { grid-area: tools; }
+.ed-steps { grid-area: steps; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ed-step { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; align-items: center; gap: 4px; }
+.ed-step-value { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.ed-step-num { font: 700 20px/1 var(--display); font-variant-numeric: tabular-nums; }
+.ed-step-unit { font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+/* Narrow phones: a smaller picture and buttons, so the name keeps room for two lines */
+@media (max-width: 379px) {
+  .ed-day { padding: 10px; }
+  .ed-row { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; padding: 8px; }
+  .ed-row .ex-pic, .ed-row .ex-thumb { width: 40px; height: 40px; }
+  .ed-icon { width: 32px; height: 32px; border-radius: 10px; }
+  .ed-tools { gap: 4px; }
+  .ed-step { grid-template-columns: 32px minmax(0, 1fr) 32px; }
+}
+.ed-add { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border: 1px dashed var(--line-hi); border-radius: 14px; background: transparent; color: var(--accent); font: 700 17px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.ed-add:disabled { opacity: .4; cursor: default; }
+.ed-add-day { min-height: 52px; border-color: var(--accent); }
+.ed-foot { display: flex; flex-direction: column; gap: 8px; }
+.ed-save { width: 100%; border: 0; cursor: pointer; }
+.ed-status { margin: 0; color: var(--warn); font-weight: 600; text-align: center; }
+.ed-status:empty { display: none; }
+.ed-delete { align-self: center; min-height: 44px; padding: 0 16px; border: 0; background: transparent; color: var(--warn); font-weight: 600; font-size: 15px; cursor: pointer; }
+@media (hover: hover) {
+  .plan-create:hover, .ed-add:not(:disabled):hover, .plan-edit:hover { border-color: var(--accent); filter: brightness(1.08); }
+  .ed-icon:not(:disabled):hover { border-color: var(--accent); }
+}
