@@ -151,7 +151,9 @@ export function validateBackup(obj) {
   if (!order.ok) return order;
   const swaps = validateSwaps({ v: 1, swaps: obj.swaps ?? {} });
   if (!swaps.ok) return swaps;
-  return { ok: true, log: log.log, days: days.days, order: order.order, swaps: swaps.swaps };
+  const plans = validatePlans({ v: 1, plans: obj.plans ?? [] });
+  if (!plans.ok) return plans;
+  return { ok: true, log: log.log, days: days.days, order: order.order, swaps: swaps.swaps, plans: plans.plans };
 }
 
 // ok is false when storage is blocked, and when an unreadable log could not be copied aside.
@@ -294,11 +296,12 @@ export function mergeLogs(current, imported) {
   return { log, added: countSessions(log) - countSessions(current), filled };
 }
 
-export function exportPayload(log, now = new Date(), days = emptyDays(), order = emptyOrder(), swaps = emptySwaps()) {
+export function exportPayload(log, now = new Date(), days = emptyDays(), order = emptyOrder(), swaps = emptySwaps(), plans = emptyPlans()) {
   const { main, bw } = splitLog(log);
   const payload = { app: APP_MARK, v: 1, exportedAt: now.toISOString(), entries: main.entries, sessions: days.sessions, done: days.done, order: order.order };
   if (Object.keys(bw.entries).length) payload.bodyweight = bw.entries;
   if (Object.keys(swaps.swaps).length) payload.swaps = swaps.swaps; // older copies of the app skip this field
+  if (plans.plans.length) payload.plans = plans.plans; // and this one
   return payload;
 }
 
@@ -566,6 +569,130 @@ export function mergeSwaps(current, imported) {
   return { swaps: { v: 1, swaps }, added };
 }
 
+// ---- Your own plans: plans built in the app, kept in their own key. The days, order and swaps stores are rebuilt from
+// known fields by every copy of the app, so anything new put inside them would be dropped on the next save.
+// Every id a plan puts into those stores is shaped so that every copy accepts it: a plan id of u and four random
+// letters (never a built-in plan id, and never the same on two phones), day ids of the plan id and more letters, slot
+// ids of the plan id, a hyphen and a number. Ids are never given out twice: each plan counts its own days and slots,
+// and a deleted plan stays stored, hidden, so the history that names it keeps its names.
+export const PLANS_KEY = 'gymplan.plans.v1';
+const USER_PLAN_RE = /^u[a-z]{4}$/;
+const USER_SLOT_RE = /^u[a-z]{4}-\d+$/;
+export const PLAN_LIMITS = { plans: 100, stored: 1000, days: 7, exercises: 15, sets: 6, reps: 30, name: 40, dayName: 30 };
+export function emptyPlans() { return { v: 1, plans: [] }; }
+// a, b, ... z, aa, ab, ...: a day's own letters after the plan id.
+const dayLetters = (n) => (n < 26 ? String.fromCharCode(97 + n) : dayLetters(Math.floor(n / 26) - 1) + String.fromCharCode(97 + (n % 26)));
+const lettersIndex = (t) => [...t].reduce((n, c) => (n + 1) * 26 + c.charCodeAt(0) - 97, -1);
+const nameOk = (v, max) => typeof v === 'string' && v.trim().length >= 1 && v.trim().length <= max;
+const repsOk = (r) => Array.isArray(r) && r.length >= 1 && r.length <= PLAN_LIMITS.sets && r.every((n) => Number.isInteger(n) && n >= 1 && n <= PLAN_LIMITS.reps);
+export function validatePlans(obj) {
+  try {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj) || obj.v !== 1 || !Array.isArray(obj.plans)) throw new Error('version');
+    // Deleted plans stay stored, so only live plans count against the limit you can reach.
+    if (obj.plans.length > PLAN_LIMITS.stored || obj.plans.filter((p) => !p?.deleted).length > PLAN_LIMITS.plans) throw new Error('too many');
+    const planIds = new Set(); const dayIds = new Set(); const slotIds = new Set();
+    const plans = obj.plans.map((p) => {
+      if (!p || typeof p !== 'object' || !USER_PLAN_RE.test(p.id) || planIds.has(p.id)) throw new Error('plan');
+      planIds.add(p.id);
+      if (!nameOk(p.name, PLAN_LIMITS.name)) throw new Error('name');
+      if (!Number.isInteger(p.nextDay) || p.nextDay < 0 || !Number.isInteger(p.nextSlot) || p.nextSlot < 1) throw new Error('counter');
+      if (!Array.isArray(p.days) || p.days.length < 1 || p.days.length > PLAN_LIMITS.days) throw new Error('days');
+      const days = p.days.map((d) => {
+        const own = typeof d?.id === 'string' && d.id.startsWith(p.id) ? d.id.slice(p.id.length) : '';
+        if (!own || !DAY_ID_RE.test(d.id) || !/^[a-z]+$/.test(own) || lettersIndex(own) >= p.nextDay || dayIds.has(d.id)) throw new Error('day');
+        dayIds.add(d.id);
+        if (!nameOk(d.name, PLAN_LIMITS.dayName) || !Array.isArray(d.exercises) || d.exercises.length > PLAN_LIMITS.exercises) throw new Error('day');
+        const exercises = d.exercises.map((x) => {
+          const n = typeof x?.id === 'string' && x.id.startsWith(`${p.id}-`) ? Number(x.id.slice(p.id.length + 1)) : NaN;
+          if (!ID_RE.test(String(x?.id)) || !(n >= 1 && n < p.nextSlot) || slotIds.has(x.id)) throw new Error('slot');
+          slotIds.add(x.id);
+          if (typeof x.ref !== 'string' || !ID_RE.test(x.ref) || USER_SLOT_RE.test(x.ref) || !repsOk(x.reps)) throw new Error('slot');
+          return { id: x.id, ref: x.ref, reps: [...x.reps] };
+        });
+        return { id: d.id, name: d.name.trim(), exercises };
+      });
+      // gone: the names of days removed from this plan, so the sessions trained on them keep their names.
+      const gone = {};
+      if (p.gone !== undefined) {
+        if (!p.gone || typeof p.gone !== 'object' || Array.isArray(p.gone)) throw new Error('gone');
+        for (const [id, dayName] of Object.entries(p.gone)) {
+          const own = id.startsWith(p.id) ? id.slice(p.id.length) : '';
+          if (!own || !/^[a-z]+$/.test(own) || lettersIndex(own) >= p.nextDay || dayIds.has(id) || !nameOk(dayName, PLAN_LIMITS.dayName)) throw new Error('gone');
+          gone[id] = dayName.trim();
+        }
+      }
+      const clean = { id: p.id, name: p.name.trim(), nextDay: p.nextDay, nextSlot: p.nextSlot, days };
+      if (Object.keys(gone).length) clean.gone = gone;
+      if (p.deleted === true) clean.deleted = true;
+      return clean;
+    });
+    return { ok: true, plans: { v: 1, plans } };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+export function loadPlans(storage) { return loadStore(storage, PLANS_KEY, validatePlans, emptyPlans); }
+// Only a store that its own next load accepts is ever written.
+export function savePlans(storage, plans) { return validatePlans(plans).ok && saveStore(storage, PLANS_KEY, plans); }
+// u and four random letters that no stored plan has (about 457,000 to draw from).
+export function newPlanId(plans, rand = Math.random) {
+  const taken = new Set(plans.plans.map((p) => p.id));
+  for (;;) {
+    let id = 'u';
+    for (let i = 0; i < 4; i++) id += String.fromCharCode(97 + Math.floor(rand() * 26));
+    if (!taken.has(id)) return id;
+  }
+}
+// Saves an edited or new plan. draft: { id?, name, days: [{ id?, name, exercises: [{ id?, ref, reps }] }] }. Days and
+// exercises that keep this plan's ids keep them, so their sessions, Done marks, order and replacements stay attached;
+// anything else gets the plan's next unused id. A day with no name is called Day 1, Day 2 and so on.
+export function commitPlan(plans, draft, rand = Math.random) {
+  const old = draft.id ? plans.plans.find((p) => p.id === draft.id && !p.deleted) : null;
+  if (draft.id && !old) return { ok: false, error: 'plan' };
+  const id = old ? old.id : newPlanId(plans, rand);
+  let nextDay = old ? old.nextDay : 0; let nextSlot = old ? old.nextSlot : 1;
+  const days = (Array.isArray(draft.days) ? draft.days : []).map((d, i) => ({
+    id: typeof d.id === 'string' && d.id.startsWith(id) && d.id !== id && /^[a-z]+$/.test(d.id) ? d.id : id + dayLetters(nextDay++),
+    name: typeof d.name === 'string' && d.name.trim() ? d.name.trim() : `Day ${i + 1}`,
+    exercises: (Array.isArray(d.exercises) ? d.exercises : []).map((x) => ({
+      id: typeof x.id === 'string' && x.id.startsWith(`${id}-`) ? x.id : `${id}-${nextSlot++}`, ref: x.ref, reps: Array.isArray(x.reps) ? [...x.reps] : x.reps,
+    })),
+  }));
+  const plan = { id, name: typeof draft.name === 'string' ? draft.name.trim() : '', nextDay, nextSlot, days };
+  const gone = { ...(old?.gone || {}) };
+  for (const d of old?.days || []) gone[d.id] = d.name;
+  for (const d of days) delete gone[d.id];
+  if (Object.keys(gone).length) plan.gone = gone;
+  const next = { v: 1, plans: old ? plans.plans.map((p) => (p.id === id ? plan : p)) : [...plans.plans, plan] };
+  const checked = validatePlans(next);
+  return checked.ok ? { ok: true, plans: checked.plans, plan: checked.plans.plans.find((p) => p.id === id) } : { ok: false, error: checked.error };
+}
+// Hides a plan. It stays stored so its sessions and Done marks still show by name in the diary.
+export function deletePlan(plans, id) { return { v: 1, plans: plans.plans.map((p) => (p.id === id ? { ...p, deleted: true } : p)) }; }
+// A deleted plan's replacements and day orders are of no more use.
+export function dropPlanSwaps(swaps, planId) { const all = { ...swaps.swaps }; delete all[planId]; return { ...swaps, swaps: all }; }
+export function dropOrderDays(order, dayIds) { const all = { ...order.order }; for (const d of dayIds) delete all[d]; return { ...order, order: all }; }
+// The phone's own plans win; a backup adds only the plans the phone does not have. added counts those. When both have
+// the same plan, the phone keeps its days, but takes the higher counters and the other copy's day names: the backup's
+// sessions may name days and slots made on the other phone, and those ids must never be handed out again here.
+export function mergePlans(current, imported) {
+  const theirs = new Map(imported.plans.map((p) => [p.id, p]));
+  const plans = current.plans.map((mine) => {
+    const other = theirs.get(mine.id);
+    if (!other) return mine;
+    const gone = { ...(other.gone || {}) };
+    for (const d of other.days) gone[d.id] = d.name;
+    Object.assign(gone, mine.gone || {});
+    for (const d of mine.days) delete gone[d.id];
+    const merged = { ...mine, nextDay: Math.max(mine.nextDay, other.nextDay), nextSlot: Math.max(mine.nextSlot, other.nextSlot) };
+    if (Object.keys(gone).length) merged.gone = gone; else delete merged.gone;
+    return merged;
+  });
+  const have = new Set(current.plans.map((p) => p.id));
+  const extra = imported.plans.filter((p) => !have.has(p.id));
+  return { plans: { v: 1, plans: [...plans, ...extra] }, added: extra.filter((p) => !p.deleted).length };
+}
+
 // The Replace sheet's search. Every typed word must start a word of the exercise's name, an alias or a version name.
 // Name matches come first, then aliases, then version names, then words spread across them; the slot's own day group
 // before the other days; then the order the exercises are listed in (rank).
@@ -594,7 +721,7 @@ function loadStore(storage, key, validate, empty) {
   if (raw == null) return { ok: true, value: empty(), [storeName(key)]: empty() };
   try {
     const checked = validate(JSON.parse(raw));
-    if (checked.ok) { const value = checked.log ?? checked.days ?? checked.order ?? checked.swaps; return { ok: true, value, [storeName(key)]: value }; }
+    if (checked.ok) { const value = checked.log ?? checked.days ?? checked.order ?? checked.swaps ?? checked.plans; return { ok: true, value, [storeName(key)]: value }; }
   } catch { /* fall through */ }
   const aside = `${key}.unreadable.${hash(raw)}`;
   try { if (storage.getItem(aside) !== raw) storage.setItem(aside, raw); } catch { return { ok: false, value: empty(), [storeName(key)]: empty(), recovered: true }; }
@@ -603,7 +730,7 @@ function loadStore(storage, key, validate, empty) {
 function saveStore(storage, key, value) {
   try { storage.setItem(key, JSON.stringify(value)); return true; } catch { return false; }
 }
-const storeName = (key) => (key === DAYS_KEY ? 'days' : key === ORDER_KEY ? 'order' : key === SWAPS_KEY ? 'swaps' : 'log');
+const storeName = (key) => (key === DAYS_KEY ? 'days' : key === ORDER_KEY ? 'order' : key === SWAPS_KEY ? 'swaps' : key === PLANS_KEY ? 'plans' : 'log');
 export function exportFileName(now = new Date()) {
   return `workout-log-${localDate(now)}.json`;
 }

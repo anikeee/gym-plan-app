@@ -715,3 +715,169 @@ test('the drawn animation file, or its still frame when the phone asks for reduc
   assert.equal(L.drawnSrc(a, false), 'media/drawn/landmine-squat.svg');
   assert.equal(L.drawnSrc(a, true), 'media/drawn/landmine-squat-still.svg');
 });
+
+// ---- Your own plans (gymplan.plans.v1). Every id they put into the days, order and swaps stores must pass the
+// current validators and the older copy's, or one session on such a plan would set the whole days store aside.
+const seeded = (seed = 1) => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; // a repeatable Math.random
+const draft = (over = {}) => ({ name: 'My week', days: [
+  { name: 'Upper', exercises: [{ ref: 'push-4', reps: [10, 10, 10] }, { ref: 'lib-15', reps: [12, 10, 10, 8] }] },
+  { name: 'Lower', exercises: [{ ref: 'legs-3', reps: [8, 8, 8] }] },
+], ...over });
+
+test('plan ids are letters only, never a built-in plan, and never repeat', () => {
+  let store = L.emptyPlans();
+  const rand = seeded(7); const ids = new Set();
+  for (let i = 0; i < 10000; i++) {
+    const id = L.newPlanId(store, rand);
+    assert.match(id, /^[a-z]+$/); assert.match(id, /^u[a-z]{4}$/);
+    assert.ok(!['trainer', 'muscle', 'strength', 'science'].includes(id));
+    ids.add(id);
+  }
+  assert.ok(ids.size > 9800, 'ids are spread out');
+  for (let i = 0; i < 40; i++) store = L.commitPlan(store, draft(), seeded(1)).plans; // the same seed every time
+  assert.equal(new Set(store.plans.map((p) => p.id)).size, 40, 'a clash is drawn again');
+});
+
+test('a new plan gets its own day and slot ids, shaped so every copy of the stores accepts them', () => {
+  const r = L.commitPlan(L.emptyPlans(), draft(), seeded(3));
+  assert.ok(r.ok);
+  const p = r.plan;
+  assert.equal(p.days.length, 2);
+  assert.deepEqual(p.days.map((d) => d.id), [`${p.id}a`, `${p.id}b`]);
+  assert.deepEqual(p.days.flatMap((d) => d.exercises.map((s) => s.id)), [`${p.id}-1`, `${p.id}-2`, `${p.id}-3`]);
+  assert.deepEqual(p.days[0].exercises[1], { id: `${p.id}-2`, ref: 'lib-15', reps: [12, 10, 10, 8] });
+  const slot = p.days[0].exercises[0].id, day = p.days[0].id;
+  let days = L.startSession(L.emptyDays(), day, new Date(2026, 9, 31, 18), '2026-10-31', p.id).days;
+  days = L.toggleDone(days, '2026-10-31', slot);
+  const order = L.setDayOrder(L.emptyOrder(), day, [p.days[0].exercises[1].id, slot]);
+  const swaps = L.setSwap(L.emptySwaps(), p.id, slot, 'push-5');
+  for (const [name, V] of [['current', L], ['older copy', OLD]]) {
+    const d = V.validateDays(JSON.parse(JSON.stringify(days)));
+    assert.ok(d.ok, `${name}: days`); assert.equal(d.days.sessions[0].plan, p.id, `${name}: the session keeps its plan`);
+    assert.deepEqual(d.days.done['2026-10-31'], [slot], `${name}: Done marks`);
+    assert.ok(V.validateOrder(JSON.parse(JSON.stringify(order))).ok, `${name}: order`);
+  }
+  assert.ok(L.validateSwaps(swaps).ok, 'swaps');
+});
+
+test('editing a plan keeps its ids and never reuses a removed one', () => {
+  const first = L.commitPlan(L.emptyPlans(), draft(), seeded(5));
+  const p = first.plan;
+  // Remove the second slot of day 1, add a new exercise and a new day: the old ids stay, the new ones count on.
+  const edit = { id: p.id, name: 'Renamed', days: [
+    { id: p.days[0].id, name: 'Upper', exercises: [p.days[0].exercises[0], { ref: 'pull-1', reps: [10, 10] }] },
+    p.days[1],
+    { name: 'Arms', exercises: [{ ref: 'lib-26', reps: [15, 15] }] },
+  ] };
+  const r = L.commitPlan(first.plans, edit, seeded(9));
+  assert.ok(r.ok);
+  assert.equal(r.plan.id, p.id); assert.equal(r.plan.name, 'Renamed');
+  assert.deepEqual(r.plan.days.map((d) => d.id), [`${p.id}a`, `${p.id}b`, `${p.id}c`]);
+  assert.deepEqual(r.plan.days[0].exercises.map((s) => s.id), [`${p.id}-1`, `${p.id}-4`], 'slot 2 is never given out again');
+  assert.equal(r.plans.plans.length, 1);
+  // Ids that belong to another plan are never kept: a copied day gets new ids.
+  const copy = L.commitPlan(r.plans, { name: 'Copy', days: r.plan.days }, seeded(11));
+  assert.ok(copy.ok); assert.notEqual(copy.plan.id, p.id);
+  assert.ok(copy.plan.days.every((d) => d.id.startsWith(copy.plan.id) && d.exercises.every((s) => s.id.startsWith(`${copy.plan.id}-`))));
+});
+
+test('a plan outside the limits is refused, and nothing outside them can be saved', () => {
+  const bad = [
+    draft({ name: '  ' }),
+    draft({ days: [] }),
+    draft({ days: Array.from({ length: 8 }, (_, i) => ({ name: `Day ${i + 1}`, exercises: [{ ref: 'push-1', reps: [10] }] })) }),
+    draft({ days: [{ name: 'A', exercises: [{ ref: 'push-1', reps: [10, 10, 10, 10, 10, 10, 10] }] }] }), // 7 sets
+    draft({ days: [{ name: 'A', exercises: [{ ref: 'push-1', reps: [31] }] }] }),
+    draft({ days: [{ name: 'A', exercises: [{ ref: 'push-1', reps: [] }] }] }),
+    draft({ days: [{ name: 'A', exercises: [{ ref: 'Push 1', reps: [10] }] }] }),
+  ];
+  for (const d of bad) assert.equal(L.commitPlan(L.emptyPlans(), d, seeded(2)).ok, false, JSON.stringify(d).slice(0, 80));
+  const storage = fakeStorage();
+  assert.equal(L.savePlans(storage, { v: 1, plans: [{ id: 'trainer', name: 'x', nextDay: 0, nextSlot: 1, days: [] }] }), false);
+  assert.equal(storage.getItem(L.PLANS_KEY), null, 'nothing written');
+});
+
+test('the plans store saves, loads, sets unreadable data aside and reports blocked storage', () => {
+  const storage = fakeStorage();
+  const r = L.commitPlan(L.emptyPlans(), draft(), seeded(4));
+  assert.ok(L.savePlans(storage, r.plans));
+  const back = L.loadPlans(storage);
+  assert.ok(back.ok); assert.deepEqual(back.plans, r.plans);
+  const broken = fakeStorage({ [L.PLANS_KEY]: '{"v":1,"plans":[{"id":"Bad"}]}' });
+  const got = L.loadPlans(broken);
+  assert.ok(got.ok && got.recovered); assert.deepEqual(got.plans, L.emptyPlans());
+  assert.ok([...broken.map.keys()].some((k) => k.startsWith(`${L.PLANS_KEY}.unreadable.`)));
+  const blocked = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };
+  assert.equal(L.loadPlans(blocked).ok, false);
+  assert.equal(L.savePlans(blocked, r.plans), false);
+});
+
+test('deleting a plan hides it but keeps its ids, so its history still has names', () => {
+  const r = L.commitPlan(L.emptyPlans(), draft(), seeded(6));
+  const gone = L.deletePlan(r.plans, r.plan.id);
+  assert.equal(gone.plans.length, 1); assert.equal(gone.plans[0].deleted, true);
+  assert.ok(L.validatePlans(gone).ok);
+  assert.equal(L.commitPlan(gone, { id: r.plan.id, ...draft() }, seeded(6)).ok, false, 'a deleted plan cannot be edited');
+  const swaps = L.setSwap(L.setSwap(L.emptySwaps(), r.plan.id, `${r.plan.id}-1`, 'push-5'), 'trainer', 'push-1', 'push-101');
+  assert.deepEqual(L.dropPlanSwaps(swaps, r.plan.id).swaps, { trainer: { 'push-1': 'push-101' } });
+  const order = L.setDayOrder(L.setDayOrder(L.emptyOrder(), `${r.plan.id}a`, [`${r.plan.id}-1`]), 'push', ['push-2', 'push-1']);
+  assert.deepEqual(Object.keys(L.dropOrderDays(order, r.plan.days.map((d) => d.id)).order), ['push']);
+});
+
+test('a backup carries your plans, an older copy still restores it, and the phone wins on a clash', () => {
+  const mine = L.commitPlan(L.emptyPlans(), draft(), seeded(8));
+  const payload = JSON.parse(JSON.stringify(L.exportPayload(L.emptyLog(), new Date(2026, 9, 31), L.emptyDays(), L.emptyOrder(), L.emptySwaps(), mine.plans)));
+  assert.deepEqual(payload.plans, mine.plans.plans);
+  assert.equal(L.exportPayload(L.emptyLog()).plans, undefined, 'no field without plans');
+  const checked = L.validateBackup(payload);
+  assert.ok(checked.ok); assert.deepEqual(checked.plans, mine.plans);
+  assert.ok(OLD.validateBackup(payload).ok, 'an older copy skips the field');
+  assert.equal(L.validateBackup({ ...payload, plans: [{ id: 'x' }] }).ok, false);
+  // The other phone has the same plan id with other content, and one more plan.
+  const other = L.commitPlan(L.emptyPlans(), draft({ name: 'Other phone' }), seeded(8)); // same seed: same id
+  const extra = L.commitPlan(other.plans, draft({ name: 'Extra' }), seeded(12));
+  const merged = L.mergePlans(mine.plans, extra.plans);
+  assert.equal(merged.added, 1);
+  assert.deepEqual(merged.plans.plans.map((p) => p.name), ['My week', 'Extra']);
+  assert.ok(L.validatePlans(merged.plans).ok);
+});
+
+test('a day removed from a plan keeps its name for the diary, and a removed id is never given out again', () => {
+  const first = L.commitPlan(L.emptyPlans(), draft(), seeded(13));
+  const p = first.plan;
+  const r = L.commitPlan(first.plans, { id: p.id, name: p.name, days: [p.days[0]] }, seeded(13));
+  assert.ok(r.ok);
+  assert.deepEqual(r.plan.gone, { [`${p.id}b`]: 'Lower' });
+  assert.ok(L.validatePlans(r.plans).ok);
+  const again = L.commitPlan(r.plans, { id: p.id, name: p.name, days: [r.plan.days[0], { name: 'New', exercises: [{ ref: 'legs-1', reps: [5] }] }] }, seeded(13));
+  assert.equal(again.plan.days[1].id, `${p.id}c`);
+  assert.deepEqual(again.plan.gone, { [`${p.id}b`]: 'Lower' });
+  assert.equal(L.validatePlans({ v: 1, plans: [{ ...again.plan, gone: { [`${p.id}a`]: 'Clash' } }] }).ok, false, 'a gone day cannot also be a live day');
+  assert.equal(L.validatePlans({ v: 1, plans: [{ ...again.plan, gone: { [`${p.id}z`]: 'Never made' } }] }).ok, false, 'a gone day was handed out before');
+});
+
+test('merging the same plan from another phone keeps this phone\'s plan but never reuses the other phone\'s ids', () => {
+  const base = L.commitPlan(L.emptyPlans(), draft(), seeded(14));
+  const p = base.plan;
+  // The other phone added a day and an exercise, then a backup came back here.
+  const theirs = L.commitPlan(base.plans, { id: p.id, name: p.name, days: [...p.days, { name: 'Arms', exercises: [{ ref: 'pull-6', reps: [10] }] }] }, seeded(14));
+  const merged = L.mergePlans(base.plans, theirs.plans);
+  const m = merged.plans.plans[0];
+  assert.equal(m.name, 'My week'); assert.equal(m.days.length, 2, 'this phone\'s days win');
+  assert.equal(m.nextDay, theirs.plan.nextDay); assert.equal(m.nextSlot, theirs.plan.nextSlot);
+  assert.deepEqual(m.gone, { [`${p.id}c`]: 'Arms' }, 'the other phone\'s day keeps its name for its sessions');
+  assert.ok(L.validatePlans(merged.plans).ok);
+  const next = L.commitPlan(merged.plans, { id: p.id, name: p.name, days: [...m.days, { name: 'Cardio', exercises: [{ ref: 'legs-6', reps: [10] }] }] }, seeded(14));
+  assert.equal(next.plan.days[2].id, `${p.id}d`, 'not the other phone\'s c');
+});
+
+test('deleted plans do not count against the limit of live plans', () => {
+  let plans = L.emptyPlans();
+  for (let i = 0; i < 100; i++) { const r = L.commitPlan(plans, draft(), seeded(100 + i)); plans = L.deletePlan(r.plans, r.plan.id); }
+  const r = L.commitPlan(plans, draft(), seeded(999));
+  assert.ok(r.ok, 'a new plan still fits');
+  let full = r.plans;
+  for (let i = 0; i < 99; i++) full = L.commitPlan(full, draft(), seeded(2000 + i)).plans;
+  const over = L.commitPlan(full, draft(), seeded(5000));
+  assert.equal(over.ok, false); assert.equal(over.error, 'too many');
+});
