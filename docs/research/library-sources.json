@@ -1445,6 +1445,29 @@
    }
   },
   {
+   "id": "lib-72",
+   "name": "Calf Press",
+   "group": "legs",
+   "versions": {
+    "machine": {
+     "name": "Calf press machine",
+     "puregymPage": null,
+     "copyOf": null,
+     "clips": [
+      {
+       "id": "QIzBFjIz6JI",
+       "by": "Matrix Fitness"
+      },
+      {
+       "id": "dhRz1Ns60Zg",
+       "by": "PureGym"
+      }
+     ],
+     "placard": "Setup and form text written on 2026-11-02 from the Matrix Calf Press placard photographed at the user's PureGym."
+    }
+   }
+  },
+  {
    "id": "lib-52",
    "name": "Leg Press Calf Raise",
    "group": "legs",

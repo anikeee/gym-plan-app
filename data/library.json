@@ -1786,7 +1786,7 @@
    "variants": {
     "machine": {
      "name": "Single leg press",
-     "kit": "45 degree plate loaded leg press, or the seated leg press. Set the back pad so your knee reaches about 90 degrees with your back flat. One foot mid plate, the other on the floor beside the seat, weaker leg first.",
+     "kit": "45 degree plate loaded leg press, or the seated leg press. Set the back pad, or on the seated one the seat carriage, so your knee reaches about 90 degrees with your back flat. One foot mid plate, the other on the floor beside the seat, weaker leg first.",
      "tip": "Back flat and hips square, whole foot on the plate. Press until your leg is nearly straight, pause, then lower slowly until your knee is at about 90 degrees.",
      "videos": [
       {
@@ -2501,6 +2501,45 @@
       "note": null
      },
      "guide": "https://www.puregym.com/exercises/legs/inner-outer-thigh-exercises/"
+    }
+   }
+  },
+  {
+   "id": "lib-72",
+   "name": "Calf Press",
+   "group": "legs",
+   "type": "isolation",
+   "asWritten": "machine",
+   "aliases": [
+    "seated calf press",
+    "calf press machine",
+    "calves"
+   ],
+   "variants": {
+    "machine": {
+     "name": "Calf press machine",
+     "kit": "Matrix Calf Press, the seated machine with a weight stack. Sit down, then pull the pin and slide the seat carriage until your knees are straight or only slightly bent, with the balls of your feet on the foot plate. Hold the handles at the sides of the seat.",
+     "tip": "Keep your knees still the whole time, so only your ankles move. Push through the balls of your feet to point your toes as far as they go, pause, then return slowly until you feel a stretch in your calves.",
+     "videos": [
+      {
+       "id": "QIzBFjIz6JI",
+       "label": "Matrix Aura calf press setup",
+       "by": "Matrix Fitness",
+       "seconds": 51
+      },
+      {
+       "id": "dhRz1Ns60Zg",
+       "label": "The same movement on the leg press",
+       "by": "PureGym",
+       "seconds": 14
+      }
+     ],
+     "animation": {
+      "exercisedb": null,
+      "fallback": "Calf_Press",
+      "note": null
+     },
+     "guide": "https://www.puregym.com/exercises/legs/calf-exercises/"
     }
    }
   },

@@ -559,15 +559,16 @@
           "variants": {
             "machine": {
               "name": "Leg press machine",
-              "kit": "45 degree plate-loaded leg press, or the seated leg press.",
-              "tip": "Feet shoulder width in the middle of the plate. Lower until the knees reach about 90 degrees and never let the lower back lift off the pad.",
+              "kit": "Matrix Leg Press, the seated machine with a weight stack. Sit down, then pull the pin and slide the seat carriage until your knees bend to about 90 degrees with your feet on the plate. Feet shoulder width apart, hands on the handles at the sides of the seat. If it is taken: the 45 degree plate loaded leg press.",
+              "tip": "Push through your whole foot until your legs are nearly straight, without locking the knees. Bring the plate back slowly to about 90 degrees at the knee, and never let your lower back lift off the pad.",
               "videos": [
-                { "id": "q4W4_VJbKW0", "label": "How to do a 45 degree leg press", "by": "PureGym", "seconds": 11 },
+                { "id": "OUALhlKGxLI", "label": "Matrix Aura leg press setup", "by": "Matrix Fitness", "seconds": 54 },
                 { "id": "qCR9bN3G1t4", "label": "How to do a seated leg press", "by": "PureGym", "seconds": 16 },
+                { "id": "q4W4_VJbKW0", "label": "How to do a 45 degree leg press, if the seated one is taken", "by": "PureGym", "seconds": 11 },
                 { "id": "sI5PJZx73H8", "label": "How to use the Magnum 45 degree leg press", "by": "Matrix Fitness", "seconds": 75 }
               ],
-              "animation": { "exercisedb": "10Z2DXU", "fallback": "Leg_Press", "note": null },
-              "guide": "https://www.puregym.com/exercises/legs/quad-exercises/leg-presses/45-degree-leg-press/"
+              "animation": { "exercisedb": "10Z2DXU", "fallback": "Leg_Press", "note": "The animation shows the 45 degree leg press. Your seated machine works the same way: push the plate away with your whole foot." },
+              "guide": "https://www.puregym.com/exercises/legs/quad-exercises/leg-presses/seated-leg-press/"
             },
             "dumbbell": {
               "name": "Dumbbell squat",
@@ -623,15 +624,16 @@
           "aliases": ["hamstring curl", "seated leg curl", "lying leg curl", "prone leg curl", "hamstrings"],
           "variants": {
             "machine": {
-              "name": "Leg curl machine (lying or seated)",
-              "kit": "Prone (lying) leg curl or seated leg curl machine.",
-              "tip": "Pad just above the heels, hips pressed into the bench. Curl all the way up and lower slowly.",
+              "name": "Seated leg curl machine",
+              "kit": "Matrix Seated Leg Curl, with a weight stack. Move the back pad until your knees line up with the machine's pivot, the round joint beside them. Set the leg pad behind your ankles, just above the heels, and use the pull pin to pick the start position. If it is taken: the lying leg curl.",
+              "tip": "Sit tall with your back on the pad and hold the handles. Curl your heels down and back under the seat as far as they go, then let the pad rise slowly until your legs are nearly straight.",
               "videos": [
-                { "id": "SbSNUXPRkc8", "label": "How to do a lying leg curl (prone leg curl)", "by": "PureGym", "seconds": 16 },
-                { "id": "QjNFk4F5dAs", "label": "How to use the prone leg curl machine", "by": "PureGym", "seconds": 60 }
+                { "id": "nFFa64sN1pE", "label": "Matrix Aura seated leg curl setup", "by": "Matrix Fitness", "seconds": 81 },
+                { "id": "Orxowest56U", "label": "Seated leg curl", "by": "Renaissance Periodization", "seconds": 11 },
+                { "id": "SbSNUXPRkc8", "label": "How to do a lying leg curl, if the seated one is taken", "by": "PureGym", "seconds": 16 }
               ],
-              "animation": { "exercisedb": "17lJ1kr", "fallback": "Lying_Leg_Curls", "note": null },
-              "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/lying-leg-curl/"
+              "animation": { "exercisedb": "Zg3XY7P", "fallback": "Seated_Leg_Curl", "note": null },
+              "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/seated-leg-curl/"
             },
             "dumbbell": {
               "name": "Dumbbell hamstring curl",
@@ -1722,20 +1724,26 @@
        "variants": {
         "machine": {
          "name": "Leg press machine",
-         "kit": "45 degree plate-loaded leg press, or the seated leg press.",
-         "tip": "Feet shoulder width in the middle of the plate. Lower until the knees reach about 90 degrees and never let the lower back lift off the pad.",
+         "kit": "Matrix Leg Press, the seated machine with a weight stack. Sit down, then pull the pin and slide the seat carriage until your knees bend to about 90 degrees with your feet on the plate. Feet shoulder width apart, hands on the handles at the sides of the seat. If it is taken: the 45 degree plate loaded leg press.",
+         "tip": "Push through your whole foot until your legs are nearly straight, without locking the knees. Bring the plate back slowly to about 90 degrees at the knee, and never let your lower back lift off the pad.",
          "videos": [
           {
-           "id": "q4W4_VJbKW0",
-           "label": "How to do a 45 degree leg press",
-           "by": "PureGym",
-           "seconds": 11
+           "id": "OUALhlKGxLI",
+           "label": "Matrix Aura leg press setup",
+           "by": "Matrix Fitness",
+           "seconds": 54
           },
           {
            "id": "qCR9bN3G1t4",
            "label": "How to do a seated leg press",
            "by": "PureGym",
            "seconds": 16
+          },
+          {
+           "id": "q4W4_VJbKW0",
+           "label": "How to do a 45 degree leg press, if the seated one is taken",
+           "by": "PureGym",
+           "seconds": 11
           },
           {
            "id": "sI5PJZx73H8",
@@ -1747,9 +1755,9 @@
          "animation": {
           "exercisedb": "10Z2DXU",
           "fallback": "Leg_Press",
-          "note": null
+          "note": "The animation shows the 45 degree leg press. Your seated machine works the same way: push the plate away with your whole foot."
          },
-         "guide": "https://www.puregym.com/exercises/legs/quad-exercises/leg-presses/45-degree-leg-press/"
+         "guide": "https://www.puregym.com/exercises/legs/quad-exercises/leg-presses/seated-leg-press/"
         },
         "dumbbell": {
          "name": "Dumbbell squat",
@@ -3154,29 +3162,35 @@
        ],
        "variants": {
         "machine": {
-         "name": "Leg curl machine (lying or seated)",
-         "kit": "Prone (lying) leg curl or seated leg curl machine.",
-         "tip": "Pad just above the heels, hips pressed into the bench. Curl all the way up and lower slowly.",
+         "name": "Seated leg curl machine",
+         "kit": "Matrix Seated Leg Curl, with a weight stack. Move the back pad until your knees line up with the machine's pivot, the round joint beside them. Set the leg pad behind your ankles, just above the heels, and use the pull pin to pick the start position. If it is taken: the lying leg curl.",
+         "tip": "Sit tall with your back on the pad and hold the handles. Curl your heels down and back under the seat as far as they go, then let the pad rise slowly until your legs are nearly straight.",
          "videos": [
           {
-           "id": "SbSNUXPRkc8",
-           "label": "How to do a lying leg curl (prone leg curl)",
-           "by": "PureGym",
-           "seconds": 16
+           "id": "nFFa64sN1pE",
+           "label": "Matrix Aura seated leg curl setup",
+           "by": "Matrix Fitness",
+           "seconds": 81
           },
           {
-           "id": "QjNFk4F5dAs",
-           "label": "How to use the prone leg curl machine",
+           "id": "Orxowest56U",
+           "label": "Seated leg curl",
+           "by": "Renaissance Periodization",
+           "seconds": 11
+          },
+          {
+           "id": "SbSNUXPRkc8",
+           "label": "How to do a lying leg curl, if the seated one is taken",
            "by": "PureGym",
-           "seconds": 60
+           "seconds": 16
           }
          ],
          "animation": {
-          "exercisedb": "17lJ1kr",
-          "fallback": "Lying_Leg_Curls",
+          "exercisedb": "Zg3XY7P",
+          "fallback": "Seated_Leg_Curl",
           "note": null
          },
-         "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/lying-leg-curl/"
+         "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/seated-leg-curl/"
         },
         "dumbbell": {
          "name": "Dumbbell hamstring curl",
@@ -4492,29 +4506,35 @@
        ],
        "variants": {
         "machine": {
-         "name": "Leg curl machine (lying or seated)",
-         "kit": "Prone (lying) leg curl or seated leg curl machine.",
-         "tip": "Pad just above the heels, hips pressed into the bench. Curl all the way up and lower slowly.",
+         "name": "Seated leg curl machine",
+         "kit": "Matrix Seated Leg Curl, with a weight stack. Move the back pad until your knees line up with the machine's pivot, the round joint beside them. Set the leg pad behind your ankles, just above the heels, and use the pull pin to pick the start position. If it is taken: the lying leg curl.",
+         "tip": "Sit tall with your back on the pad and hold the handles. Curl your heels down and back under the seat as far as they go, then let the pad rise slowly until your legs are nearly straight.",
          "videos": [
           {
-           "id": "SbSNUXPRkc8",
-           "label": "How to do a lying leg curl (prone leg curl)",
-           "by": "PureGym",
-           "seconds": 16
+           "id": "nFFa64sN1pE",
+           "label": "Matrix Aura seated leg curl setup",
+           "by": "Matrix Fitness",
+           "seconds": 81
           },
           {
-           "id": "QjNFk4F5dAs",
-           "label": "How to use the prone leg curl machine",
+           "id": "Orxowest56U",
+           "label": "Seated leg curl",
+           "by": "Renaissance Periodization",
+           "seconds": 11
+          },
+          {
+           "id": "SbSNUXPRkc8",
+           "label": "How to do a lying leg curl, if the seated one is taken",
            "by": "PureGym",
-           "seconds": 60
+           "seconds": 16
           }
          ],
          "animation": {
-          "exercisedb": "17lJ1kr",
-          "fallback": "Lying_Leg_Curls",
+          "exercisedb": "Zg3XY7P",
+          "fallback": "Seated_Leg_Curl",
           "note": null
          },
-         "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/lying-leg-curl/"
+         "guide": "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/seated-leg-curl/"
         },
         "dumbbell": {
          "name": "Dumbbell hamstring curl",
